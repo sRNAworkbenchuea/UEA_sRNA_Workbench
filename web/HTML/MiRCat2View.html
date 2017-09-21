@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MiRCat Two Display</title>
+
+
+
+        <!--Javascript-->
+        <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+      
+        <!--JQuery files -->
+        <script type="text/javascript" src="../js/lib/jquery/jquery-1.11.2.min.js"></script>
+
+        
+        <!--Convert DIV to canvas files -->
+        <script type="text/javascript" src="../js/lib/html2canvas-2.js"></script>
+
+        <!--D3 Javascript -->
+        <!--<script src="../js/lib/d3/d3.js"></script>-->
+        <!--<script src="../js/lib/d3/d3.min.js"></script>-->
+        <script type="text/javascript"  src="../js/lib/d3V4/d3.v4.min.js"></script>
+
+        <script type="text/javascript" src="../js/lib/d3.legend.js"></script>
+
+        <!--Menu Javascript-->
+        <script src="../js/lib/classie.js"></script>
+        <script type="text/javascript" src="../js/menu/mlpushmenu.js"></script>
+        <!-- Javascript based browser feature detection for push menu -->
+        <script type="text/javascript" src="../js/lib/modernizr.push.custom.js"></script>
+        <script type="text/javascript" src="../js/lib/modernizr-2.6.2.min.js"></script>
+
+
+        <!--Workbench Routines -->
+        <script type="text/javascript" src="../js/utils/workbenchutils.js"></script>
+
+        <!--tooltip Javascript-->
+        <script type="text/javascript" src="../js/tipped/tipped.js"></script>
+
+
+        <!--Datatables Javascript-->
+        <script type="text/javascript" src="../js/datatables/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="../js/datatables/dataTables.colVis.js"></script>
+        <script type="text/javascript" src="../js/datatables/dataTables.tableTools.js"></script>
+        
+        <!--bio java-->
+        <script type="text/javascript" src="../js/requireRNA.js"></script>
+        <!--<script type="text/javascript" src="../js/biojs/drawRNA.js"></script>-->
+        
+
+        <!--<script type="text/javascript" src="../js/biojs/drawrna.js"></script>-->
+
+        <!--Coverage-->
+        <script type="text/javascript" src="../js/miRCat2/coveragePlot.js"></script>
+
+
+
+        <!-- CSS -->
+        <!--Workbench CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/wbstyles.css" />
+        
+        <!--Biojs CSS -->
+        <!--<link rel="stylesheet" type="text/css" href="../CSS/biojs/bootstrap.css" />-->
+        <link rel="stylesheet" type="text/css" href="../CSS/biojs/spectrum.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/biojs/style.css" />
+
+
+
+        <!--Datatables CSS-->
+        <link rel="stylesheet" type="text/css" href="../css/jquery.dataTables.css">
+        <link rel="stylesheet" type="text/css" href="../css/dataTables.colVis.css">
+        <link rel="stylesheet" type="text/css" href="../css/dataTables.tableTools.css">
+
+        <!--tooltip CSS-->
+        <link rel="stylesheet" type="text/css" href="../CSS/tipped/tipped.css" />
+
+        <!--Menu CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/normalize.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/menus.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/icons.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/component.css" />
+
+
+        <!-- Import FontAwesome 4.2 -->
+        <link rel="stylesheet" href="../CSS/font-awesome.min.css">
+
+        <!--Buttons CSS-->
+        <link rel="stylesheet" href="../CSS/fancy-buttons.css">
+
+        <style type="text/css">
+            /* graph styles */
+            .axis path{
+                display: none;
+            }
+
+            td
+            {
+                padding:0 5px 0 5px;
+                /*word-wrap: break-word;*/
+
+            }
+            #source_sample_list, #reference_list, #observed_list {
+                border: 1px solid #eee;
+                width: 142px;
+                min-height: 20px;
+                list-style-type: none;
+                margin: 0;
+                padding: 5px 0 0 0;
+                float: left;
+                margin-right: 10px;
+                content: ""; /* fa-square-o */
+            }
+            #sortable1 li, #sortable2 li {
+                margin: 0 5px 5px 5px;
+                padding: 5px;
+                font-size: 1.2em;
+                width: 120px;
+            }
+
+            table.mc_results tr td:first-child {
+                text-align: center;
+            }
+
+            table.mc_results tr td:first-child:before {
+                content: "\f096"; /* fa-square-o */
+                font-family: FontAwesome;
+            }
+
+            table.mc_results tr.selected td:first-child:before {
+                content: "\f046"; /* fa-check-square-o */
+            }
+
+            table.mc_results tr_default td:first-child {
+                text-align: center;
+            }
+
+            table.mc_results tr_default td:first-child:before {
+
+            }
+
+            table.mc_results tr_default.selected td:first-child:before {
+
+            }
+
+            .precur_col
+            {
+                word-wrap: break-word;
+                width: 10px;
+                height: 100px;
+            }
+            
+            
+            textarea{
+                //line-height: 5.5ex;
+                font-family: "Courier New", Courier, monospace;
+                height: 100%; 
+                width: 100%; 
+                white-space: pre;
+                word-wrap: normal;
+                overflow-x: scroll;
+            }
+
+
+
+        </style>
+
+    </head>
+    <body>
+        <div class="container">
+            <!-- Push Wrapper -->
+            <div class="mp-pusher" id="mp-pusher">
+
+                <!-- mp-menu -->
+                <nav id="mp-menu" class="mp-menu">
+                    <div class="mp-level">
+                        <h2 class="icon icon-world">miRCat 2 Setup</h2>
+                        <ul>
+                            <li class="icon icon-arrow-left" id="settings_options">
+                                <a class="icon icon-settings" href="#">Settings</a>
+                                <div class="mp-level">
+                                    <h2 class="icon icon-display">Settings</h2>
+                                    <a class="mp-back" href="#">back</a>
+
+                                    <ul>
+                                        <li class="icon icon-arrow-left" id="parameter_options">
+                                            <a class="icon icon-settings" href="#">Parameters</a>
+                                            <div class="mp-level" style="overflow: auto">
+                                                <h2 class="icon icon-display">Parameters</h2>
+                                                <a class="mp-back" href="#">back</a>
+
+                                                <ul>
+                                                    <li>
+
+                                                        <!--<section style="margin: 10px;">
+                                                            <fieldset  style="min-height:100px;">
+                                                                <legend><b> Organism Type </b> </legend>-->
+
+                                                        <table id="MC2Params" style="margin-bottom: 50px">
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="radio" name="default_radio" id="org_animal_radio" class="radio" onclick="setOrgType(false)" />
+                                                                    <label for="org_animal_radio">Animal Data</label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="radio" name="default_radio" id="org_plant_radio" class="radio" onclick="setOrgType(true)" checked />
+                                                                    <label for="org_plant_radio">Plant Data</label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr style="border-bottom: 1px solid white;">
+                                                                <td style="padding-top: 1em;">
+                                                                    
+                                                                </td>  
+                                                            </tr>
+                                                            
+                                                            <tr>
+                                                                <td style="padding-top: 1em;">
+                                                                    <label for="repeats" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Maximum Repeated Hits</label>
+                                                                    <input class="simple-tooltip" type="number" id="repeats" align="right"  value="25" title="">
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding-top: 1em;">
+                                                                   <label for="complex" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Sequence Complexity</label>
+                                                                    <input class="simple-tooltip" type="number" id="complex" align="right"  value="0.9" title="">
+                                                                </td>
+                                                            </tr>
+                                                            
+                                                            <tr>
+                                                                <td style="padding-top: 1em;">
+                                                                    <label for="minlen" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Minimum Length</label>
+                                                                    <input class="simple-tooltip" type="number" id="minlen" align="right"  value="20" title="minimum length of the miRNA">
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding-top: 1em;">
+                                                                    <label for="maxlen" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Maximum Length</label>
+                                                                    <input class="simple-tooltip" type="number" id="maxlen" align="right"  value="23" title="maximum length of the miRNA">
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding-top: 1em;">
+                                                                    <label for="minFoldLen" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Minimum Hairpin</label>
+                                                                    <input class="simple-tooltip" type="number" id="minFoldLen" align="right"  value="45" title="minimum length of the precursor">
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding-top: 1em;">
+                                                                   <label for="maxFoldLen" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Maximum Hairpin</label>
+                                                                    <input class="simple-tooltip" type="number" id="maxFoldLen" align="right"  value="250" title="maximum length of the precursor">
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding-top: 1em;">
+                                                                    <label for="maxAmfe" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Maximum AMFE</label>
+                                                                    <input class="simple-tooltip" type="number" id="maxAmfe" align="right"  value="-22" title="maximum adjusted minimum free energy of the precursor (per 100nt)">
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding-top: 1em;">
+                                                                    <label for="gapsInMirna" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Maximum gaps</label>
+                                                                    <input class="simple-tooltip" type="number" id="gapsInMirna" align="right"  value="4" title="maximum number of consecutive gaps in the fold on the miRNA position">
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding-top: 1em;">
+                                                                    <label for="noloops" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Number of loops</label>
+                                                                    <input class="simple-tooltip" type="number" id="noloops" align="right"  value="3" title="maximum number of bulks in the loop area of the precursor">
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding-top: 1em;">
+                                                                    <label for="clearCutPercent" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Overlap Percentage</label>
+                                                                    <input class="simple-tooltip" type="number" id="clearCutPercent" align="right"  value="0.92" title="percentage of incident reads that should fall between the same start and end positions as the miRNA">
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="checkbox" name="compradio" id="allowcomplexloop" class="radio" checked  />
+                                                                    <label class="simple-tooltip" for="allowcomplexloop" title="Allows multiple bulks in the loop area on the precursor">Allow Complex Loops</label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td >
+                                                                    <input type="checkbox" name="randradio" id="randfold" class="radio"  title="use Randfold to calculate p-value"  />
+                                                                    <label class="simple-tooltip" for="randfold" title="use Randfold to calculate p-value" >Randfold Enabled</label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding-top: 1em;">
+                                                                    <label for="pval" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">P-Val</label>
+                                                                    <input class="simple-tooltip" type="number" id="pval" align="right"  value="0.05" title="cut-off value if randfold is enabled">
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+
+                                                        <!--</fieldset>
+                                                        
+        
+                                                    </section>-->
+                                                    </li>
+                                                </ul>
+
+                                            </div>
+                                        </li>
+                                        
+
+                                        <li id='setOutputDir'  ><a  href="#" onclick="app.setOutputDir()" >Set Output Directory</a></li>
+
+
+                                    </ul>
+                                    
+                                </div>
+                            </li>
+                            <li class="icon icon-arrow-left" id="export_options">
+                                <a class="icon icon-data" href="#">Export</a>
+                                <div class="mp-level">
+                                    <h2 class="icon icon-display">Export</h2>
+                                    <a class="mp-back" href="#">back</a>
+                                    <ul>
+                                        <!--<li id='exportmiRNAToFASTA'  ><a  href="#" onclick="app.exportMiRNAToFASTA()" >Export miRNAs to FASTA</a></li>-->
+
+                                        <!--<li id='exportPREcursorToFASTA'  ><a  href="#" onclick="app.exportPreCursorToFASTA()" >Export precursors to FASTA</a></li>-->
+
+                                        <!--<li id='exportToCSV'  ><a  href="#" onclick="app.exportTableToCSV()" >Export Table to CSV</a></li>-->
+
+                                        <li id='exportAlignments'  ><a  href="#" onclick="printAllAlignments()" >Export All Alignments to Text</a></li>
+
+                                        <li id='exportSingleCoveragePlot'  ><a  href="#" onclick="saveSingleCoverageToPDF(true,'')" >Export Current Coverage Plot to PDF</a></li>
+                                        
+                                        <li id='exportfoldedImage'  ><a  href="#" onclick="saveImageFold()" >Export Current Folded Plot to PNG</a></li>
+                                        
+                                        <li id='exportAllCoveragePlot'  ><a  href="#" onclick="generateAllCoveragePDF()" >Export All Coverage Plots to PDF</a></li>
+
+                                    </ul>
+                                </div>
+                            </li>
+                            <li id='continue_flow'><a href="#" onclick="continueFlow()">Continue Workflow</a></li>
+                            <li id='back_to_main'  ><a  href="#" onclick="returnToMain()" >Home</a></li>
+
+                            <!--<li id='debug'  ><a  href="#" onclick="debug()" >debug</a></li>-->
+
+
+
+                        </ul>
+                    </div>
+
+                </nav>
+                <!-- /mp-menu -->
+
+                <div class="scroller"><!-- this is for emulating position fixed of the nav -->
+                    <div class="scroller-inner">
+
+
+                        <div class="content clearfix" >
+                            <div class="block block-80 clearfix">
+                                <p><a href="#" id="trigger" class="menu-trigger">Open/Close Menu</a></p>
+
+
+                            </div>
+
+
+                        </div>
+                    </div><!-- /scroller-inner -->
+
+                    <a href="#" id="showFoldImage" class="fancy-button medium half-left-rounded midnight down " onclick="showFoldImage()">
+                        Display selected row precursor plot 
+                        <span class="icon">
+                            <i class="fa fa-chevron-down"></i>
+                        </span>
+                    </a>
+                    <a href="#" id="showCoverageImage" class="fancy-button medium half-left-rounded midnight down " onclick="showCoverageImage(true)">
+                        Display selected row coverage plot 
+                        <span class="icon">
+                            <i class="fa fa-chevron-down"></i>
+                        </span>
+                    </a>
+                    <a href="#" id="showAlignmentImage" class="fancy-button medium half-left-rounded midnight down " onclick="showAlignmentImage()">
+                        Display selected row alignments 
+                        <span class="icon">
+                            <i class="fa fa-chevron-down"></i>
+                        </span>
+                    </a>
+                    <!--The miRCat 2 Results-->
+                    <div id="results_table_div" style="width:100%"></div>
+
+                    <div id="coveragePlot_div" style="display:none;"> </div>
+                    
+                    <textarea id="alignmentText" style=" display:none" ></textarea>
+                    
+
+                </div><!-- /scroller -->
+            </div>
+        </div>
+                    <div id="RNAPlot" style="height: 100%; display:none;"></div>
+
+        <script>
+            
+             $(document).ready(function() {
+                        Tipped.create('.simple-tooltip', {behavior: 'hide'});
+                        
+                        
+
+                        
+                      });
+
+            new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
+
+            var dataSet = [];
+
+            initialiseResultsTable();
+
+
+            function continueFlow()
+            {
+                var paramsString = "";
+                
+                if (typeof app !== 'undefined')
+                {
+                    if (app.checkReadyStatus())
+                    {
+                        $("#continue_flow").find('a').addClass('disabled');
+                        $("#continue_flow").addClass('disabled');
+                        //document.getElementById("MC2Params");
+                        $('#MC2Params tr').each(function(){
+                            $(this).find('td').each(function(){
+                                console.log($(this));
+                            })
+                        })
+                        
+                        $('#MC2Params tr').each(function(i){
+                            if(i >1)
+                            {
+                                $(this).find('input').each(function(){
+                                    if( i === 13 || i === 14 )
+                                    {
+                                        paramsString += $(this).attr("id") + " = ";
+                                        paramsString += $(this).is(":checked") + ",";
+                                    }
+                                    else
+                                    {
+                                        paramsString += $(this).attr("id") + " = ";
+                                        paramsString += $(this).val() + ",";
+                                    }
+                                })
+                            }
+                        })
+                        app.setupParams(paramsString, $('#org_plant_radio').is(":checked"));
+                        //app.setupParams();
+                        //app.setContinue(true);
+                    }
+
+
+                }
+                
+            }
+
+
+            function setBusy(state)
+            {
+                if (state === 'true')
+                {
+                    alert("state is true");
+                    $("#export_options").find('a').addClass('disabled');
+                    $("#settings_options").find('a').addClass('disabled');
+
+
+                }
+                else if (state === 'false')
+                {
+                    alert("state is false");
+                    $("#export_options").find('a').removeClass('disabled');
+                }
+            }
+
+
+            function disableAllElements()
+            {
+                $("#database_settings").find('a').addClass('disabled');
+            }
+            function enableAllElements()
+            {
+                $("#database_settings").find('a').removeClass('disabled');
+            }
+
+            /*
+             * 
+             * @returns {undefined}
+             */
+            function setOrgType(isPlant)
+            {
+                var defaultPath = '';
+                if(typeof app !== 'undefined')
+                {
+                    if (isPlant)
+                    {
+                        defaultPath = app.getPlantDefaultPath();
+                    }
+                    else
+                    {
+                        defaultPath = app.getAnimalDefaultPath();
+                    }
+                    if (window.File && window.FileReader && window.FileList && window.Blob) 
+                    {
+                        // Great success! All the File APIs are supported.
+
+                        getFileObject(defaultPath, function (fileObject) {
+
+
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                               // var textArea = document.getElementById("alignmentText");
+                               var fileData = e.target.result;
+                               var fileSplit = fileData.split("\n");
+                               //console.log(fileSplit);
+                               for(var i = 0; i < fileSplit.length; i++)
+                               {
+                                   var dataSplit = fileSplit[i].split("=");
+                                   //console.log(dataSplit[1]);
+                                   switch(dataSplit[0].toLowerCase().trim())
+                                   {
+                                        case "repeats": 
+                                            document.getElementById("repeats").value = dataSplit[1].trim();
+                                            break;
+
+                                        case "complex": 
+                                            document.getElementById("complex").value = dataSplit[1].trim();
+                                            break;
+
+                                        case "pval":
+                                            document.getElementById("pval").value = dataSplit[1].trim();
+                                            break;
+
+                                        case "minlen":
+                                            //console.log(document.getElementById("minlen").value);
+                                            //console.log(dataSplit[1].trim());
+                                            document.getElementById("minlen").value = dataSplit[1].trim();
+                                            break;
+
+                                        case "maxlen":
+                                            document.getElementById("maxlen").value = dataSplit[1].trim();
+                                            break;
+
+                                        case "minfoldlen":
+                                            document.getElementById("minFoldLen").value = dataSplit[1].trim();
+                                            break;
+
+                                        case "maxamfe":
+                                            document.getElementById("maxAmfe").value = dataSplit[1].trim();
+                                            break;
+
+                                        case "gapsinmirna":
+                                            document.getElementById("gapsInMirna").value = dataSplit[1].trim();
+                                            break;
+
+                                        case "maxfoldlen":
+                                            document.getElementById("maxFoldLen").value = dataSplit[1].trim();
+                                            break;
+
+                                        case "allowcomplexloop":
+                                            console.log(dataSplit[1].trim());
+                                            if(dataSplit[1].trim() === 'true')
+                                                $("#complex_loops").prop("checked", true);
+                                            else
+                                                $("#complex_loops").prop("checked", false);
+                                            break;
+
+                                        case "noloops":
+                                            document.getElementById("noloops").value = dataSplit[1].trim();
+                                            break;
+
+                                        case "clearcutpercent":
+                                            document.getElementById("clearCutPercent").value = dataSplit[1].trim();
+                                            break;
+
+                                        case "randfold":
+                                            if(dataSplit[1].trim() === 'true')
+                                                $("#randfold_radio").prop("checked", true);
+                                            else
+                                                $("#randfold_radio").prop("checked", false);
+                                            break;
+
+                                        default:
+                                            if(!dataSplit[0] === "\n")
+                                                alert("Param " + dataSplit[0] + " is not a valid parameter");
+                                   }
+
+
+                               }
+
+                               // textArea.value = fileData;
+                            };
+                            reader.onerror = function(event){
+                                 console.error("File could not be read! Code " + event.target.error.code);
+                            };
+                            reader.readAsText(fileObject);
+                        }); 
+                    } 
+                    else 
+                    {
+                      //  alert('The File APIs are not fully supported in this browser.');
+                    }
+                }
+            }
+            
+
+            /*
+             * RESULTS TABLE SECTION
+             */
+            
+            function debug()
+            {
+                /*
+                for(var i=0; i<20;i++)
+                {
+                            addToData("208.9920366167423","1 CHROMOSOME dumped from ADB: Feb/3/09 16:9; last updated: 2009-02-02",
+                            "TTGAGCCGTGCCAATATCACG","233","3961367","3961387","-","0",
+                            "TTTCCTTCACTTAGCTATGGATGGTTTATCTTCATTTGTTATATTGGATACAAGCTTTGCTACGATCTACATTTGGGAATGTGAGTCTCTTAT",
+                            ".((((.((((((.(((((((((((((.(((((..((((.((((........)))).))))))))).))))))))))))).)))))).)))).",
+                            "3961363",
+                            "396136392",
+                            "-42.7",
+                            "-46.413043478260875",
+                            "0.0","AGATATTAGTGCGGTTCAATC","9","3961429","3961449", "MIRBASE_PRECURSOR"
+                            );
+                }
+        */
+                addToData("208.9920366167423","1 CHROMOSOME dumped from ADB: Feb/3/09 16:9; last updated: 2009-02-02",
+                            "TTAGCTATGGATGGTTTATCTT","233","3961367","3961387","-","0",
+                            "TTTCCTTCACTTAGCTATGGATGGTTTATCTTCATTTGTTATATTGGATACAAGCTTTGCTACGATCTACATTTGGGAATGTGAGTCTCTTAT",
+                            ".((((.((((((.(((((((((((((.(((((..((((.((((........)))).))))))))).))))))))))))).)))))).)))).",
+                            "3961363",
+                            "396136392",
+                            "-42.7",
+                            "-46.413043478260875",
+                            "0.0","CATTTGGGAATGTGAGTCTCT","9","3961429","3961449", "MIRBASE_PRECURSOR"
+                            );
+                    
+                addToData("208.9920366167423","1 CHROMOSOME dumped from ADB: Feb/3/09 16:9; last updated: 2009-02-02",
+                            "TTGAGCCGTGCCAATATCACG","233","3961367","3961387","-","0",
+                            "CCCTAAATACCTAATTCCCTAAACCCGAAACCGGTTTCTCTGGTTGAAAATCATTGTGTATATAATGATAATTTTATCGTTTTTATGTAATTGCTTATTGTTGTGTGTAGATTTTTTAAAAATATCATTTGAGGTCAATACAAATCCTATTTCTTGTGGTTTTCTTTCCTTCACTTAGCTATGGATGGTTT",
+                            ".((((((((((((..(((((((.(((((((..(((((((..((((((((((.((.((.(((((...(((((((((((((((...(((((...)))))))))))))).....))))))...))))).)).)).)))))).))))..))))......)))..))))))).)))))))..)))))))))))).",
+                            "3961363",
+                            "396136392",
+                            "-42.7",
+                            "-46.413043478260875",
+                            "0.0","CATTTGGGAATGTGAGTCTCT","9","3961429","3961449", "MIRBASE_PRECURSOR"
+                            );   
+        
+                    
+                //initialiseRNAPlot("TTTCCTTCACTTAGCTATGGATGGTTTATCTTCATTTGTTATATTGGATACAAGCTTTGCTACGATCTACATTTGGGAATGTGAGTCTCTTAT",
+                //    ".((((.((((((.(((((((((((((.(((((..((((.((((........)))).))))))))).))))))))))))).)))))).)))).");
+                // plotRNA("CCCTAAATACCTAATTCCCTAAACCCGAAACCGGTTTCTCTGGTTGAAAATCATTGTGTATATAATGATAATTTTATCGTTTTTATGTAATTGCTTATTGTTGTGTGTAGATTTTTTAAAAATATCATTTGAGGTCAATACAAATCCTATTTCTTGTGGTTTTCTTTCCTTCACTTAGCTATGGATGGTTT",
+                //    ".((((((((((((..(((((((.(((((((..(((((((..((((((((((.((.((.(((((...(((((((((((((((...(((((...)))))))))))))).....))))))...))))).)).)).)))))).))))..))))......)))..))))))).)))))))..)))))))))))).");
+                              document.getElementById('coveragePlot_div').innerHTML='';
+
+            }
+
+            function addToData(score, chrom, sequence, abundance, start, end, strand, mismatches, hairpin_seq,
+                                hairpin_db, hairpin_start, hairpin_end, hairpin_mfe, hairpin_amfe,
+                                p_val, star_seq, star_abund, star_start, star_end, miRBase_Prec)
+            {
+                dataSet.push([null,score, chrom, sequence, abundance, start, end, strand, mismatches, hairpin_seq,
+                                hairpin_db, hairpin_start, hairpin_end, hairpin_mfe,hairpin_amfe,
+                                p_val, star_seq, star_abund, star_start, star_end, miRBase_Prec]);
+                
+                showMainTable();
+
+            }
+            
+            function showMainTable()
+            {
+                var table = $('#MC_resultsTable').dataTable();
+                table.fnClearTable();
+                table.fnAddData(dataSet);
+                table.fnDraw();
+            }
+
+
+            function initialiseResultsTable()
+            {
+
+
+
+                $('#results_table_div').html('<table cellpadding="0" cellspacing="0" border="0" class="display mc_results" id="MC_resultsTable" >' +
+                        '<caption>miRCat Results</caption></table>');
+
+       
+
+                $('#MC_resultsTable').dataTable({
+                    autoWidth: false , 
+                    "data": dataSet,
+                    "columns": [
+                        {"data": null, defaultContent: '', orderable: false},
+                        {"title": "L-Fold Score"},
+                        {"title": "Chromosome"},
+                        {"title": "Sequence"},
+                        {"title": "Abundance"},
+                        {"title": "Start"},
+                        {"title": "End"},
+                        {"title": "Strand"},
+                        {"title": "Mismatches"},
+                        {"title": "Hairpin Sequence", "className": "precur_col"},
+                        {"title": "Hairpin Dot Bracket"},
+                        {"title": "Hairpin Start Coordinate"},
+                        {"title": "Hairpin End Coordinate"},
+                        {"title": "Hairpin Min Free Energy"},
+                        {"title": "Hairpin Adjusted Min Free Energy"},
+                        {"title": "p-Value"},
+                        {"title": "Star Sequence"},
+                        {"title": "Star abundance"},
+                        {"title": "Star start"},
+                        {"title": "Star end"},
+                        {"title": "miRBase precursor"}
+                    ],
+                    order: [1, 'asc'],
+                    dom: 'T<"clear">lfrtip',
+                    tableTools: {
+                        sRowSelect: 'os',
+                        sRowSelector: 'td:first-child',
+                        aButtons: []
+                    }
+                });
+
+
+                //setupTableListener();
+
+            }
+            
+            /*
+             * RNA ploting
+             */
+            
+            var Rna = require("drawrnajs");
+            //var optspanel = require("optspanel");
+            var yourDiv = document.getElementById('RNAPlot');
+            var RNA_app;
+
+            //plotRNA("TTTCCTTCACTTAGCTATGGATGGTTTATCTTCATTTGTTATATTGGATACAAGCTTTGCTACGATCTACATTTGGGAATGTGAGTCTCTTAT",
+            //        ".((((.((((((.(((((((((((((.(((((..((((.((((........)))).))))))))).))))))))))))).)))))).)))).");
+    
+            function showFoldImage()
+            {
+                var table = $('#MC_resultsTable').DataTable();
+                var data = table.row('.selected').data();
+
+                if(typeof data !== 'undefined')
+                {
+                    plotRNA(data[9], data[10]);
+                
+                    var mirLocation = data[9].indexOf(data[3]);
+                    var mirstarlocation = data[9].indexOf(data[16]);
+                    var cy = RNA_app.vis.cy;
+                    var graphNodes = cy.nodes("[type!='index']");
+                    var mircolor = "#7FFFD4";
+                    var mirstarcolor = "#FF00FF";
+                    if(mirLocation >= 0)
+                    {
+                        for(var i=mirLocation; i < data[9].length && i<mirLocation+data[3].length; i++){
+                            cy.$("#" + graphNodes[i].id()).css("background-color", mircolor);
+
+                        }
+                    }
+                    else
+                    {
+                        alert("could not highlight miRNA on precursor");
+                    }
+                    if(mirstarlocation >= 0)
+                    {
+                        for(var i=mirstarlocation; i < data[9].length && i<mirstarlocation+data[16].length; i++){
+                            console.log(i);
+                            cy.$("#" + graphNodes[i].id()).css("background-color", mirstarcolor);
+
+                        }
+                    }
+                    else
+                    {
+                        if(data[16].length !== 0)
+                            alert("could not highlight miRNA* on precursor");
+                    }
+                }
+
+            }
+            
+            function saveImageFold()
+            {
+                //var svgNodes = $("#RNAPlot");
+                //var svgNodes = document.getElementsByClassName("cy")[0].childNodes[1];//[0].querySelector('canvas');
+                //var svgNodes = element = $('a[data-item-id="layer2-node"]');
+                //console.log(svgNodes);
+                //var img_dataurl = svgNodes.toDataURL("image/png");
+                //console.log(img_dataurl);
+                //app.saveB64Encode(img_dataurl);
+
+                //var useWidth = document.getElementById("RNAPlot").style.width;
+                //var useHeight = document.getElementById("RNAPlot").style.height;
+       
+       
+                var rnaplotDiv = document.getElementById("RNAPlot").childNodes[1];//.childNodes[0];
+                rnaplotDiv.style.overflow = "visible";
+                html2canvas(rnaplotDiv, {
+                    //width: useWidth,
+                    //height: useHeight,
+                    onrendered: function(canvas) {
+                      var dataURL = canvas.toDataURL('image/png');
+                      var table = $('#MC_resultsTable').DataTable();
+                      var data = table.row('.selected').data();
+                      var id = data[2] + "_" + data[11] + "_" + data[12];
+                      app.saveB64Encode(dataURL, id);
+                    }
+                  });
+                
+                
+                
+            }
+            
+            function importCanvas(sourceCanvas, targetSVG) {
+                // get base64 encoded png data url from Canvas
+                var img_dataurl = sourceCanvas.toDataURL("image/png");
+
+                var svg_img = document.createElementNS(
+                    "http://www.w3.org/2000/svg", "image");
+
+                svg_img.setAttributeNS(
+                    "http://www.w3.org/1999/xlink", "xlink:href", img_dataurl);
+
+                //targetSVG.appendChild(svg_img);
+                console.log(svg_img.innerHTML)
+            }
+
+            function initialiseRNAPlot(sequence, dotBracket)
+            {
+                
+                var input = [
+                    sequence,
+                    dotBracket
+                ];
+                 RNA_app = new Rna({
+                    el: yourDiv,
+                    seq: input[0],
+                    dotbr: input[1],
+                    layout: "naview",
+                    seqpanel: true,
+                    optspanel: true,
+                    resindex: true
+                });
+                RNA_app.render();
+                
+
+                document.getElementById('perform').style.display="none";
+                document.getElementById('export').style.display="none";
+
+                
+                document.getElementById('RNAPlot').style.display="block";
+                document.getElementById('coveragePlot_div').style.display="none";
+                document.getElementById('alignmentText').style.display="none";
+
+
+                $("#newbond").removeClass('icon');
+                $("#discovery").removeClass('icon');
+                $("#lasso").removeClass('icon');
+
+                $("#newbond").addClass('BIOJSicon');
+                $("#discovery").addClass('BIOJSicon');
+                $("#lasso").addClass('BIOJSicon');
+                
+                
+
+            }
+            function plotRNA(sequence, dotBracket)
+            {
+             
+                document.getElementById("RNAPlot").innerHTML='';
+                initialiseRNAPlot(sequence, dotBracket);
+   
+                
+            }
+
+            /*
+             * Coverage plot
+             */
+
+            function showCoverageImage(display)
+            {
+                var table = $('#MC_resultsTable').DataTable();
+                var data = table.row('.selected').data();
+                
+                document.getElementById('coveragePlot_div').innerHTML='';
+                
+       
+                if(typeof app !== 'undefined')
+                {
+                    
+                    if(typeof data !== 'undefined')
+                    {
+                        var result = app.writeSequenceCoverage(data[11], data[12], data[2], data[9]);
+                        if(result)
+                        {
+                            var id = data[2] + "_" + data[11] + "_" + data[12];
+
+                            buildCoverage(result, null, id);
+                            if(display)
+                            {
+                                document.getElementById('RNAPlot').style.display="none";
+                                document.getElementById('coveragePlot_div').style.display="block";
+                                document.getElementById('alignmentText').style.display="none";
+                            }
+                        }
+                        else
+                        {
+                            alert("Failure in coverage build");
+                        }
+                    }
+                    
+                }
+                else
+                {
+                    //if(typeof data !== 'undefined')
+                    //{
+                        //buildCoverage("../TSV/individualCoverage.tsv");
+                    //}
+                    //else
+                    {
+                        buildCoverage("../TSV/individualCoverage.tsv", null, "TEST");
+
+                    }
+                    if(display)
+                    {
+                        document.getElementById('RNAPlot').style.display="none";
+                        document.getElementById('coveragePlot_div').style.display="block";
+                        document.getElementById('alignmentText').style.display="none";
+                    }
+
+                }
+
+                
+
+            }
+            
+            function saveSingleCoverageToPDF(load, multiID)
+            {
+                var table = $('#MC_resultsTable').DataTable();
+                var data = table.row('.selected').data();
+                
+                var svgNodes = $("#coveragePlot_div svg");
+                //var svgData;
+                //console.log(svgNode);
+                
+                for(var i = 0; i < svgNodes.length; i++)
+                {
+                    var currentSvgNode = $("#coveragePlot_div svg")[i];
+                
+                    console.log(currentSvgNode);
+                     // Pull down all CSS into the svg dom
+                    styles(currentSvgNode);
+
+                    // set extra attributes
+                    setAttributes(currentSvgNode);
+
+                    var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
+
+                    var svgData = doctype + outerHTML(currentSvgNode);
+
+                    // Add headers to the string
+
+                    //alert(svgData);
+                    if(typeof app !== 'undefined')
+                    {
+                        if(typeof data !== 'undefined' && load)
+                        {
+                            var id = data[2] + "_" + data[11] + "_" + data[12];
+                            app.selectSeqCoverageDir();
+                            var result = app.writeSingleSVG(svgData, id, false);
+
+
+
+
+                        }
+                        else
+                        {
+                            var result = app.writeSingleSVG(svgData, multiID+i, true);
+
+                        }
+
+
+                    }
+                }
+                if(typeof app !== 'undefined' && !load)
+                {
+                    app.mergeFiles();
+                }
+          
+
+            }
+            function generateAllCoveragePDF()
+            {
+                document.getElementById('coveragePlot_div').innerHTML='';
+
+                if(typeof app !== 'undefined')
+                {
+                    app.selectSeqCoverageDir();
+
+                }
+                var promise = generateCoverageLoop();
+                promise.then(function() { 
+                    alert("complete");
+                    saveSingleCoverageToPDF(false, "complete_results");
+                });
+                
+                /*
+                generateCoverageLoop(function()
+                {
+                    console.log("finised all renders. Printing...");
+                    saveSingleCoverageToPDF(false, "complete_results");
+
+                });
+                */
+                
+                
+            }
+            
+            function generateCoverageLoop()
+            {
+                var deferred = $.Deferred();
+                
+                var table = $('#MC_resultsTable').DataTable();
+                var rows = table.rows().data();
+                //console.log(rows);
+                /*
+                for(var i =0; i < rows[0].length; i++)
+                {
+                    console.log(rows[0][i]);
+                }*/
+        
+                var i = 0;
+                var nextStep = function() {
+                    if (i<rows.length) {
+                        var data = rows[i];
+                        console.log(data);
+
+                  
+                        if(typeof app !== 'undefined')
+                        {
+                            var result = app.writeSequenceCoverage(data[11], data[12], data[2], data[9]);
+                            var id = data[2] + "_" + data[11] + "_" + data[12];
+
+                            if(result)
+                            {
+                                buildCoverage(result, function() {
+                                    alert("build complete..");
+
+                                    //document.getElementById('coveragePlot_div').innerHTML='';
+
+                                }, id);
+
+                            }
+                        } 
+                        
+                        i++;
+                        //nextStep();
+                        setTimeout(nextStep, 50);
+                    }
+                    else {
+                        deferred.resolve();
+                    }
+                };
+                nextStep();
+                return deferred.promise();
+                
+                /*
+                table.rows().every( function ( rowIdx, tableLoop, rowLoop ) 
+                {
+                    var data = this.data();
+
+                  
+                    if(typeof app !== 'undefined')
+                    {
+                        var result = app.writeSequenceCoverage(data[11], data[12], data[2], data[9]);
+                        var id = data[2] + "_" + data[11] + "_" + data[12];
+
+                        if(result)
+                        {
+                            buildCoverage(result, function() {
+                                alert("build complete..");
+                                
+                                //document.getElementById('coveragePlot_div').innerHTML='';
+
+                            });
+                            
+                        }
+                    }
+                    
+                    
+
+                } );
+                */
+               
+                //callback();
+            }
+            
+            function outerHTML(el) 
+            {
+                var outer = document.createElement('div');
+                outer.appendChild(el.cloneNode(true));
+                return outer.innerHTML;
+            }
+            
+            function setAttributes(el) 
+            {
+                el.setAttribute("version", "1.1");
+                el.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+                el.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+            }
+                
+            function styles(dom) 
+            {
+                var used = "";
+                var sheets = document.styleSheets;
+                for (var i = 0; i < sheets.length; i++) {
+                    //console.log(sheets[i])
+                    if(sheets[i].href !== null && sheets[i].href.indexOf('wbstyles') >= 0)
+                    {
+                        //console.log("FOUND");
+                        var rules = sheets[i].cssRules;
+                          if(rules !== null){
+                            var rlength = rules.length;
+                            for (var j = 0; j < rlength; j++) {
+                              var rule = rules[j];
+                              //console.log(rule);
+                              if (typeof(rule.style) !== "undefined" && rule.selectorText !== undefined) {
+                                if(rule.selectorText.indexOf("webkit") > -1){
+                                    console.log("Skipping" + rule.selectorText);
+                                }
+                                else{
+
+                                    var elems = dom.querySelectorAll(rule.selectorText);
+                                    if (elems.length > 0) {
+                                      used += rule.selectorText + " { " + rule.style.cssText + " }\n";
+                                    }
+                                }
+                              }
+                            }
+                        }
+                    }
+                }
+
+                var s = document.createElement('style');
+                s.setAttribute('type', 'text/css');
+                s.innerHTML = "<![CDATA[\n" + used + "\n]]>";
+
+                var defs = document.createElement('defs');
+                defs.appendChild(s);
+                dom.insertBefore(defs, dom.firstChild);
+              }
+      
+            
+            /*
+             * Alignments
+             */
+            
+            var testAlignmentString = "GNW8_Scaffold138523/54121-54191(+)\n"+
+"CTCTGATCGGCCAAACTGGGGCACTGCCTTATTTCATGCCAAGAAAGTGCTTCTTGTTCGGCTGATTGGGG\n" +
+"...........................................AAAGTGCTTCTTGTTCGGCTGA......	9421\n" +
+"...........................................AAAGTGCTTCTTGTTCGGCTGATT....	1136\n" + 
+"...........................................AAAGTGCTTCTTGTTCGGCTGAT.....	757\n" + 
+"........GGCCAAACTGGGGCACTGCCT..........................................	145\n" +
+"........GGCCAAACTGGGGCACTGCC...........................................	119\n" +
+"...........................................AAAGTGCTTCTTGTTCGGCT........	29\n" +
+"...........................................AAAGTGCTTCTTGTTCGG..........	16\n" +
+"..........................................GAAAGTGCTTCTTGTTCGGCTGA......	10\n" +
+"...........................................AAAGTGCTTCTTGTTCGGC.........	4\n" +
+"........GGCCAAACTGGGGCACTGC............................................	3\n" +
+"............................................AAGTGCTTCTTGTTCGGCTGA......	1\n" +
+"(((..(((((((.(((.((((((((..(((..........)))..))))))))..))).)))))))..))) (-31.50)";
+
+            var longAlignmentTest = "1 CHROMOSOME dumped from ADB: Feb/3/09 16:9; last updated: 2009-02-02\n" +
+"TGGAAGTAGAGCTCCTTAAAGTTCAAACATGAGTTGAGCAGGGTAAAGAAAAGCTGCTAAGCTATGGATCCCATAAGCCCTAATCCTTGTAAAGTAAAAAAGGATTTGGTTATATGGATTGCATATCTCAGGAGCTTTAACTTGCCCTTTAATGGCTTTTACTCTTCTTTGGATTGAAGGGAGCTCTACATCTT\n" +
+".......................................................................................................................................................................TTTGGATTGAAGGGAGCTCTAC..... 12\n" +
+".....................................................................................................................................................................TCTTTGGATTGAAGGGAGCTC........ 4\n" +
+".............................TGAGTTGAGCAGGGTAAAGAAA............................................................................................................................................... 2\n" +
+".(((.((((((((((((..((((((((...((((..((((......(((((((...((((((.((.((.((((.(..(((((.((((.(((((((...........)))))))..)))))))))..).)))).)).)).))))))...))))))))))).))))...))))))))..)))))))))))).))). -79.3";
+            function showAlignmentImage()
+            {
+                var table = $('#MC_resultsTable').DataTable();
+                var data = table.row('.selected').data();
+                var textArea = document.getElementById("alignmentText");
+                var alignmentText = "No data loaded";
+
+       
+                if(typeof data !== 'undefined')
+                {
+                    //alert("here");
+                    
+                    if(typeof app !== 'undefined')
+                    {
+                        var result = app.getSequenceAlignments(data[11], data[12], data[2], data[5], data[6], data[7], data[9], data[10],data[13]);
+                        if(result)
+                        {
+                            document.getElementById('RNAPlot').style.display="none";
+                            document.getElementById('coveragePlot_div').style.display="none";
+                            document.getElementById('alignmentText').style.display="block";
+                            alignmentText = result;
+                            //buildAlignments();
+                        }
+                        else
+                        {
+                            alert("Failure in alignment build");
+                        }
+                    }
+                    else
+                    {
+                        document.getElementById('RNAPlot').style.display="none";
+                        document.getElementById('coveragePlot_div').style.display="none";
+                        document.getElementById('alignmentText').style.display="block";
+                        alignmentText = longAlignmentTest;
+                        //buildAlignments();
+                    }
+                }
+                else
+                {
+                    document.getElementById('RNAPlot').style.display="none";
+                    document.getElementById('coveragePlot_div').style.display="none";
+                    document.getElementById('alignmentText').style.display="block";
+                    alignmentText = longAlignmentTest;
+
+                    //buildAlignments();
+                }
+                
+                textArea.value = alignmentText;
+            }
+            
+            function buildAlignments()
+            {
+                if (window.File && window.FileReader && window.FileList && window.Blob) 
+                {
+                    // Great success! All the File APIs are supported.
+
+                    getFileObject('../alignments/testhairpinsalignment.txt', function (fileObject) {
+                        
+
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            var textArea = document.getElementById("alignmentText");
+                           var fileData = e.target.result;
+                            textArea.value = fileData;
+                        };
+                        reader.onerror = function(event){
+                             console.error("File could not be read! Code " + event.target.error.code);
+                        };
+                        reader.readAsText(fileObject);
+                    }); 
+                } 
+                else 
+                {
+                  //  alert('The File APIs are not fully supported in this browser.');
+                }
+            }
+            
+            function printAllAlignments()
+            {
+                if(typeof app !== 'undefined')
+                {
+                    app.exportAlignments();
+                }
+                var table = $('#MC_resultsTable').DataTable();
+
+                table.rows().every( function ( rowIdx, tableLoop, rowLoop ) 
+                {
+                    var data = this.data();
+                  
+                    if(typeof app !== 'undefined')
+                    {
+                        app.writeAlignments(data[11], data[12], data[2], data[5], data[6], data[7], data[9], data[10],data[13]);
+                    }
+
+                } );
+            }
+            
+            
+            
+            
+
+            
+
+        </script>
+
+    </body>
+</html>

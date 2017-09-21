@@ -1,0 +1,906 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<title>Differential Expression Review</title>
+                <!--Javascript-->
+                <!--JQuery files -->
+                <script type="text/javascript" src="../js/lib/jquery/jquery-1.11.2.min.js"></script>
+                <script type="text/javascript" src="../js/lib/jquery/tipsy.js"></script>   
+                
+                <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+
+
+                <!--D3 Javascript -->
+                <script src="../js/lib/d3/d3.js"></script>
+                <script src="../js/lib/d3/d3.min.js"></script>
+                <script type="text/javascript" src="../js/lib/d3.legend.js"></script>
+                
+                <!--Statistical package-->
+                <script src="../js/utils/science.v1.min.js"></script>
+
+                <!--Menu Javascript-->
+                <script src="../js/lib/classie.js"></script>
+                <script type="text/javascript" src="../js/menu/mlpushmenu.js"></script>
+                <!-- Javascript based browser feature detection for push menu -->
+                <script type="text/javascript" src="../js/lib/modernizr.push.custom.js"></script>
+                <script type="text/javascript" src="../js/lib/modernizr-2.6.2.min.js"></script>
+                
+                <!--Workbench Routines -->
+                <script type="text/javascript" src="../js/utils/workbenchutils.js"></script>
+                <script type="text/javascript" src="../js/lib/chroma.min.js"></script>
+                <script type="text/javascript" src="../js/wbFunctions.js"></script>
+                <script type="text/javascript" src="../js/wbcolours.js"></script>
+                <script type="text/javascript" src="../js/Boxplot.js"></script>
+                <script type="text/javascript" src="../js/FCBoxplots.js"></script>
+                <script type="text/javascript" src="../js/MAPlot.js"></script>
+
+                <!--tooltip Javascript-->
+                <script type="text/javascript" src="../js/tipped/tipped.js"></script>
+                
+                <!--Dragdealer javascript-->
+                <script type="text/javascript" src="../js/dragdealer/dragdealer.js"></script>
+                
+                <!--list drag and sort-->
+                <script src="../js/lib/jqueryui/jquery-ui.min.js"></script>
+                
+                <!--Datatables Javascript-->
+                <script type="text/javascript" src="../js/datatables/jquery.dataTables.min.js"></script>
+                <script type="text/javascript" src="../js/datatables/dataTables.colVis.js"></script>
+                <script type="text/javascript" src="../js/datatables/dataTables.tableTools.js"></script>
+
+                <!-- CSS -->
+                <!--Workbench CSS -->
+                <link rel="stylesheet" type="text/css" href="../CSS/wbstyles.css" />
+                <link rel="stylesheet" type="text/css" href="../CSS/tipsy.css" />
+                
+                <!--tooltip CSS-->
+                <link rel="stylesheet" type="text/css" href="../CSS/tipped/tipped.css" />
+
+
+                <!--Menu CSS -->
+                <link rel="stylesheet" type="text/css" href="../CSS/normalize.css" />
+                <link rel="stylesheet" type="text/css" href="../CSS/menus.css" />
+                <link rel="stylesheet" type="text/css" href="../CSS/icons.css" />
+                <link rel="stylesheet" type="text/css" href="../CSS/component.css" />
+                
+                <!-- Import FontAwesome 4.2 -->
+                <link rel="stylesheet" href="../CSS/font-awesome.min.css">
+                
+                <!--Datatables CSS-->
+                <link rel="stylesheet" type="text/css" href="../css/jquery.dataTables.css">
+                <link rel="stylesheet" type="text/css" href="../css/dataTables.colVis.css">
+                <link rel="stylesheet" type="text/css" href="../css/dataTables.tableTools.css">
+                
+                
+                <!--Buttons CSS-->
+                <link rel="stylesheet" href="../CSS/fancy-buttons.css">
+                
+                <!--dragdealer CSS-->
+                <link href="../CSS/dragdealer.css" type="text/css" rel="stylesheet">
+
+                <style type="text/css">
+                    /* graph styles */
+                    .axis path{
+                        display: none;
+                    }
+                    
+                    td
+                    {
+                        padding:0 5px 0 5px;
+                    }
+                    #source_sample_list, #reference_list, #observed_list {
+                      border: 1px solid #eee;
+                      width: 142px;
+                      min-height: 20px;
+                      list-style-type: none;
+                      margin: 0;
+                      padding: 5px 0 0 0;
+                      float: left;
+                      margin-right: 10px;
+                      content: ""; /* fa-square-o */
+                    }
+                    #sortable1 li, #sortable2 li {
+                      margin: 0 5px 5px 5px;
+                      padding: 5px;
+                      font-size: 1.2em;
+                      width: 120px;
+                    }
+                    
+                    table.de_results tr td:first-child {
+                        text-align: center;
+                    }
+
+                    table.de_results tr td:first-child:before {
+                        content: "\f096"; /* fa-square-o */
+                        font-family: FontAwesome;
+                    }
+
+                    table.de_results tr.selected td:first-child:before {
+                        content: "\f046"; /* fa-check-square-o */
+                    }
+                    
+                    table.de_results tr_default td:first-child {
+                        text-align: center;
+                    }
+
+                    table.de_results tr_default td:first-child:before {
+                        
+                    }
+
+                    table.de_results tr_default.selected td:first-child:before {
+                        
+                    }
+                </style>
+
+        </head>
+        <body>
+            <div class="container">
+                <!-- Push Wrapper -->
+                <div class="mp-pusher" id="mp-pusher">
+
+                    <!-- mp-menu -->
+                    <nav id="mp-menu" class="mp-menu">
+                        <div class="mp-level">
+                            <h2 class="icon icon-world">Differential Expression</h2>
+                            <ul>
+                                <li id='begin_review'><a href="#" onclick="initiateDE()">Continue Workflow</a></li>
+                                
+                                <!-- View selection -->
+                                <li id='begin_review'><a href="#" onclick="showView('#DE_align_results')">Show table</a></li>
+                                <li id='begin_review'><a href="#" onclick="showView('#ma_div')">Show MA Plots</a></li>
+                                <li id='begin_review'><a href="#" onclick="showView('#xplot_div')">Show Fold Change Cross Plot</a></li>
+                                <li id='begin_review'><a href="#" onclick="showView('#debp_div')">Show DE Boxplots</a></li>
+                                <!-- DE options -->
+                                <li id="settings" class="icon icon-arrow-left" >
+                                    <a class="icon icon-user" href="#">Settings</a>
+                                    <div class="mp-level">
+                                        <h2 class="icon icon-user">Settings</h2>
+                                        <a class="mp-back" href="#">back</a>
+                                        <ul>
+                                            <li style="margin: 0 0 10px 0;">
+                                                <label for="fc_cutoff" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Fold Change Cutoff Value</label>
+                                                <input type="number" id="fc_cutoff" align="right" name="fc_cutoff" value="1.0" step="0.01">
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                 <li id="export_options" class="icon icon-arrow-left" >
+                                    <a class="icon icon-save" href="#">Export</a>
+                                    <div class="mp-level">
+                                        <h2 class="icon icon-save">Export</h2>
+                                        <a class="mp-back" href="#">back</a>
+                                        <ul>
+                                            <li id='exportToCSV'><a href="#" onclick="app.exportToCSV()">Export to CSV</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li id='back_to_main'><a href="#" onclick="returnToMain()">Home</a></li>
+                                <li id='debug'><a href="#" onclick="debug()">debug</a></li>
+                            </ul>
+                        </div>
+
+                    </nav>
+                    <!-- /mp-menu -->
+
+                    <div class="scroller"><!-- this is for emulating position fixed of the nav -->
+                        <div class="scroller-inner">
+
+
+                            <div class="content clearfix" >
+                                <div class="block block-80 clearfix">
+                                    <p><a href="#" id="trigger" class="menu-trigger">Open/Close Menu</a></p>
+
+
+                                </div>
+
+
+                            </div>
+                        </div><!-- /scroller-inner -->
+                        
+
+                        <table class="filetable" id="samplePairSelectionTable" cellspacing='0' style="td:first" >
+
+
+                            <thead>
+                                <tr>
+                                    <th>Source Samples</th>
+                                    <th>Reference Samples</th>
+                                    <th class="simple-tooltip" title=''>Observed Sample</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="samplePairSetupBody">
+                                <tr id="connected" class="tr_default">
+                                    <td>
+                                        <ul id="source_sample_list" class="connectedSortable">
+
+                                        </ul>
+                                    </td>
+                                    <td>
+
+                                        <ul id="reference_list" class="connectedSortable">
+
+                                        </ul>
+                                    </td>
+                                    <td>
+
+                                        <ul id="observed_list" class="connectedSortable">
+
+                                        </ul>
+
+                                    </td>
+
+
+
+                                </tr>
+                            </tbody>
+
+
+                        </table>
+                        
+                        <div id="status_label">
+                            <label></label>
+                        </div>
+                        
+                        <div id="de_window-slider" class="dragdealer" >
+                            <div class="handle red-bar">
+                                <span class="value"></span>
+                            </div>
+                        </div>
+
+                        <a href="#" id="addGFFButton" class="fancy-button medium half-left-rounded midnight down " onclick="displayAnnot()">
+                            Display selected row annotations 
+                            <span class="icon">
+                                <i class="fa fa-chevron-down"></i>
+                            </span>
+                        </a>
+
+                        <div id="views">
+                            <div id="DE_align_results" style="display:none">
+
+                                <table cellpadding="0" cellspacing="0" border="0" class="display" id="DE_align_resultsTable" >
+                                    <caption>Annotation Information</caption>
+                                </table>
+                            </div>
+                            <div id="DE_results"></div>
+
+                            <!-- Boxplot graphics -->
+                            <div id="debp_div">
+
+                            </div>
+
+                            <!-- MAplot graphics -->
+                            <div id="ma_div" style="display:none">
+
+                            </div>
+                            <div id="xplot_div" style="display:none">
+                                
+                            </div>
+                            <div id="debp_div" style="display:none">
+
+                            </div>
+                        </div><!-- /scroller -->
+                    </div>
+                </div>
+            </div>
+
+
+
+            <script>
+
+                    new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
+                    var JSON_DEBP = "../json/DifferentialExpression_dist.json";
+                    
+                    var dim = {h:200, w:600}
+                    var margins = {t:10, b:30, l:30, r:10}
+                    var initialBandWidth = 0.2;
+                    var addedSamples = 0;
+                    
+                    var dataSet=[];
+                    var annotData = [];
+                    
+                    //slider values
+                    var currentWindowStart = 0;
+                    var currentWindowEnd = 0;
+                    var DESlider;
+                    var threshold_Steps = 0;
+                    var totalResultSize = 0;
+                    //initialiseDEBP()
+                    
+                    $("#export_options").find('a').addClass('disabled');
+                    $("#export_options").addClass('disabled');
+   
+   
+                    initialiseResultsTable();
+                    
+                    function showView(id){
+                        $("#views").children().hide();
+                        $(id).show();
+                        if(id==="#ma_div")
+                            plotMAs();
+                        if(id==="#xplot_div")
+                            initialiseFoldChangeXplot();
+                        if(id==="#debp_div"){
+                           console.log("Currently disabled")
+                            // disabled until it is useful enough or does not take
+                            // so much time
+                            // This would require specifying a "Pattern Series" before
+                            // fold change calculation. E.g. I want my series to go N00 -> H16 -> H32 -> H48. 
+                            // Currently it is only specified as N00 -> H16 and then another pattern of H16 -> H32 etc.
+                            // This breaks up the boxplots into charts of two boxplots each and isn't visually useful.
+                          //  initialiseDEBP();
+                        }
+                    }
+        
+                    function initialiseDEBP()
+                    {
+
+                        //sd3.select("#table").style("display", "none")
+                        
+//                        d3.selectAll(".kl").remove()
+//                        var svg = d3.select("#kl_div").append("svg").attr("class", "kl").attr("height", dim.h+margins.t+margins.b).attr("width", dim.w+margins.l+margins.r);
+//                        var svgg = svg.append("g").attr("transform", translateStr(margins.l, margins.t));
+  
+                        d3.json(JSON_DEBP, function(error, json)
+                        {
+                            var boxplots = json.Boxplots;
+                            var lines = json.Lines;
+                            
+                            var keys = {chart:"Pattern", group:"Series", box:"Sample"}
+                            var DEBoxplots = new BoxplotsByAnnotation("#debp_div", keys);
+                            DEBoxplots.build(boxplots, "", lines);
+                            $('path.seqline').tipsy({ 
+                              gravity: 's', 
+                              html: true, 
+                              title: function() {
+                                var d = this.__data__, type = d.Annotation;
+                                return 'Type: ' + type; 
+                              }
+                            });                            
+                        });
+                    }      
+                    
+                    //setup sample pairs                   
+                    function addToSamplePairTable(sampleID)
+                    {
+   
+                        
+                        
+                        var list = document.getElementById("source_sample_list");
+                        //console.log(list)
+                        if(list !== null)
+                        {
+                            var li = document.createElement("li");
+                            li.setAttribute("title", "");
+                            li.setAttribute("data-tipped-options","position: 'left'");
+                            li.setAttribute("class", "draggable simple-tooltip");
+                            li.setAttribute("id",addedSamples);
+                            li.appendChild(document.createTextNode(sampleID));
+
+                            list.appendChild(li);
+                            
+                            $( "#reference_list, #observed_list" ).sortable({
+                                revert: true
+                            });
+                            $( ".draggable" ).draggable({
+                                connectToSortable: "#reference_list, #observed_list",
+                                helper: "clone",
+                                revert: "invalid"
+                            });
+                            $( "ul, li" ).disableSelection();
+
+                              Tipped.create('.simple-tooltip', {behavior: 'hide'});
+                              
+                              addedSamples++;
+                        }
+                    }
+                    
+                    function initiateDE()
+                    {
+                        
+                        
+                        document.getElementById("status_label").innerHTML = "Processing...";
+                        
+                        var FC_cutoff = document.getElementById("fc_cutoff").value;
+                       
+          
+        
+                        if(typeof app !== 'undefined')
+                        {
+                             var ref_list = $("#reference_list li");
+                            var obs_list = $("#observed_list li");
+
+                            if((ref_list.length !== 0) && (obs_list.length !== 0) && (ref_list.length === obs_list.length))
+                            {
+                                for(var i = 0; i < ref_list.length; i++)
+                                {
+                                    alert(ref_list[i].textContent);
+                                    alert( obs_list[i].textContent);
+                                    app.addSamplePair(ref_list[i].textContent, obs_list[i].textContent);
+                                }
+                                app.setFCCutoff(FC_cutoff);
+                                var result = app.begin_D_E();
+                                if(result)
+                                {
+                                    document.getElementById("samplePairSelectionTable").style.display='none';
+                                    $("#begin_review").find('a').addClass('disabled');
+                                    $("#begin_review").addClass('disabled');
+                                    $("#grouping_options").find('a').addClass('disabled');
+                                    $("#grouping_options").addClass('disabled');
+                                    $("#settings").find('a').addClass('disabled');
+                                    $("#settings").addClass('disabled');
+                                }
+                                
+                                
+                                
+                            }
+                            else
+                            {
+                                document.getElementById("samplePairSelectionTable").style.display='block';
+                                app.showListSetupError();
+                            }
+                        }
+                        else
+                        {
+                            addToData("FINDME", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            for(var i = 0; i < 3000; i++)
+                            {
+                                addToData("ACTG", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            }
+                            /*
+                            addToData("ACTG", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            addToData("ACTG", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            addToData("ACTG", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            addToData("ACTG", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            addToData("ACTG", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            addToData("FINDME", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            addToData("FINDME", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            addToData("FINDME", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            addToData("FINDME", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            addToData("FINDME", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            addToData("FINDME", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            addToData("FINDME", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            addToData("FINDME", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            addToData("FINDME", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            */
+                            initialiseResultsTable();
+                            enableExportMenu();
+                            
+                            setDEResultSize(8105, 1000);
+                        }
+                    }
+                    
+                    function setDEResultSize(de_resultSize, threshold)
+                    {
+                        /*
+                        alert("original result size");
+                        alert(de_resultSize);
+                        alert("original thresh");
+                        alert(threshold);
+        */
+                        
+                        threshold_Steps = parseInt(threshold);
+                        totalResultSize = parseInt(de_resultSize);
+                        
+                        /*
+                        alert("parse result size");
+                        alert(totalResultSize);
+                        alert("parse thresh")
+                        alert(threshold_Steps);
+                        */
+                        
+                        var steps =  (totalResultSize / threshold_Steps)+1;
+                        currentWindowEnd = threshold_Steps;
+                        //alert("steps");
+                        //alert(steps);
+                        setupWindowSlider(steps);
+                    }
+                    
+                    function setupWindowSlider(steps)
+                    {
+                        DESlider = new Dragdealer('de_window-slider', {
+                            steps: steps,
+                            speed: 1,
+                            animationCallback: function (x, y) {
+
+                                updateSliderWindow();
+                                $('#de_window-slider .value').text(currentWindowStart + "-" + currentWindowEnd);
+                            },
+                            callback: function (x, y) {
+                                scrollTable();
+                            }
+                        });
+                        //console.log(DESlider);
+                    }
+                    
+                    function updateSliderWindow()
+                    {
+                        if(DESlider !== undefined)
+                        {
+                            
+                            
+                            
+
+                            var DE_step = DESlider.getStep();
+                            //alert("step: " + DE_step[0]);
+                            currentWindowStart = (DE_step[0]-1) * threshold_Steps;
+                            currentWindowEnd = currentWindowStart + threshold_Steps;
+                            if(currentWindowEnd >= totalResultSize)
+                            {
+                                currentWindowEnd = totalResultSize;
+                            }
+                            
+                            //alert("start " + currentWindowStart);
+                            //alert("end " + currentWindowEnd);
+                            //alert("steps " + threshold_Steps);
+                            //alert("size " + totalResultSize);
+                        }
+                        
+                        
+                    }
+                    
+                    function enableChunkSelect()
+                    {
+                        document.getElementById("de_window-slider").style.display="block";
+                    }
+                    
+                    function addToData(sequence, size, annotation, foldChange, direction, reference_name, observed_name, average_count, pattern)
+                    {
+                        dataSet.push([null,sequence, size, annotation, foldChange,direction, reference_name, observed_name, average_count, pattern]);
+                      
+                    }
+                    
+                    function addToAnnotation(AnnotationName, start, end, chrom, type)
+                    {
+                        annotData.push([AnnotationName, start, end, chrom, type]);
+                      
+                    }
+                    
+                    function initialiseResultsTable()
+                    {
+                        
+
+                    
+                            $('#DE_results').html( '<table cellpadding="0" cellspacing="0" border="0" class="display de_results" id="DE_resultsTable">'+
+                                    '<caption>Differential Expression Results</caption></table>' );
+                            
+                            //alert("here");
+
+                            $('#DE_resultsTable').dataTable( {
+                                "data": dataSet,
+                                "columns": [
+                                    { "data": null, defaultContent: '', orderable: false },
+                                    { "title": "Sequence" },
+                                    { "title": "Size" },
+                                    { "title": "Annotation" },
+                                    { "title": "Fold Change" },
+                                    { "title": "Direction" },
+                                    { "title": "Observed Sample" },
+                                    { "title": "Reference Sample" },
+                                    { "title": "Average Count" },
+                                    { "title": "Pattern" }
+                                ],
+                                order: [ 1, 'asc' ],
+                                dom: 'T<"clear">lfrtip',
+                                tableTools: {
+                                    sRowSelect:   'os',
+                                    sRowSelector: 'td:first-child',
+                                    aButtons:     [  ]
+                                }
+                            } );  
+                  
+                            
+                            $('#DE_align_resultsTable').dataTable( {
+                                "data": annotData,
+                                "columns": [
+                                    { "title": "Annotation Name" },
+                                    { "title": "Annotation Start Position" },
+                                    { "title": "Annotation End Position" },
+                                    { "title": "Chromosome" },
+                                    { "title": "Type" }
+
+                                ]
+                             } );  
+                            
+                            setupTableListener();
+                      
+                    }
+                    
+                    function scrollTable()
+                    {
+                        //clear old data
+                        dataSet = [];
+                        
+                        if(typeof app !== 'undefined')
+                        {
+                            app.loadResultSet(currentWindowStart, currentWindowEnd);
+                        }
+                        else
+                        {
+                            console.log("loading");
+                            for(var i = currentWindowStart; i < currentWindowEnd; i++)
+                            {
+                                addToData("ACTG", "21","miRNA", "2.0", "+", "1","1000","500", "D");
+                            }
+                            showMainTable();
+                        }
+                        
+                    }
+                    function setupTableListener()
+                    {
+                        
+                        var table = $('#DE_resultsTable').DataTable();
+/*
+                        $('#DE_resultsTable tbody').on( 'click', 'tr', function () {
+                            
+                            document.getElementById("DE_align_results").style.display="none";
+                            
+                            if ( $(this).hasClass('selected') ) {
+                                $(this).removeClass('selected');
+                            }
+                            else {
+                                table.$('tr.selected').removeClass('selected');
+                                $(this).addClass('selected');
+                            }
+                        } );
+        
+        
+                        $("#DE_resultsTable tbody").delegate("tr", "click", function() {
+                        var iPos = userTable.fnGetPosition( this );
+                        if(iPos!=null){
+                            //couple of example on what can be done with the clicked row...
+                            var aData = userTable.fnGetData( iPos );//get data of the clicked row
+                            var iId = aData[1];//get column data of the row
+                            userTable.fnDeleteRow(iPos);//delete row
+
+                        }
+                    }*/
+                        
+                        // #myInput is a <input type="text"> element
+                        $('#myInput').on( 'keyup', function () {
+                            table.search( this.value ).draw();
+                        } );
+
+                  
+                    }
+                    
+                    function displayAnnot()
+                    {
+                        
+                        
+                        var table = $('#DE_resultsTable').DataTable();
+                        var data = table.row('.selected').data();
+                                                
+                        annotData = [];
+                        console.log(data);
+                        if(typeof data !== 'undefined')
+                        {
+                            document.getElementById("DE_align_resultsTable").caption.innerHTML="Annotations for " + data[1];
+                        }
+                        else
+                        {
+                            document.getElementById("DE_align_resultsTable").caption.innerHTML="Annotations for DEBUG" ;
+                        }
+                        if(typeof app !== 'undefined')
+                        {
+                            app.displayAnnotations(data[1]);
+                            
+                        }
+                        else
+                        {
+                            annotData.push(["data[1]","17411","17429","chr1","miRNA_primary_transcript"]);
+                            //annotData.push([data[1],"17411","17429","chr1","miRNA_primary_transcript"]);
+                            //annotData.push([data[1],"17411","17429","chr1","miRNA_primary_transcript"]);
+                            annotData.push(["hsa-mir-6859-1","17411","17429","chr1","miRNA_primary_transcript"]);
+                           
+                           
+                            showAnnotationsTable();
+                        }
+                        //console.log(table.)
+                        //table.row('.selected').remove().draw( false );
+                    }
+                    
+                    function showAnnotationsTable()
+                    {
+                        //$('#DE_align_results').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="DE_resultsTable"></table>' );
+                        document.getElementById("DE_align_results").style.display="block";
+                        
+                        var table = $('#DE_align_resultsTable').dataTable();
+                        table.fnClearTable();
+                        table.fnAddData(annotData);
+                        table.fnDraw();
+        
+                        
+                    }
+                    function emptyAnnotationsTable()
+                    {
+                        document.getElementById("DE_align_results").style.display="none";
+                        
+                        var table = $('#DE_align_resultsTable').dataTable();
+                        table.fnClearTable();
+                        //table.fnAddData(annotData);
+                        table.fnDraw();
+                    }
+                    
+                    function showMainTable()
+                    {
+                        document.getElementById("status_label").innerHTML = "Complete";
+                        var table = $('#DE_resultsTable').dataTable();
+                        table.fnClearTable();
+                        table.fnAddData(dataSet);
+                        table.fnDraw();
+                    }
+                    
+                    function enableExportMenu()
+                    {
+                        $("#export_options").find('a').removeClass('disabled');
+                        $("#export_options").removeClass('disabled');
+                    }
+                    
+                    function fcd (d){
+                                if(d.d==="U"){
+                                    return +d.M
+                                }else if(d.d==="D"){
+                                    return 0-d.M
+                                }else {
+                                    return 0
+                                } 
+                            }
+                    
+                    function plotMAs()
+                    {
+//                        $.ajax({
+//                            url: "../json/DifferentialExpression.json",
+//                            success: function (data) {
+//                                var obj = JSON.parse(data);
+//                                obj.forEach();
+//                            },
+//                            error: function(xhr, text, error)
+//                            {
+//                                console.warn(text);
+//                            }
+//                        });
+                        d3.json("../json/DifferentialExpression.json", function(error, json)
+                        {
+                            if (error) console.warn(error);
+                            console.log(json);
+                            var byFile = d3.nest().key(function(d){return d.Pair;}).entries(json);
+                            
+                            console.log(byFile);
+                            
+
+                            var size = 200, padding = 40, titlePadding = 20, expand=0.1;
+                            var domainM = [d3.min(json, function(d){return fcd(d)}), d3.max(json, function(d){return fcd(d)})];
+                            var domainA = [d3.min(json, function(d){return d.A}), d3.max(json, function(d){return d.A})];
+                            var rangex = [0, size];
+                            var rangey = [0, size];
+                            var xAxis = d3.scale.linear().domain(domainA).range(rangex);
+                            var yAxis = d3.scale.linear().domain(domainM).range([rangey[1], rangey[0]]); 
+                            var plotter = new MAPlotter(size, padding, expand, xAxis, yAxis);
+                            
+                            var selection = d3.select("#ma_div")//.append("svg").attr("class", "ma")
+//                                .attr("height", 300)
+//                                .attr("width", 300).append("g");
+                            var div = selection.selectAll("div")
+                                    .data(byFile, function(d){return d.key})
+                                    .enter()
+                                    .append("div")
+                                    .attr("class", function(d){"divfile "+d.key}).style("float", "left").style("width", size+padding+"px")
+                            
+                            
+                            var svg = div.append("svg").attr("height", size+padding+titlePadding+(plotter.pex*2)).attr("width", size+padding+(plotter.pex*2))
+                            var title = svg.append("g")
+                                //title.append("rect").attr("x", padding).attr("width", size).attr("height", titlePadding).style("fill", "grey")
+                                title.append("svg:text").text(function(d){return d.key;}).attr("x",padding).attr("y",titlePadding -5)
+                            svg.append("g").attr("transform", translateStr(padding, titlePadding))
+                                    .each(function(d){plotter.maplot(this, d.values)});
+                            
+                              
+                            
+                            //plotter.maplot(selection, data);
+                        });
+                        
+                    }
+                    
+                    plotFoldChangeXplot = function()
+                    {
+                        var x = $("#xselect").val(), y=$("#yselect").val();
+                        var size = 300, padding = 50;
+                        
+                        if(!d3.select("#xplot_svg").empty())
+                            d3.select("#xplot_svg").remove()
+                        var svg = d3.select("#xplot_div").attr("width", size+padding*2).attr("height", size+padding*2)
+                                   .append("svg")
+                                   .attr("id", "xplot_svg")
+                                   .attr("height", size+padding*2).attr("width", size+padding*2);
+                        
+                        var xydata = [];
+                        d3.json("../json/DifferentialExpression.json", function(error, json)
+                        {
+                           json.forEach(function(d){
+                               if(d.Pair === x || d.Pair === y)
+                               {
+                                   xydata.push(d);
+                               }
+                           })
+                           
+                           var xaxis = d3.scale.linear()
+                                       .domain([d3.min(xydata.filter(function(d){return d.Pair === x}), function(d){return fcd(d)}), d3.max(xydata.filter(function(d){return d.Pair === x}), function(d){return fcd(d)})])
+                                       .range([0,size]);
+                           var yaxis = d3.scale.linear()
+                                       .domain([d3.min(xydata.filter(function(d){return d.Pair === y}), function(d){return fcd(d)}), d3.max(xydata.filter(function(d){return d.Pair === y}), function(d){return fcd(d)})])
+                                       .range([0,size]);
+                           
+                           var plotdata = d3.nest().key(function(d){return d.seq}).entries(xydata)
+                           var noStraights = [];
+                           plotdata.forEach(function(seq){
+                               if(seq.values[0].d !== "S" && seq.values[1].d !== "S")
+                               {
+                                   noStraights.push(seq);
+                               }
+                           })
+                           var plotarea = svg.append("g").attr("transform", translateStr(padding, padding));
+                           plotarea.append("rect").attr("width",size).attr("height",size).style("stroke", "black").style("fill", "white")
+                                          
+                           
+                           plotarea.append("g").attr("class", "points").selectAll("circle")
+                                   .data(noStraights, function(d){return d.key})
+                                   .enter()
+                                   .append("circle")
+                                   .attr("r", 2)
+                                   .attr("cx", function(d){return xaxis(fcd(d.values.filter(function(d){return d.Pair === x})[0]))})
+                                   .attr("cy", function(d){return yaxis(fcd(d.values.filter(function(d){return d.Pair === y})[0]))})
+                           
+                           plotarea.append("svg:line").attr("x1", xaxis(0)).attr("x2", xaxis(0)).attr("y1", 0).attr("y2",size)
+                            .style("stroke", "black")
+                                .attr("stroke-width", 1)
+                        plotarea.append("svg:line").attr("y1", yaxis(0)).attr("y2", yaxis(0)).attr("x1", 0).attr("x2",size)
+                            .style("stroke", "black")
+                                .attr("stroke-width", 1)
+                           plotarea.append("g").attr("class", "x axis").attr("transform", translateStr(0,size)).call(d3.svg.axis().ticks(5).scale(xaxis).orient("bottom"))
+                           plotarea.append("g").attr("class", "y axis").attr("transform", translateStr(0, 0)).call(d3.svg.axis().ticks(5).scale(yaxis).orient("left"))
+
+                        });
+                    };
+                    
+                    function initialiseFoldChangeXplot(){
+                    
+                        var xplot = $("#xplot_div")
+                                .append($("<label/>").attr("for", "xselect").text("X pair"))
+                                .append("<select/>")
+                        xplot.append($("<label/>").attr("for", "yselect").text("Y pair"))
+                                .append("<select/>")
+
+                        var selectors =xplot.children("select");
+                        var go = xplot.append("<button/>").children("button").attr("type","button").text("Plot").click(plotFoldChangeXplot)
+    //                    xselect.attr("id", "xselect");
+    //                    var yselect = $("#xplot_div").append("<select/>").children();
+    //                    yselect.attr("id", "yselect");
+                        d3.json("../json/DifferentialExpression.json", function(error, json)
+                        {
+                            var byPair = d3.nest().key(function(d){return d.Pair}).entries(json);
+                            byPair.forEach(function(d){
+                                selectors.append($("<option/>").attr("value", d.key).text(d.key));
+                                //yselect.append($("<option/>").attr("value", d.key).text(d.key));
+                            })
+                            selectors.eq(0).attr("id", "xselect").prop("selectedIndex", 0)
+                            selectors.eq(1).attr("id", "yselect").prop("selectedIndex", 1)
+                            plotFoldChangeXplot();
+                        })
+                    }
+
+                    function debug()
+                    {
+                        
+                    }
+
+                
+            </script>
+            <!--<script src="../js/menu/overlay-menu.js"></script>-->
+        </body>
+</html>
+		

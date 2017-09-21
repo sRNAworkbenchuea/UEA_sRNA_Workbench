@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+
+1) How many samples?
+2) How many replicates per sample?
+3) Would you like a level? What would you like your level to be called? 
+* Time points, Tissue types, Treatments
+
+-->
+<html>
+    <head>
+        <title>File Setup Wizard</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!--Javascript-->
+
+
+
+        <!--JQuery files -->
+        <script type="text/javascript" src="../../js/lib/jquery/jquery-1.11.2.min.js"></script>
+        <!--<script type="text/javascript" src="../js/lib/jquery.cookie-1.3.1.js"></script>
+        <script type="text/javascript" src="../js/lib/jquery/jquery.validate.js"></script>-->
+
+        <!--wizard JS-->
+        <!--<script type="text/javascript" src="../js/steps/jquery.steps.js"></script>-->
+        <script type="text/javascript" src="../../js/wizards/jquery.smartWizard.js"></script>
+
+
+        <!--Workbench Routines -->
+        <script type="text/javascript" src="../../js/utils/workbenchutils.js"></script>
+        <script type="text/javascript" src="../../js/files/FileTable.js"></script>
+
+        <!--list drag and sort-->
+        <!--<script src="../../js/utils/jquery.sortable.js"></script>-->
+        <!--<script type="text/javascript" src="../../js/ListUtils/dragdrop.js"></script>-->
+        <!--<script type="text/javascript" src="../../js/ListUtils/drag.js"></script>-->
+        <!--<script type="text/javascript" src="../../js/ListUtils/coordinates.js"></script>-->
+        <script src="../../js/lib/jqueryui/jquery-ui.min.js"></script>
+
+
+
+        <!--tooltip Javascript-->
+        <script type="text/javascript" src="../../js/tipped/tipped.js"></script>
+
+
+
+
+        <!-- CSS -->
+        <!--Workbench CSS -->
+        <link rel="stylesheet" type="text/css" href="../../CSS/wbstyles.css" />
+
+
+        <!--Menu CSS -->
+        <link rel="stylesheet" type="text/css" href="../../CSS/normalize.css" />
+        <link rel="stylesheet" type="text/css" href="../../CSS/menus.css" />
+        <link rel="stylesheet" type="text/css" href="../../CSS/icons.css" />
+        <link rel="stylesheet" type="text/css" href="../../CSS/component.css" />
+
+        <!--tooltip CSS-->
+        <link rel="stylesheet" type="text/css" href="../../CSS/tipped/tipped.css" />
+
+
+        <!-- Import FontAwesome 4.2 
+        <link rel="stylesheet" href="../CSS/font-awesome.css">-->
+
+        <!--Wizard CSS-->
+        <!--<link rel="stylesheet" href="../CSS/jquery.steps.css">-->
+        <link rel="stylesheet" type="text/css" href="../../CSS/smart_wizard_vertical.css" />
+
+        <!-- Import FontAwesome 4.2 -->
+        <link rel="stylesheet" href="../../CSS/font-awesome.min.css">
+        <!--Buttons CSS-->
+        <link rel="stylesheet" href="../../CSS/fancy-buttons.css">
+        <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+        <style type="text/css">
+            td
+            {
+                padding:0 5px 0 5px;
+            }
+            #available_annot_list, #selected_annot_list, #other_list {
+                border: 1px solid #eee;
+                width: 142px;
+                min-height: 20px;
+                list-style-type: none;
+                margin: 0;
+                padding: 5px 0 0 0;
+                float: left;
+                margin-right: 10px;
+            }
+            #sortable1 li, #sortable2 li {
+                margin: 0 5px 5px 5px;
+                padding: 5px;
+                font-size: 1.2em;
+                width: 120px;
+            }
+        </style>
+
+
+        <script type="text/javascript">
+
+
+            /* window.onload = function() {
+             var list = document.getElementById("phonetic");
+             DragDrop.makeListContainer( list );
+             list.onDragOver = function() { this.style["background"] = "#EEF"; };
+             list.onDragOut = function() {this.style["background"] = "none"; };
+             
+             list = document.getElementById("numeric");
+             DragDrop.makeListContainer( list );
+             list.onDragOver = function() { this.style["border"] = "1px dashed #AAA"; };
+             list.onDragOut = function() {this.style["border"] = "1px solid white"; };
+             };*/
+            $(document).ready(function () {
+
+// Smart Wizard 	
+                $('#wizard').smartWizard(
+                        {
+                            onLeaveStep: leaveAStepCallback,
+                            onFinish: onFinishCallback,
+                            onCancel: onCancelCallback,
+                            labelCancel: 'Cancel'
+                        });
+
+
+                function leaveAStepCallback(obj, context) {
+
+                    //alert("Leaving step " + context.fromStep + " to go to step " + context.toStep);
+                    if (context.toStep === 3)
+                    {
+                        if (typeof app !== 'undefined')
+                            app.processAnnotations();
+
+
+                    }
+                    return validateSteps(context.fromStep, context.toStep); // return false to stay on step and true to continue navigation 
+                }
+
+                function onFinishCallback(objs, context) {
+                    if (validateAllSteps()) {
+                        setupSelectedAnnotations();
+                        app.setTableHTML(document.getElementById("fileInputTable").innerHTML);
+
+                        app.hideWizard();
+
+                        app.rebuildJSON();
+
+                        app.finalise();
+                        createPreconfiguredFlow();
+                    }
+                }
+
+                function onCancelCallback()
+                {
+
+                }
+
+                // Your Step validation logic
+                function validateSteps(stepnumber, tostep) {
+                    var isStepValid = true;
+                    if (tostep === 2)
+                    {
+                        updateTranscriptomeButtonText();
+                        $("#wizard").smartWizard('enableFinish', true);
+                    }
+                    // validate step 1 (sRNA Files)
+                    if (stepnumber === 1)
+                    {
+                        // Your step validation logic
+                        // set isStepValid = false if has errors
+                        var configuredResult = true;
+                        if (typeof app !== 'undefined')
+                        {
+                            configuredResult = app.checkAllConfiguredSRNA() && app.checkAllConfiguredDegradomes();
+                        }
+                        if (configuredResult)
+                        {
+                            setOk(1);
+                            return true;
+                        }
+                        else
+                        {
+                            setError(1);
+                            $('#wizard').smartWizard('showMessage', 'Samples are missing files');
+                            return false;
+                        }
+                    }
+                    //validate references
+                    else if (stepnumber === 2)
+                    {
+
+                        if (tostep === 1)
+                        {
+                            return true;
+                        }
+
+                        else
+                        {
+
+                            var ref_configuredResult = true;
+                            var gffValid = true;
+                            var transcriptomeValid = true;
+                            if (typeof app !== 'undefined') {
+                                ref_configuredResult = app.getConfiguredReferences();
+                                gffValid = app.checkGFFFiles();
+                                transcriptomeValid = app.checkTranscriptomeFiles();
+                            }
+
+                            if (ref_configuredResult)
+                            {
+                                if (gffValid) {
+                                    if (transcriptomeValid) {
+                                        setOk(2);
+                                        
+                                        return true;
+                                    } else {
+                                        setError(2);
+                                        $('#wizard').smartWizard('showMessage', 'Transcriptome file is not valid');
+                                        return false;
+                                    }
+                                } else {
+                                    setError(2);
+                                    $('#wizard').smartWizard('showMessage', 'GFF file is not valid');
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                setError(2);
+                                $('#wizard').smartWizard('showMessage', 'References are missing files');
+                                return false;
+                            }
+                        }
+                    }
+                    else if (stepnumber === 3)
+                    {
+                        if (tostep === 1)
+                        {
+                            return true;
+                        }
+                        else if (tostep === 2)
+                        {
+                            return true;
+                        }
+                        var list = document.getElementById("selected_annot_list");
+                        var listItem = list.getElementsByTagName("li");
+                        var foundGene = false;
+                        //var foundExon = false;
+                        for (var i = 0; i < listItem.length; i++)
+                        {
+                            if (listItem[i].innerHTML === 'gene')
+                            {
+                                foundGene = true;
+                            }
+                            if (listItem[i].innerHTML === 'exon')
+                            {
+                                if (foundGene)
+                                {
+                                    setError(3);
+                                    $('#wizard').smartWizard('showMessage', 'Gene cannot rank above Exon in annotation preference');
+                                    return false;
+                                }
+                                else
+                                {
+                                    setOk(3);
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+
+
+
+                    return true;
+                    // ...      
+                }
+                function validateAllSteps() {
+
+                    var sRNAconfiguredResult = app.checkAllConfiguredSRNA();
+                    //alert("sRNA config" + sRNAconfiguredResult);
+                    if (sRNAconfiguredResult)
+                    {
+                        setOk(1);
+
+                    }
+                    else
+                    {
+                        setError(1);
+                        $('#wizard').smartWizard('showMessage', 'Samples are missing files');
+
+                    }
+
+                    var ref_configuredResult = app.getConfiguredReferences();
+
+                    if (ref_configuredResult)
+                    {
+                        setOk(2);
+
+                    }
+                    else
+                    {
+                        setError(2);
+                        $('#wizard').smartWizard('showMessage', 'References are missing files');
+
+                    }
+                    var list = document.getElementById("selected_annot_list");
+                    var listItem = list.getElementsByTagName("li");
+                    var foundGene = false;
+                    var geneBelowExon = true;
+                    //var foundExon = false;
+                    for (var i = 0; i < listItem.length; i++)
+                    {
+                        if (listItem[i].innerHTML === 'gene')
+                        {
+                            foundGene = true;
+                        }
+                        if (listItem[i].innerHTML === 'exon')
+                        {
+                            if (foundGene)
+                            {
+
+                                geneBelowExon = false;
+                            }
+                            else
+                            {
+                                geneBelowExon = true;
+                            }
+                        }
+                    }
+                    if (geneBelowExon)
+                    {
+                        setOk(3);
+                    }
+                    else
+                    {
+                        setError(3);
+                        $('#wizard').smartWizard('showMessage', 'Gene cannot rank above Exon in annotation preference');
+                    }
+                    return ref_configuredResult && sRNAconfiguredResult && geneBelowExon;
+                }
+                function setError(stepnumber) {
+                    $('#wizard').smartWizard('setError', {stepnum: stepnumber, iserror: true});
+                }
+                function setOk(stepnumber) {
+                    $('#wizard').smartWizard('setError', {stepnum: stepnumber, iserror: false});
+                }
+                
+                
+                
+            });
+
+            $("#wizard").smartWizard('disableStep', 3);
+
+        </script>
+
+    </head>
+    <body>
+        <table class="mainwizardtable">
+            <tr><td> 
+                    <!-- Smart Wizard -->
+                    <div id="wizard" class="swMain">
+                        <ul id="wizardlist">
+                            <li><a href="#step-1">
+                                    <span class="stepNumber">1</span>
+                                    <span class="stepDesc">
+                                        Step 1<br />
+                                        <small>Setup Samples</small>
+                                    </span>
+                                </a>
+                            </li>
+
+
+                            <li><a href="#step-2">
+                                    <span class="stepNumber">2</span>
+                                    <span class="stepDesc">
+                                        Step 2<br />
+                                        <small>Select References</small>
+                                    </span>
+                                </a>
+                            </li>
+
+                            <li class="simple-tooltip" title="Use this step if a GFF file has been included"><a href="#step-3">
+                                    <span class="stepNumber">3</span>
+                                    <span class="stepDesc">
+                                        Step 3<br />
+                                        <small>Configure Annotations </small>
+                                    </span>
+                                </a>
+                            </li>
+
+
+                        </ul>
+                        <div id="step-1">	
+                            <h2 class="StepTitle">Sample Setup</h2>
+
+                            <div>
+                                <p>    
+                                    <label for="sampleID" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4;">What is the ID for this sample?</label>
+                                    <input type="text" id="sampleID" align="right" name="sampleID">
+                                </p>
+                                <p>
+                                    <a href="#" id="addSampleButton" class="fancy-button medium rounded midnight square" onclick="addSample()">
+                                        Add Sample 
+                                        <span class="icon">
+                                            <i class="fa fa-square-o"></i>
+                                        </span>
+                                    </a>
+                                </p>
+                            </div>
+                            <div id="filetable_div">
+
+                            </div>
+
+                        </div>
+
+                        <div id="step-2" style="overflow: auto;" >	
+                            <h2 class="StepTitle">Select References</h2>
+                            <fieldset  style="min-height:100px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="selectMap" id="patman_map" class="radio" onchange="setupPatmanMap()" checked />
+                                            <label for="patman_map">Map With PatMan</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="selectMap" id="bowtie_map" class="radio" onchange="setupPatmanMap()" />
+                                            <label for="bowtie_map">Map With Bowtie</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="selectMap" id="patman_output" class="radio" onchange="setupPatmanMap()" />
+                                            <label for="patman_output">Provide PatMan output</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="selectMap" id="bowtie_output" class="radio" onchange="setupPatmanMap()" />
+                                            <label for="bowtie_output">Provide Bowtie output</label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                            <div>
+
+                                <a href="#" id="addTranscriptomeButton" class="fancy-button medium rounded midnight square " onclick="addTranscriptome()">
+                                    <span id="addTranscriptomeButtonText">Add Transcriptome</span>
+                                    <span class="icon">
+                                        <i class="fa fa-square-o"></i>
+                                    </span>
+                                </a>
+                                <a href="#" id="addGFFButton" class="fancy-button medium rounded midnight square" onclick="addGFF()">
+                                    Add GFF (Optional)
+                                    <span class="icon">
+                                        <i class="fa fa-square-o"></i>
+                                    </span>
+                                </a>
+                                <!--<a href="#" class="fancy-button medium rounded midnight square" onclick="addCustom()">
+                                    Add Custom
+                                    <span class="icon">
+                                        <i class="fa fa-square-o"></i>
+                                    </span>
+                                </a>-->
+                            </div>
+
+                            <div>
+                                <table class="filetable" id="referenceInputTable" cellspacing='0' > <!-- cellspacing='0' is important, must stay -->
+
+                                    <!-- Table Header -->
+                                    <thead>
+                                        <tr>
+                                            <th id="reference_header">Reference Type</th>
+                                            <th>Path</th>
+
+                                        </tr>
+                                    </thead>
+                                    <!-- Table Header -->
+
+                                    <!-- Table Body -->
+                                    <tbody>
+
+                                        <tr id="GENOME_0">
+                                            <td>
+                                                Primary Genome
+                                            </td>
+                                            <td>
+                                                <a href='#' onclick='add_genome_file()'>Add File</a>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                    <!-- Table Body -->
+
+                                </table>
+                            </div>
+                        </div>
+                        <div id="step-3" style="overflow: auto;" >
+
+                            <!--
+                            <table class="filetable" id="annotationSelectionTable" cellspacing='0' >
+
+                                
+                                <thead>
+                                    <tr>
+                                        <th>Available Annotation</th>
+                                        <th>Selected Annotation</th>
+                                    </tr>
+                                </thead>
+                                
+                                <tbody>
+                                    <tr>
+                                        <td id="target1">
+                                            <ul id="available_annot_list" ondragover = "allowDrop(event)" ondrop ="drop(event)">
+                                                
+                                            </ul>
+                                        </td>
+                                        <td id="target2">
+                                            <ul id="selected_annot_list" ondragover = "allowDrop(event)" ondrop ="drop(event)">
+                                                
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                    
+                            
+                            </table>-->
+
+
+                            <table class="filetable" id="annotationSelectionTable" cellspacing='0' >
+
+
+                                <thead>
+                                    <tr>
+                                        <th>Available Annotation</th>
+                                        <th>Selected Annotation</th>
+                                        <th class="simple-tooltip" title='The "Other" set will group all selected annotations together'>Add To 'Other'</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="annotationSelectionTableBDY">
+                                    <tr id="connected">
+                                        <td>
+                                            <ul id="available_annot_list" class="connectedSortable">
+
+                                            </ul>
+                                        </td>
+                                        <td>
+
+                                            <ul id="selected_annot_list" class="connectedSortable">
+
+                                            </ul>
+                                        </td>
+                                        <td>
+
+                                            <ul id="other_list" class="connectedSortable">
+
+                                            </ul>
+
+                                        </td>
+
+
+
+                                    </tr>
+                                </tbody>
+
+
+                            </table>
+
+                        </div>
+
+
+
+                    </div>
+                    <!-- End SmartWizard Content  	-->	
+
+                </td></tr>
+        </table>
+
+        <script>
+
+            $(document).ready(function () {
+                Tipped.create('.simple-tooltip', {behavior: 'hide'});
+                version4_1AlphaSetup();
+                
+                
+            });
+            
+            function version4_1AlphaSetup()
+            {
+                var d = document.getElementById("addTranscriptomeButton");
+                d.className = d.className + " buttonDisabled";
+            }
+
+            $('#filetable_div').fileTable({
+                on_add_sRNA_file: add_sRNA_file,
+                on_set_sRNA_file: set_sRNA_file,
+                on_remove_sRNA_replicate: remove_sRNA_replicate,
+                on_remove_deg_replicate: remove_deg_replicate,
+                on_remove_sample: removeRow,
+                on_add_deg_file: add_deg_file,
+                on_set_deg_file: set_deg_file,
+                on_change_deg_type: change_deg_type,
+                setup_mode: true
+            });
+
+            var totalSamplesAdded = 0;
+            var totalReferencesAdded = 1;
+            var totalLoadedAnnotations = 0;
+            
+  
+
+            function updateTranscriptomeButtonText() {
+                var addTranscriptButtonText = "Add Transcriptome (Optional)";
+                if (typeof app !== 'undefined') {
+                    if (!app.isTranscriptomeOptional()) {
+                        addTranscriptButtonText = "Add Transcriptome";
+                    }
+                }
+                document.getElementById("addTranscriptomeButtonText").innerHTML = addTranscriptButtonText;
+            }
+
+            function updateAddSampleButton() {
+                // if we have reached the number of samples permitted in the current workflow - disable the button
+                var maxSamples = -1;
+                if (typeof app !== "undefined")
+                {
+                    maxSamples = app.getMaxSamples();
+                }
+                else
+                {
+                    maxSamples = 3; //debug test
+                }
+                var d = document.getElementById("addSampleButton");
+                if (maxSamples !== -1 && getNumberSamples() >= maxSamples)
+                {
+                    d.className += " buttonDisabled";
+                }
+                else
+                {
+                    while (d.className.indexOf("buttonDisabled") !== -1)
+                    {
+                        d.className = d.className.replace("buttonDisabled", "");
+                    }
+                }
+            }
+
+
+            function getNumberSamples()
+            {
+                return document.getElementsByClassName("sampleRow").length;
+            }
+
+            function addSample()
+            {
+                // check to see if we will exceeded the number of samples for the workflow
+                var maxSamples = -1;
+                if (typeof app !== "undefined")
+                {
+                    maxSamples = app.getMaxSamples();
+                }
+                else
+                {
+                    maxSamples = 3; //debug test
+                }
+                var numSamples = getNumberSamples();
+  
+                if (maxSamples !== -1 && numSamples >= maxSamples) {
+                    return;
+                }
+                var sampleID = document.getElementById('sampleID').value;
+                sampleID = $('#filetable_div').fileTable("addSample", sampleID);
+                if (typeof app !== "undefined") {
+                    app.addSample(sampleID);
+                }
+                updateAddSampleButton();
+            }
+
+            function add_sRNA_file(sampleID, replicateID)
+            {
+                // check to see if we will exceeded the number of replicates for the sample
+                var maxReplicates = -1;
+                if (typeof app !== "undefined")
+                {
+                    maxReplicates = app.getMaxReplicates();
+                }
+                else
+                {
+                    maxReplicates = 3; //debug test
+                }
+                var numReps = app.getNumberRepsForSample(sampleID);
+              
+                if (maxReplicates !== -1 && numReps >= maxReplicates) {
+                    return;
+                }
+                // Choose files
+                var files = [];
+                if (typeof app !== "undefined") {
+                    files = app.addFileTo_sRNA_Sample(sampleID, replicateID, files);
+                }
+                else
+                {
+                    files = ["DEBUG FILE", "DEBUG FILE 2"];
+                }
+                return files;
+            }
+            function add_deg_file(sampleID, replicateID, type)
+            {
+                // Choose files
+                var files = [];
+                if (typeof app !== "undefined") {
+                    files = app.addFileTo_deg_Sample(sampleID, replicateID, files);
+                }
+                else
+                {
+                    files = ["DEGBUG FILE", "DEGBUG FILE 2"];
+                }
+                return files;
+            }
+            function set_sRNA_file(sampleID, replicateID)
+            {
+                var files = [];
+                if (typeof app !== "undefined") {
+                    return app.addFileTo_sRNA_Sample(sampleID, replicateID, files)[0];
+                }
+                else
+                {
+                    return ["DEBUG CHANGED"];
+                }
+            }
+            function set_deg_file(sampleID, replicateID, type)
+            {
+                var files = [];
+                if (typeof app !== "undefined") {
+                    return app.addFileTo_deg_Sample(sampleID, replicateID, files)[0];
+                }
+                else
+                {
+                    return ["DEBUG CHANGED"];
+                }
+            }
+            function remove_sRNA_replicate(sampleID, replicateID) {
+                if (typeof app !== "undefined")
+                    app.remove_sRNA_replicate(sampleID, replicateID);
+            }
+            function remove_deg_replicate(sampleID, replicateID) {
+                if (typeof app !== "undefined")
+                    app.remove_deg_replicate(sampleID, replicateID);
+            }
+            function remove_sample(sampleID)
+            {
+                if (typeof app !== "undefined")
+                    app.removeSample(sampleID);
+            }
+
+            function change_deg_type(sampleID, replicateID, type)
+            {
+                if (typeof app !== "undefined")
+                    app.setDegDataType(sampleID, replicateID, type);
+            }
+
+            function removeRow(sampleID)
+            {
+                //alert(row)
+                /* var sampleID;
+                 if (rowid.id === undefined)
+                 {
+                 //console.log(rowid);
+                 sampleID = rowid;
+                 }
+                 else
+                 {
+                 sampleID = rowid.id;
+                 }
+                 var row = document.getElementById(sampleID);
+                 row.parentNode.removeChild(row);*/
+                //var sRNAconfiguredResult = false;
+                if (typeof app !== "undefined")
+                {
+                    app.removeSample(sampleID);
+                    // RNAconfiguredResult = app.checkAllConfiguredSRNA();
+                }
+
+
+                /*var configuredResult = app.getConfiguredReferences();
+                 
+                 if(configuredResult)
+                 {
+                 document.getElementById("reference_header").style.color = "green";
+                 }
+                 else
+                 {
+                 document.getElementById("reference_header").style.color = "red";
+                 }*/
+
+                //var rowCount = document.getElementById("sRNA_replicateInputTable_" + sampleID).rows.length;
+                //alert("reference config: " + configuredResult);
+                // var sRNAconfiguredResult = app.checkAllConfiguredSRNA();
+                //alert("sRNA config" + sRNAconfiguredResult);
+                /* if (sRNAconfiguredResult)
+                 {
+                 document.getElementById("sRNA_Header").style.color = "green";
+                 }
+                 else
+                 {
+                 document.getElementById("sRNA_Header").style.color = "red";
+                 }*/
+                updateAddSampleButton();
+            }
+            function removeGFF(gffID)
+            {
+                //alert(row)
+                clearGFFList();
+                var sampleID;
+                if (gffID.id === undefined)
+                {
+                    //console.log(rowid);
+                    sampleID = gffID;
+                }
+                else
+                {
+                    sampleID = gffID.id;
+                }
+                var row = document.getElementById(sampleID);
+                row.parentNode.removeChild(row);
+
+                if (typeof app !== 'undefined')
+                    app.removeGFF($(row).children("td").eq(1).text());
+                $("#addGFFButton").removeClass('buttonDisabled');
+                $("#wizard").smartWizard('disableStep', 3);
+
+
+
+
+
+
+            }
+            function removeTranscriptome(trID)
+            {
+                var sampleID;
+                if (trID.id === undefined)
+                {
+                    sampleID = trID;
+                }
+                else
+                {
+                    sampleID = trID.id;
+                }
+                var row = document.getElementById(sampleID);
+                row.parentNode.removeChild(row);
+                if (typeof app !== 'undefined')
+                    app.removeTranscriptome();
+                $("#addTranscriptomeButton").removeClass('buttonDisabled');
+                updateTranscriptomeButtonText();
+            }
+
+            function checkCellHTML(sampleID, rowCount)
+            {
+                var checkedID = sampleID + "_replicateEnabled_" + rowCount;
+                return "<input type='checkbox' name = 'replicateChecks' id ='" +
+                        checkedID +
+                        "' checked onclick='handleStateChangeOnReplicate(" +
+                        sampleID + "," + rowCount +
+                        ")' /> ";
+            }
+
+            //step 3 functions
+            function addTranscriptome()
+            {
+                // Find a <table> element with id="referenceInputTable":
+                var table = document.getElementById("referenceInputTable").getElementsByTagName('tbody')[0];
+
+
+                totalReferencesAdded++;
+
+
+                // Create an empty <tr> element and add it to the 1st position of the table:
+                var rowCount = table.rows.length;
+
+                var row = table.insertRow(rowCount);
+
+
+
+                if (rowCount % 2 === 0)
+                    row.className = "even";
+
+                // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+
+
+                var referenceID = "TRANSCRIPTOME_" + totalReferencesAdded;
+
+                row.id = referenceID;
+
+                // Add some text to the new cells:
+                var sampleLabel = "TRANSCRIPTOME";
+                sampleLabel += "<a href='#' onclick='removeTranscriptome(";
+                sampleLabel += referenceID;
+                sampleLabel += ")'><img src='../../images/cross_black.png' alt='Cross' style='width:12px;height:12px'></a>";
+
+                cell1.innerHTML = sampleLabel;
+                cell2.innerHTML = "<a href='#' onclick='add_TranscriptomeFile(" +
+                        referenceID +
+                        ")'>Add File</a>";
+
+                //console.log(sampleID);
+                var d = document.getElementById("addTranscriptomeButton");
+                d.className = d.className + " buttonDisabled";
+                add_TranscriptomeFile(referenceID);
+                // addTranscriptomeFile();
+
+                /*
+                 var configuredResult = app.getConfiguredReferences();
+                 //alert("reference config" + configuredResult);
+                 if(configuredResult)
+                 {
+                 document.getElementById("reference_header").style.color = "green";
+                 }
+                 else
+                 {
+                 document.getElementById("reference_header").style.color = "red";
+                 }
+                 */
+                updateTranscriptomeButtonText();
+            }
+
+
+            function clearGFFList()
+            {
+
+                if (typeof app !== 'undefined')
+                    app.resetAnnotationFlag();
+
+                $("#available_annot_list").empty();
+                $("#selected_annot_list").empty();
+                $("#other_list").empty();
+
+
+            }
+
+            /**
+             * Add a row in step two for a GFF file
+             * @returns row element id for the row that was added
+             */
+            function addGFF(file)
+            {
+
+                clearGFFList();
+                // Find a <table> element with id="referenceInputTable":
+                var table = document.getElementById("referenceInputTable").getElementsByTagName('tbody')[0];
+
+
+                totalReferencesAdded++;
+
+
+                // Create an empty <tr> element and add it to the 1st position of the table:
+                var rowCount = table.rows.length;
+
+                var row = table.insertRow(rowCount);
+
+
+
+                if (rowCount % 2 === 0)
+                    row.className = "even";
+
+                // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+
+
+                var referenceID = "GFF_" + totalReferencesAdded;
+
+                row.id = referenceID;
+
+                // Add some text to the new cells:
+                var sampleLabel = "GFF";
+                sampleLabel += "<a href='#' onclick='removeGFF(";
+                sampleLabel += referenceID;
+                sampleLabel += ")'><img src='../../images/cross_black.png' alt='Cross' style='width:12px;height:12px'></a>";
+
+                cell1.innerHTML = sampleLabel;
+                cell2.innerHTML = "<a href='#' onclick='add_GFFFile(" +
+                        referenceID +
+                        ")'>Add File</a>";
+
+                add_GFFFile(referenceID, file);
+
+                var d = document.getElementById("addGFFButton");
+                d.className = d.className + " buttonDisabled";
+                $("#wizard").smartWizard('enableStep', 3);
+                //var result = $("#wizard").smartWizard('enableFinish', false);
+                //console.log(result);
+
+                return referenceID;
+
+            }
+            /*function addCustom()
+             {
+             // Find a <table> element with id="referenceInputTable":
+             var table = document.getElementById("referenceInputTable").getElementsByTagName('tbody')[0];
+             
+             
+             totalReferencesAdded++;
+             
+             
+             // Create an empty <tr> element and add it to the 1st position of the table:
+             var rowCount = table.rows.length;
+             
+             var row = table.insertRow(rowCount);
+             
+             
+             
+             if (rowCount % 2 === 0)
+             row.className = "even";
+             
+             // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+             var cell1 = row.insertCell(0);
+             var cell2 = row.insertCell(1);
+             var cell3 = row.insertCell(2);
+             
+             var referenceID = "Custom_" + totalReferencesAdded;
+             
+             row.id = referenceID;
+             
+             // Add some text to the new cells:
+             var sampleLabel = "CUSTOM";
+             sampleLabel += "<a href='#' onclick='removeRow(";
+             sampleLabel += referenceID;
+             sampleLabel += ")'><img src='../../images/cross_black.png' alt='Cross' style='width:12px;height:12px'></a>";
+             
+             cell1.innerHTML = sampleLabel;
+             cell2.innerHTML = "<a href='#' onclick='add_CustomFile(" +
+             referenceID +
+             ")'>Add File</a>";
+             cell3.innerHTML = "Waiting";
+             //console.log(sampleID);
+             app.addTranscriptome(referenceID);
+             
+             }*/
+
+            function add_TranscriptomeFile(id)
+            {
+                var sampleID;
+                if (id.id === undefined)
+                {
+                    //console.log(rowid);
+                    sampleID = id;
+                }
+                else
+                {
+                    sampleID = id.id;
+                }
+
+                var result = "modified path";
+                var cell;
+                var newCellHTML;
+
+                var row = document.getElementById(sampleID);
+
+                cell = row.cells[1];
+
+                if (typeof app === 'undefined')
+                    result = "debug add transcriptome file";
+                else
+                    result = app.addFileToTranscriptome();
+
+                newCellHTML = "<a href='#' onclick='add_TranscriptomeFile(" + id + ")'>";
+                newCellHTML += result;
+                newCellHTML += "</a>";
+                cell.innerHTML = newCellHTML;
+            }
+            function add_genome_file(file)
+            {
+                var result = file;
+                var cell;
+                var newCellHTML;
+
+                var row = document.getElementById("GENOME_0");
+
+                cell = row.cells[1];
+
+                if (typeof result === 'undefined') {
+                    if (typeof app === 'undefined')
+                        result = "debug add genome";
+                    else if (document.getElementById("patman_map").checked) {
+                        result = app.addFileToGenome();
+                    }
+                    else if (document.getElementById("bowtie_map").checked) {
+                        result = app.addIndexFileToGenome();
+                    }
+                    else if (document.getElementById("patman_output").checked)
+                    {
+                        result = app.choosePatmanOutput();
+                    }
+                    else if (document.getElementById("bowtie_output").checked)
+                    {
+                        result = app.chooseBowtieOutput();
+                    }
+                }
+                newCellHTML = "<a href='#' onclick='add_genome_file()'>";
+                newCellHTML += result;
+                newCellHTML += "</a>";
+                cell.innerHTML = newCellHTML;
+            }
+
+
+            function add_GFFFile(id, file)
+            {
+
+                clearGFFList();
+
+                if (typeof app === 'undefined')
+                {
+                    addToAnnotationTable("test", 100);
+                    addToAnnotationTable("test2", 200);
+                }
+                var sampleID;
+                if (id.id === undefined)
+                {
+                    //console.log(rowid);
+                    sampleID = id;
+                }
+                else
+                {
+                    sampleID = id.id;
+                }
+                var result = file;
+                var cell;
+                var newCellHTML;
+
+                var row = document.getElementById(sampleID);
+
+
+
+                cell = row.cells[1];
+                if (typeof result === "undefined") {
+                    if (typeof app !== 'undefined')
+                        result = app.addFileTo_GFFList();
+                    else
+                        result = "add_file";
+                }
+                //row.id = result;
+
+                newCellHTML = "<a href='#' onclick='add_GFFFile(" + row.id + ")'>";
+                newCellHTML += result;
+                newCellHTML += "</a>";
+                cell.innerHTML = newCellHTML;
+            }
+
+            //handle checked replicates
+            // Pass the checkbox name to the function
+            function getCheckedBoxes(chkboxName)
+            {
+                var checkboxes = document.getElementsByName(chkboxName);
+                var checkboxesChecked = [];
+                // loop over them all
+                for (var i = 0; i < checkboxes.length; i++) {
+                    // And stick the checked ones onto an array...
+                    if (checkboxes[i].checked) {
+                        checkboxesChecked.push(checkboxes[i]);
+                    }
+                }
+                // Return the array if it is non-empty, or null
+                return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+            }
+
+            //setup GFF annotations                    
+            function addToAnnotationTable(annotation, amount, listid)
+            {
+
+                if (typeof listid === "undefined")
+                    listid = "available_annot_list";
+
+                var list = document.getElementById(listid);
+                //console.log(list)
+                if (list !== null)
+                {
+                    var li = document.createElement("li");
+                    li.setAttribute("title", "Found " + amount + " transcripts in the GFF file");
+                    li.setAttribute("data-tipped-options", "position: 'left'");
+                    li.setAttribute("class", "simple-tooltip");
+                    li.appendChild(document.createTextNode(annotation));
+
+                    list.appendChild(li);
+                    totalLoadedAnnotations++;
+
+                    $("#available_annot_list, #selected_annot_list, #other_list").sortable({
+                        connectWith: ".connectedSortable"
+                    }).disableSelection();
+
+
+                    Tipped.create('.simple-tooltip', {behavior: 'hide'});
+                }
+
+
+            }
+
+            function setupSelectedAnnotations()
+            {
+                //alert("Setting selected")
+                var list = document.getElementById("selected_annot_list");
+                var listItem = list.getElementsByTagName("li");
+                for (var i = 0; i < listItem.length; i++)
+                {
+                    app.insertAnnotation(listItem[i].innerHTML);
+                }
+
+                list = document.getElementById("other_list");
+                listItem = list.getElementsByTagName("li");
+                for (var i = 0; i < listItem.length; i++)
+                {
+                    app.insertOtherAnnotation(listItem[i].innerHTML);
+                }
+            }
+
+            //Changing the mapping options
+            function setupPatmanMap()
+            {
+                var row = document.getElementById("GENOME_0");
+                if (document.getElementById("patman_map").checked)
+                {
+
+
+                    row.innerHTML = "<td>" +
+                            "     Primary Genome" +
+                            "</td>" +
+                            "<td>" +
+                            "    <a href='#' onclick='add_genome_file()'>Add File</a>" +
+                            "</td>";
+
+
+                }
+                else if (document.getElementById("bowtie_map").checked) //bowtie must be selected
+                {
+                    row.innerHTML = "<td>" +
+                            "     Primary Indexed Genome" +
+                            "</td>" +
+                            "<td class='simple-tooltip' title='Directory must be the structure &ltPATH&gt /&ltBASENAME&gt.1.ewbt'>" +
+                            "    <a href='#' onclick='add_genome_file()'>Add Indexed File</a>" +
+                            "</td>";
+                }
+                else if (document.getElementById("patman_output").checked)
+                {
+                    row.innerHTML = "<td>" +
+                            "     Mapping Output File" +
+                            "</td>" +
+                            "<td class='simple-tooltip' title='Directory must be the structure &ltPATH&gt /&ltBASENAME&gt.1.ewbt'>" +
+                            "    <a href='#' onclick='add_genome_file()'>Add PatMan output</a>" +
+                            "</td>";
+                }
+                else if (document.getElementById("bowtie_output").checked)
+                {
+                    row.innerHTML = "<td>" +
+                            "     Mapping Output File" +
+                            "</td>" +
+                            "<td class='simple-tooltip' title='Directory must be the structure &ltPATH&gt /&ltBASENAME&gt.1.ewbt'>" +
+                            "    <a href='#' onclick='add_genome_file()'>Add Bowtie output</a>" +
+                            "</td>";
+                }
+
+                Tipped.create('.simple-tooltip', {behavior: 'hide'});
+            }
+
+            
+
+
+
+        </script>
+    </body>
+</html>

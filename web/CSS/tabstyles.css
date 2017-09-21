@@ -1,0 +1,295 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 05-Apr-2017, 10:11:14
+    Author     : w0445959
+*/
+
+* {
+	box-sizing: border-box;
+	-webkit-tap-highlight-color: rgba(255,255,255,0);
+}
+
+body {
+	line-height: 1.5;
+	font-family: 'Montserrat';
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+	color: #1a1a1a;
+	background: #1a1a1a;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+.nav {
+	will-change: transform;
+	position: relative;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 1;
+	background: #1a1a1a;
+	transform: translateY(-100%);
+	transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.nav--active {
+	transform: translateY(0);
+}
+
+.nav__list {
+	display: flex;
+}
+
+.nav__item {
+	flex: 1;
+	position: relative;
+	transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.nav__item:hover {
+	opacity: 0.75;
+}
+
+.nav__thumb {
+	display: block;
+	height: 120px;
+	background: #dc143c;
+	transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.nav__thumb:before {
+	content: attr(data-letter);
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 70px;
+	text-transform: uppercase;
+	opacity: 0.15;
+}
+
+.nav__label {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	color: #1a1a1a;
+	margin: 0;
+}
+
+@media (max-width: 850px) {
+	.nav__label {
+		font-size: 14px;
+	}
+}
+
+@media (max-width: 720px) {
+	.nav__label {
+		display: none;
+	}
+
+	.nav__thumb {
+		height: 90px;
+	}
+
+	.nav__thumb:before {
+		font-size: 32px;
+		opacity: 0.7;
+	}
+}
+
+.burger {
+	position: absolute;
+	right: 0;
+	top: 100%;
+	width: 60px;
+	height: 60px;
+	background: #1a1a1a;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.burger__patty {
+	position: relative;
+	width: 60%;
+	height: 2px;
+	background: #fff;
+	transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.burger__patty:before,
+.burger__patty:after {
+	will-change: transform;
+	content: "";
+	position: absolute;
+	left: 0;
+	background: #fff;
+	height: 2px;
+	width: 100%;
+	transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.burger__patty:before {
+	top: -10px;
+}
+
+.burger__patty:after {
+	top: 10px;
+}
+
+.burger--close .burger__patty {
+	transform: rotate(45deg);
+}
+
+.burger--close .burger__patty:before {
+	transform: rotate(-90deg) translate(-9px, 0);
+}
+
+.burger--close .burger__patty:after {
+	opacity: 0;
+	transform: scaleX(0);
+}
+
+.page {
+	height: 100vh;
+	will-change: transform;
+	perspective: 400px;
+	overflow: hidden;
+	transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.section {
+	will-change: transform;
+	position: absolute;
+	width: 100%;
+	top: 0;
+	left: 0;
+	height: 100vh;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	background: #fff;
+	transform: translateX(100%);
+	transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.section--hidden {
+	transform: translateX(-100%);
+}
+
+.section--active {
+	transform: translateX(0) rotateY(0);
+	z-index: 2;
+}
+
+.section:before {
+	content: attr(data-letter);
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 20vh;
+	text-transform: uppercase;
+	opacity: 0.15;
+	z-index: -1;
+}
+
+.section__wrapper {
+	width: 100%;
+	max-width: 800px;
+	padding: 0 8vw;
+}
+
+.section__title {
+	margin: 0 0 25px 0;
+	font-size: 24px;
+	text-transform: uppercase;
+	letter-spacing: 4px;
+}
+
+.section p {
+	margin: 0 0 25px 0;
+	font-family: 'Georgia';
+	font-size: 20px;
+}
+
+.section p:last-child {
+	margin-bottom: 0;
+}
+
+.color1 {
+	background: #1abc9c;
+}
+
+.color2 {
+	background: #e74c3c;
+}
+
+.color3 {
+	background: #3498db;
+}
+
+.color4 {
+	background: #f4d03f;
+}
+
+.color5 {
+	background: #9b59b6;
+}
+
+.color6 {
+	background: activeborder;
+}
+
+.color7 {
+	background: blueviolet;
+}
+
+.color8 {
+    background: cadetblue;
+}
+
+.color9 {
+    background: darkgoldenrod;
+}
+.logo {
+	position: fixed;
+	top: 195px;
+	right: 7px;
+	z-index: 2;
+}
+
+@media (max-width: 720px) {
+	.logo {
+		top: 160px;
+	}
+}
+
+.logo img {
+	width: 45px;
+	transform: rotate(0);
+	transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.logo img:hover {
+	transform: rotate(180deg) scale(1.1);
+}

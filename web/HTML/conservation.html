@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="../CSS/workflowModule.css">
+        <script src="../js/d3.v3.min.js"></script>
+        <script src="../js/HQLTableViewer.js"></script>
+        <script src="../js/StatusLog.js"></script>
+        <script src="../js/utils/workbenchutils.js"></script>
+
+
+        <link rel="stylesheet" type="text/css" href="../css/jquery.dataTables.css">
+        <script type="text/javascript" src="../js/jQuery/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="../js/datatables/jquery.dataTables.min.js"></script>
+
+        <script>
+
+
+
+            function showHideLog()
+            {
+                var logElement = document.getElementById('l');
+                if (logElement.getAttribute("class") == "tool_log_show")
+                {
+                    logElement.setAttribute("class", "tool_log_hide");
+                }
+                else
+                {
+                    logElement.setAttribute("class", "tool_log_show");
+                }
+
+
+            }
+
+
+            function init()
+            {
+                app.initController();
+                createDataTable("", 'conserved');
+
+                drawTable('conserved');
+         
+
+                //var  oTable = $('#conserved_table').dataTable();
+
+                //oTable.fnSettings()._lengthMenu = [[2, 25, 50, 75, -1], [2, 25, 50, 75, "All"]];
+
+
+                // var oSettings = oTable.fnSettings();
+
+                // oSettings.iDisplayStart = 3;
+
+                drawTable('conserved');
+
+            }
+
+
+
+
+
+        </script>
+        <title>conservation</title>
+    </head>
+    <body onload="init();">
+
+
+        <div>
+
+
+            <div class="tool_title">
+                <div class="button" style="display:inline;" id="gohome" onclick="app.goHome();">&#8617;</div>
+                <h1>CONSERVATION MODULE</h1>
+                <div class="button" style="float:right;" onclick="saveTable('conserved');">Export All</div>
+            </div>
+            <p>This module shows the conservation across the input samples.</p>
+            <h2>CONSERVATION</h2>
+            <div id="conserved" class="log_panel"></div>
+            <h2>LOG</h2>
+            <div id="l" class="tool_log_show" style="height: 100px;"><div id="output" class="output"></div></div>
+
+        </div>
+
+    </body>
+</html>

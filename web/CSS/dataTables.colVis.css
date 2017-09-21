@@ -1,0 +1,65 @@
+div.ColVis {
+    float : right;
+    margin-bottom : 1em;
+}
+button.ColVis_Button {
+    height : 21px;
+    padding : 3px 8px;
+}
+button.ColVis_Button:active {
+    outline : none;
+}
+div.ColVis_collectionBackground {
+    position : fixed;
+    top : 0;
+    left : 0;
+    height : 100%;
+    width : 100%;
+    background-color : black;
+    z-index : 1100;
+}
+ul.ColVis_collection {
+    list-style : none;
+    width : 150px;
+    padding : 8px 8px 4px 8px;
+    margin : 0;
+    border : 1px solid #ccc;
+    background-color : #f3f3f3;
+    background-color : rgba(255, 255, 255, 255);
+    overflow : hidden;
+    z-index : 2002;
+}
+ul.ColVis_collection li {
+    position : relative;
+    height : auto;
+    left : 0;
+    right : 0;
+    padding : 0.5em;
+    display : block;
+    float : none;
+    margin-bottom : 4px;
+    box-shadow : 1px 1px 3px #999 ;
+}
+ul.ColVis_collection li {
+    text-align : left;
+}
+ul.ColVis_collection li.ColVis_Button:hover {
+    border : 1px solid #999;
+    background-color : #f0f0f0;
+}
+ul.ColVis_collection li span {
+    display : inline-block;
+    padding-left : 0.5em;
+    cursor : pointer;
+}
+span.ColVis_radio {
+    display : inline-block;
+    width : 20px;
+}
+div.ColVis_catcher {
+    position : absolute;
+    z-index : 1101;
+}
+.disabled {
+    color : #999;
+}

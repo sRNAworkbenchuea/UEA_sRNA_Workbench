@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PARESnip</title>
+        <link rel="stylesheet" href="../CSS/workflowModule.css">
+        <script src="../js/d3.v3.min.js"></script>
+        <script src="../js/HQLTableViewer.js"></script>
+        <script src="../js/ToolParameters.js"></script>
+        <script src="../js/StatusLog.js"></script>
+        <script src="../js/utils/workbenchutils.js"></script>
+
+
+        <link rel="stylesheet" type="text/css" href="../css/jquery.dataTables.css">
+        <script type="text/javascript" src="../js/jQuery/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="../js/datatables/jquery.dataTables.min.js"></script>
+
+
+        <script>
+            var parameterSet = null;
+
+            function setParamValue(id, val)
+            {
+                document.getElementById(id).setAttribute("value", val);
+            }
+
+
+            function save()
+            {
+                try
+                {
+                    var p = [
+                        document.getElementById('min_sRNA_abundance').value,
+                        document.getElementById('subsequences_are_secondary_hits').checked,
+                        document.getElementById('output_secondary_hits_to_file').checked,
+                        document.getElementById('use_weighted_fragments_abundance').checked,
+                        document.getElementById('category_0').checked,
+                        document.getElementById('category_1').checked,
+                        document.getElementById('category_2').checked,
+                        document.getElementById('category_3').checked,
+                        document.getElementById('category_4').checked,
+                        document.getElementById('discard_tr_rna').checked,
+                        document.getElementById('discard_low_complexity_candidates').checked,
+                        document.getElementById('discard_low_complexity_srnas').checked,
+                        document.getElementById('min_fragment_length').value,
+                        document.getElementById('max_fragment_length').value,
+                        document.getElementById('min_sRNA_length').value,
+                        document.getElementById('max_sRNA_length').value,
+                        document.getElementById('allow_single_nt_gap').checked,
+                        document.getElementById('allow_mismatch_position_11').checked,
+                        document.getElementById('allow_adjacent_mismatches').checked,
+                        document.getElementById('max_mismatches').value,
+                        document.getElementById('calculate_pvalues').checked,
+                        document.getElementById('number_of_shuffles').value,
+                        document.getElementById('pvalue_cutoff').value,
+                        document.getElementById('do_not_include_if_greater_than_cutoff').checked
+                    ];
+                    return app.save(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9],
+                            p[10], p[11], p[12], p[13], p[14], p[15], p[16], p[17], p[18],
+                            p[19], p[20], p[21], p[22], p[23]);
+                }
+                catch (err)
+                {
+                    alert("There was an error saving PAREsnip parameters");
+                }
+
+            }
+
+            function init()
+            {
+                try
+                {
+                    parameterSet = new ToolParameters("parameterSet", "form");
+                    app.setUpLog();
+                    if (app.showParameters())
+                    {
+                        app.setUpParameters();
+                    }
+                    createDataTable("", 'predictions');
+                    drawTable('predictions');
+                }
+                catch (err)
+                {
+                    alert("There was an error initialising PAREsnip");
+                }
+            }
+
+            function goBack()
+            {
+                try
+                {
+                    if (app.showParameters())
+                    {
+                        if (save())
+                        {
+                            app.goHome();
+                        }
+                    }
+                    else
+                    {
+                        app.goHome();
+                    }
+                }
+                catch (err)
+                {
+                    alert("There was an error going back to home.");
+                }
+            }
+
+            function exportTable()
+            {
+                try
+                {
+                    saveTable('predictions');
+                }
+                catch (err)
+                {
+                    alert("There was an error saving the output");
+                }
+            }
+
+        </script>
+
+    </head>
+    <body onload="init();">
+
+        <div class="tool_title">
+            <div class="button" style="display:inline;" id="gohome" onclick="goBack();">&#8617;</div>
+              <div class="button" style="float:right;" onclick="exportTable();">Export All</div>
+            <h1 id="module_title">PAREsnip MODULE</h1>
+        </div>
+        <p>This module predicts miRNAs from degradome data.</p>
+
+        <div class="right_column">
+            <div id="form"></div>
+        </div>
+        <div class="left_column">
+
+            <div id="predictions" class="log_panel">
+
+
+
+            </div>
+
+
+            <h2>LOG</h2>
+            <div class="tool_log_show" style="height: 100px;"><div id="output" class="output"></div></div>
+        </div>
+
+
+    </body>
+</html>

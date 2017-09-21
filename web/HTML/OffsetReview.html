@@ -1,0 +1,587 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<title>Offset Review</title>
+                <!--Javascript-->
+                <!--JQuery files -->
+                <script type="text/javascript" src="../js/lib/jquery/jquery-1.11.2.min.js"></script>    
+                
+                <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+
+
+                <!--D3 Javascript -->
+                <script src="../js/lib/d3/d3.js"></script>
+                <script src="../js/lib/d3/d3.min.js"></script>
+                <script type="text/javascript" src="../js/lib/d3.legend.js"></script>
+                
+                <!--Statistical package-->
+                <script src="../js/utils/science.v1.min.js"></script>
+
+                <!--Menu Javascript-->
+                <script src="../js/lib/classie.js"></script>
+                <script type="text/javascript" src="../js/menu/mlpushmenu.js"></script>
+                <!-- Javascript based browser feature detection for push menu -->
+                <script type="text/javascript" src="../js/lib/modernizr.push.custom.js"></script>
+                <script type="text/javascript" src="../js/lib/modernizr-2.6.2.min.js"></script>
+                
+                <!--Workbench Routines -->
+                 <script type="text/javascript" src="../js/utils/workbenchutils.js"></script>
+                <script type="text/javascript" src="../js/wbFunctions.js"></script>
+
+
+                <!-- CSS -->
+                <!--Workbench CSS -->
+                <link rel="stylesheet" type="text/css" href="../CSS/wbstyles.css" />
+
+
+                <!--Menu CSS -->
+                <link rel="stylesheet" type="text/css" href="../CSS/normalize.css" />
+                <link rel="stylesheet" type="text/css" href="../CSS/menus.css" />
+                <link rel="stylesheet" type="text/css" href="../CSS/icons.css" />
+                <link rel="stylesheet" type="text/css" href="../CSS/component.css" />
+                <style>
+                    #offset_table{
+                        float:left
+                    }   
+                    #kl_div{
+                        overflow:hidden
+                    }
+                    #offset_table tr.highlight{
+                        background:#336ca6
+                    }
+                    
+                    /* input slider styling. Temporary quick copy-paste from the internet */
+                    body {
+                        padding: 30px;
+                    }
+                    input[type=range] {
+                        /*removes default webkit styles*/
+                        -webkit-appearance: none;
+
+                        /*fix for FF unable to apply focus style bug */
+                        border: 1px solid white;
+
+                        /*required for proper track sizing in FF*/
+                        width: 300px;
+                    }
+                    input[type=range]::-webkit-slider-runnable-track {
+                        width: 300px;
+                        height: 5px;
+                        background: #ddd;
+                        border: none;
+                        border-radius: 3px;
+                    }
+                    input[type=range]::-webkit-slider-thumb {
+                        -webkit-appearance: none;
+                        border: none;
+                        height: 16px;
+                        width: 16px;
+                        border-radius: 50%;
+                        background: #336ca6;
+                        margin-top: -4px;
+                    }
+                    input[type=range]:focus {
+                        outline: none;
+                    }
+                    input[type=range]:focus::-webkit-slider-runnable-track {
+                        background: #ccc;
+                    }
+
+                    input[type=range]::-moz-range-track {
+                        width: 300px;
+                        height: 5px;
+                        background: #ddd;
+                        border: none;
+                        border-radius: 3px;
+                    }
+                    input[type=range]::-moz-range-thumb {
+                        border: none;
+                        height: 16px;
+                        width: 16px;
+                        border-radius: 50%;
+                        background: #336ca6;
+                    }
+
+                    /*hide the outline behind the border*/
+                    input[type=range]:-moz-focusring{
+                        outline: 1px solid white;
+                        outline-offset: -1px;
+                    }
+
+                    input[type=range]::-ms-track {
+                        width: 300px;
+                        height: 5px;
+
+                        /*remove bg colour from the track, we'll use ms-fill-lower and ms-fill-upper instead */
+                        background: transparent;
+
+                        /*leave room for the larger thumb to overflow with a transparent border */
+                        border-color: transparent;
+                        border-width: 6px 0;
+
+                        /*remove default tick marks*/
+                        color: transparent;
+                    }
+                    input[type=range]::-ms-fill-lower {
+                        background: #777;
+                        border-radius: 10px;
+                    }
+                    input[type=range]::-ms-fill-upper {
+                        background: #ddd;
+                        border-radius: 10px;
+                    }
+                    input[type=range]::-ms-thumb {
+                        border: none;
+                        height: 16px;
+                        width: 16px;
+                        border-radius: 50%;
+                        background: goldenrod;
+                    }
+                    input[type=range]:focus::-ms-fill-lower {
+                        background: #888;
+                    }
+                    input[type=range]:focus::-ms-fill-upper {
+                        background: #ccc;
+                    }
+                </style>
+        </head>
+
+        <body>
+            <div class="container">
+                <!-- Push Wrapper -->
+                <div class="mp-pusher" id="mp-pusher">
+
+                    <!-- mp-menu -->
+                    <nav id="mp-menu" class="mp-menu">
+                        <div class="mp-level">
+                            <h2 class="icon icon-world">Sample Offset Review</h2>
+                            <ul>
+                                <!-- <li id='offset'><a href="#" onclick="initialiseKL()">Offset Review</a></li> -->
+                                
+                                
+                                <li id='normalisation_submenu' class="icon icon-arrow-left">
+                                    <a class="icon icon-news" href="#" >Normalisation Type</a>
+                                    <div class="mp-level">
+                                        <h2 class="icon icon-news">Normalisation Type</h2>
+                                        <a class="mp-back" href="#">back</a>
+                                        
+                                            <table id='normalisations'>
+                                                <!-- Normalisations dynamically added here by updateNormalisationMenu -->
+                                            </table>
+
+                                        
+                                    </div>
+                                </li>
+                                <li id="settings" class="icon icon-arrow-left" >
+                                    <a class="icon icon-user" href="#">Settings</a>
+                                    <div class="mp-level">
+                                        <h2 class="icon icon-user">Settings</h2>
+                                        <a class="mp-back" href="#">back</a>
+                                        <ul>
+                                            <li style="margin: 0 0 10px 0;">
+                                                <label for="winlength" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Window Length</label>
+                                                <input type="number" id="winlength" align="right" name="winlength" value="4000" step="100" 
+                                                       oninput="app.setWindowLength($('#winlength').val())">
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li id='begin_review'><a href="#" onclick="setupReview()">Continue Workflow</a></li>
+                                <li id='back_to_main'><a href="#" onclick="returnToMain()">Home</a></li>
+                            </ul>
+                        </div>
+
+                    </nav>
+                    <!-- /mp-menu -->
+
+                    <div class="scroller"><!-- this is for emulating position fixed of the nav -->
+                        <div class="scroller-inner">
+
+
+                            <div class="content clearfix" >
+                                <div class="block block-80 clearfix">
+                                    <p><a href="#" id="trigger" class="menu-trigger">Open/Close Menu</a></p>
+
+
+                                </div>
+
+
+                            </div>
+                        </div><!-- /scroller-inner -->
+                        <div id="offset_table" style="display:table">
+                        <table class="filetable" id="offset_table" > <!-- cellspacing='0' is important, must stay -->
+                            <thead>
+                                <tr>
+                                    <th>Sample ID</th>
+                                    <th id="offset">
+                                        Offset
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="offset_tb">
+
+
+
+                            </tbody>
+                        </table>
+                        </div>
+                        <div id="status_label">
+                            <label></label>
+                        </div>
+                        <!-- KL graphics -->
+                        <div id="kl_div">
+
+                        </div>
+
+                    </div><!-- /scroller -->
+                </div>
+            </div>
+
+
+
+            <script>
+                    // stuff to do once page has loaded
+                    $( document ).ready(function() {
+                        alert("OR ready");
+                        if(typeof app !== "undefined")
+                            app.onPageLoaded();
+                    });
+                    
+                    new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
+                    var JSON_KL = "../json/StrandBiasDivergence.json";
+                    
+                    var dim = {h:250, w:600}
+                    var margins = {t:10, b:30, l:50, r:10}
+                    var initialBandWidth = 0.2;
+                    
+                    var normsSetup = false;
+                    //initialiseKL();
+                    function initialiseKL()
+                    {
+
+                        //sd3.select("#table").style("display", "none")
+                        
+                        d3.selectAll(".kl").remove()
+                        var svg = d3.select("#kl_div").append("svg").attr("class", "kl").attr("height", dim.h+margins.t+margins.b).attr("width", dim.w+margins.l+margins.r);
+                        var svgg = svg.append("g").attr("transform", translateStr(margins.l, margins.t));
+  
+                        d3.json(JSON_KL, function(error, json)
+                        {
+                            
+                            var byFilename = d3.nest().key(function(d){return d.Filename}).entries(json);
+                            
+                            //calculateLoess(byFilename, initialBandWidth);
+                            
+                            var tab = d3.select("#offset_table").select("#offset_tb").selectAll(".offset_row")
+                                    .data(byFilename, function(f){return f.key})
+                                    .enter()
+                                    .append("tr")
+                                    .attr("chosen", "false")
+                                    .attr("onclick", function(f){return "KLforFile('"+f.key+"')"})
+                                    .attr("class", function(f){return "offset_row "+f.key.replace("\.", " ")})
+                                    .on("click", function(d){fileSelected(d, this)})
+                                    
+                            tab.append("td").text(function(f){return f.key});
+                            tab.append("td").attr("class","offset").text(function(f){return calculateLoess(f.values, initialBandWidth)})
+                            $("#offset_table tbody").children("tr:first").addClass("highlight")
+                            d3.select("#offset_tb").select("tr").attr("chosen", "true")
+                        
+                            // draw KL line
+                            //var selected = svgg.selectAll(".kl.graph").data([byFilename[0].values], function(d,i){return i})
+                                    //.append("g").attr("class", "kl graph")
+                                    
+                            svgg.call(KLdivergence, byFilename[0].values, initialBandWidth);
+
+                              
+                            // draw minimum inidicator
+                             
+                            
+                            d3.select("#kl_div").append("label")
+                                    .attr("for", "bandWidth_slider")
+                                    .attr("id", "bandWidth_slider_label")
+                                    .text("Adjust Loess smoothing bandwidth: " + initialBandWidth);
+                            var loSlider = d3.select("#kl_div")
+                                    .append("div");
+                            loSlider.append("input")
+                                .attr("id", "bandWidth_slider")
+                                .attr("type", "range")
+                                .attr("min", "0.01")
+                                .attr("max", "1")
+                                .attr("value", initialBandWidth)
+                                .attr("step", "0.01")
+                                .on("change", onBandWidthSliderUpdate);
+//                            loSlider.append("label")
+//                                    .attr("for", "bandWidth_slider")
+//                                    .attr("id", "bandWidth_slider_label")
+//                                    .text();
+                        });
+                        
+                        document.getElementById("status_label").innerHTML = "Complete!";
+                    }
+                    
+                    function fileSelected(data, element)
+                    {
+                        // change current selected row to this row
+                        d3.select(".offset_row[chosen=true]").attr("chosen", "false");
+                        d3.select(element).attr("chosen", "true")
+                        $(".offset_row[chosen=true]").addClass("highlight").siblings().removeClass("highlight")
+                        
+                        KLforFile(data.key)
+                    }
+                    
+                    function KLforFile(filename)
+                    {
+                        var bandwidth = $("#bandWidth_slider").val();
+                        var svgg = d3.select("#kl_div").select("g")
+                        d3.json(JSON_KL, function(error, json){
+                            var byFilename = d3.nest().key(function(d){return d.Filename}).entries(json);
+                            var thisfile = find(byFilename, "key", filename)
+                            KLdivergence(svgg, thisfile.values, bandwidth)
+                        })
+                    }
+                    
+                    function calculateLoess(data, bandWidth)
+                    {
+                            var loess = science.stats.loess();
+                            loess.bandwidth(bandWidth);
+                            
+                            var x = data.map(function(d){return d.Expression})
+                            var y = data.map(function(d){return d.KL})
+
+                            var ysmoothed = loess(x,y);
+                            for(var i=0; i < data.length; i++)
+                            {
+                                data[i]["ysmoothed"] = ysmoothed[i];
+                            }
+                            var minYsmoothed = d3.min(data, function(d){return d.ysmoothed})
+                            var proposedOffset = data[data.map(function(d){return d.ysmoothed}).indexOf(minYsmoothed)].Expression
+                            return proposedOffset;
+                    }
+                    
+                    function KLdivergence(g, data, bandWidth)
+                    {
+                       
+                        var proposedOffset = calculateLoess(data, bandWidth)
+
+                        
+                        var xscale = d3.scale.linear()
+                            .domain([d3.min(data, function(d){return d.Expression}), d3.max(data, function(d){return d.Expression})])
+                            .range([0, dim.w]);
+                        var yscale = d3.scale.linear()
+                                .domain([0, d3.max(data, function(d){return d.KL})])
+                                .range([dim.h, 0]);
+                        //var byFilename = d3.nest().key(function(d){return d.Filename}).entries(json);
+                        var line = d3.svg.line()
+                                .x(function(d){return xscale(d.Expression);})
+                                .y(function(d){return yscale(d.KL);});
+                        var sline = d3.svg.line()
+                            .x(function(d){return xscale(d.Expression);})
+                            .y(function(d){return yscale(d.ysmoothed);})
+
+                        
+                        //var selected = g.selectAll(".kl.graph").data([g.data()], function(d,i){return i}).append("g").attr("class", "kl graph")
+                        var selected = g.selectAll(".kl.graph").data([data], function(d,i){return i})
+                        var entered = selected.enter().append("g").attr("class","kl graph")
+                        entered.append("path").attr("class", "kl raw").attr("d", function(f){ return line(f)})
+                                     .style("fill", "transparent").style("stroke", "black");
+                             
+                        entered.append("path").attr("class", "kl smoothed")
+                                      .attr("d", function(f){ 
+                                          return sline(f);
+                                       }).style("fill", "transparent").style("stroke", "red");   
+                        entered.append("line").attr("class","minPoint")
+                                    .attr("x1", function(f){return xscale(proposedOffset)})
+                                    .attr("x2", function(f){return xscale(proposedOffset)})
+                                    .attr("y1", yscale.range()[1])
+                                    .attr("y2", yscale.range()[0])
+                                    .style("stroke", "black")
+                            
+                                                         // draw axes
+                         entered.append("g").attr("class", "x axis")
+                                     .attr("transform", translateStr(0,dim.h))
+                                     .call(d3.svg.axis().orient("bottom").scale(xscale));
+                         entered.append("g").attr("class", "y axis").call(d3.svg.axis().orient("left").scale(yscale));
+                            
+                        var update = selected.transition()
+                        
+                        update.select(".raw").attr("d", function(f){return line(f)}).duration(300);
+                        update.select(".smoothed").attr("d", function(f){return sline(f)}).duration(300);
+                                   
+                        
+                        update.select(".minPoint").attr("x1", xscale(proposedOffset))
+                                                  .attr("x2", xscale(proposedOffset))
+                                          
+                        selected.exit().remove();
+                        return proposedOffset;
+                    }
+                    
+                    function onBandWidthSliderUpdate()
+                    {
+                        var slider = d3.select("#bandWidth_slider");
+                        d3.select("#bandWidth_slider_label").text("Adjust Loess smoothing bandwidth: " + slider.node().value)
+                        d3.json(JSON_KL, function(error, json){
+                            var currentRow = d3.select("tr.offset_row[chosen=true]")
+                            
+                            // take currently selected file from table
+                            var currentFile = currentRow.select("td").text();
+                            
+                            // sort data based on by file
+                            var byFilename = d3.nest().key(function(d){return d.Filename}).entries(json);
+                            
+                            //var data = find(byFilename, "key", currentFile);
+                            // for each file, update offset
+                            byFilename.forEach(function(f){
+                                var thisOffset = calculateLoess(f.values, slider.node().value)
+                                var cell = currentRow.select("td.offset")
+                                $("tr."+f.key+" td.offset").text(thisOffset);
+                                // if the file is selected, update the KL graph
+                                if(f.key === currentFile){
+                                    
+                                    KLdivergence(d3.select("#kl_div").select("g"), f.values, slider.node().value)
+            //                        filename = filename.replace(".", "\\\\.");
+
+                                }
+                            });
+                        })
+                    }
+                    
+                    function detectNorms(list)
+                    {
+                        alert("detecting norms");
+                        if(!normsSetup)
+                        {
+                            if(typeof app !== 'undefined')
+                            {
+                                //alert("inside application code");
+                                var list = app.getNormalisations();
+                                updateNormalisationMenu(list);
+                            }
+                            else
+                            {
+
+                                var list = ["test1","test2","test3","test4","test5","test6","test7","test8"];
+                                updateNormalisationMenu(list);
+                            }
+                            normsSetup = true;
+                        }
+                    }
+                    function setNormType()
+                    {
+                        var table = document.getElementById("normalisations");
+                        //console.log(table);
+                        for(var i = 0; i < table.rows.length; i++)
+                        {
+                            var radioBox = table.rows[i].cells[0].children[0];
+                            //console.log(radioBox);
+                            if(radioBox.checked)
+                            {
+                                
+                                if(typeof app !== 'undefined')
+                                {
+                                    
+                                    app.setNormType(radioBox.id);
+                                }
+                                else
+                                {
+                                    //alert(radioBox.id);
+                                }
+                            }
+                        }
+                    }
+                    function updateNormalisationMenu(types)
+                    {
+                       
+
+                        var table = document.getElementById("normalisations");
+                        
+                        
+                        // one div per normalisation
+                        for(var i = 0; i < types.length; i++)
+                        {
+                            var title = types[i];
+                            //alert(title);
+                            var rowCount = table.rows.length;
+                            var row = table.insertRow(rowCount);
+                            var cell1 = row.insertCell(0);      
+                            $(cell1).append($('<input type="radio" name="norm_radio" class = "radio" onchange="setNormType()"/>')
+                                    .attr("id", title)
+                                    .prop("checked", true))
+                                    .append($("<label />").attr("for", title).text(title));
+//                            cell1.innerHTML = '<input type="radio" id=' + title + ' name="norm_radio" class = "radio" onchange="setNormType()" ';
+//                                    if(types.length === 1)
+//                                        cell1.innerHTML += "checked"
+//                            cell1.innerHTML += '/>'+ '<label for="' + title + '">'+ title +'</label>';       
+                        }
+                        
+                        if(types.length === 1){
+                            app.setNormType(types[0]);
+                            app.begin_review();
+                        }
+                        
+                        //console.log(table);
+
+                        
+                    }
+                    function appendIndividualNormalisation(normType)
+                    {
+                        var table = document.getElementById("normalisations");
+
+                        var title = normType;
+                            //alert(title);
+                            var rowCount = table.rows.length;
+                            var row = table.insertRow(rowCount);
+                            var cell1 = row.insertCell(0);      
+                            $(cell1).append($('<input type="radio" name="norm_radio" class = "radio" onchange="setNormType()"/>')
+                                    .attr("id", title)
+                                    .prop("checked", true))
+                                    .append($("<label />").attr("for", title).text(title));
+                    }
+                    
+                    function setupReview()
+                    {
+                        document.getElementById("status_label").innerHTML = "Processing...";
+                        var table = document.getElementById("offset_table").getElementsByTagName('tbody')[0];
+                        
+                        //console.log(table);
+                        alert("setup");
+                        for(var i = 0; i < table.rows.length; i++)
+                        {
+                            //console.log(table.rows[i]);
+                            
+                            var row = table.rows[i];
+                            //console.log(row.cells[0].innerHTML);
+                            //console.log(row.cells[1].innerHTML);
+                            if(typeof app !== 'undefined')
+                            {
+                                app.setOffsetValue(row.cells[0].innerHTML, row.cells[1].innerHTML);
+                            }
+                        }
+                        if(typeof app !== 'undefined')
+                        {
+                            var list = app.getNormalisations();
+                            var result = app.begin_review();
+                            if(result)
+                            {
+                                $("#begin_review").find('a').addClass('disabled');
+                                $("#begin_review").addClass('disabled');
+                                $("#normalisation_submenu").find('a').addClass('disabled');
+                                $("#normalisation_submenu").addClass('disabled');
+                                
+                            }
+                        }
+                        else
+                        {
+//                            for(i=)
+                        }
+                    }       
+            </script>
+
+            <!--<script src="../js/menu/overlay-menu.js"></script>-->
+        </body>
+</html>
+		

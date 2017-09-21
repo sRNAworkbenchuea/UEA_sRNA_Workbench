@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Loci Filter</title>
+        <link rel="stylesheet" href="../CSS/workflowModule.css">
+        <script src="../js/d3.v3.min.js"></script>
+        <script src="../js/HQLTableViewer.js"></script>
+        <script src="../js/ToolParameters.js"></script>
+        <script src="../js/StatusLog.js"></script>
+        <script src="../js/utils/workbenchutils.js"></script>
+
+
+        <link rel="stylesheet" type="text/css" href="../css/jquery.dataTables.css">
+        <script type="text/javascript" src="../js/jQuery/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="../js/datatables/jquery.dataTables.min.js"></script>
+
+        <script>
+
+
+
+            function goBack()
+            {
+
+                app.goHome();
+            }
+
+            function init()
+            {
+                app.initController();
+                createDataTable("", 'predictions');
+                drawTable('predictions');
+            }
+
+
+        </script>
+
+    </head>
+    <body onload="init();">
+
+
+        <div class="tool_title">
+            <div class="button" style="display:inline;" id="gohome" onclick="goBack();">&#8617;</div>
+            <h1>Loci Module</h1>
+        </div>
+        <p>This module takes a list of interactions and a list of sRNAs. The module returns a subset of the sRNAs that map to the genome around the sRNA involved in the interactions.</p>
+
+        <div class="left_column">
+
+            <div id="predictions" class="log_panel"></div>
+
+            <h2>LOG</h2>
+            <div class="log_panel" style="height: 100px;"><div id="output" class="output"></div></div>
+
+        </div>
+
+    </body>
+</html>

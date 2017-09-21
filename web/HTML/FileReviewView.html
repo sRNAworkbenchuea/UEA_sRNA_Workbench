@@ -1,0 +1,450 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<title>File Review Display</title>
+                
+
+
+                <!--Javascript-->
+                
+                
+
+                <!--JQuery files -->
+                <script type="text/javascript" src="../js/lib/jquery/jquery-2.1.4.min.js"></script>
+                <!--JQuery UI-->
+                <script type="text/javascript" src="../js/lib/jqueryui/jquery-ui.min_1.js"></script>
+                
+                <!--<script type="text/javascript" src="../js/lib/jquery.cookie-1.3.1.js"></script>
+                <script type="text/javascript" src="../js/lib/jquery/jquery.validate.js"></script>-->
+
+                <!--wizard JS-->
+                <!--<script type="text/javascript" src="../js/steps/jquery.steps.js"></script>-->
+                <!--<script type="text/javascript" src="../js/wizards/jquery.smartWizard-2.0.min.js"></script>-->
+
+                
+
+                <!--D3 Javascript -->
+                <script type="text/javascript" src="../js/lib/d3/d3.js"></script>
+                <script type="text/javascript" src="../js/lib/d3/d3.min.js"></script>
+                <script type="text/javascript" src="../js/lib/d3.legend.js"></script>
+                
+                <!--Pipped (slider API)-->
+                <script type="text/javascript" src="../js/jquery-ui-slider-pips.js"></script>
+                
+                <!--JQuery UI-->
+                <script type="text/javascript" src="../js/jquery-ui-slider-pips.js"></script>
+                
+                
+
+                <!--Menu Javascript-->
+                <script src="../js/lib/classie.js"></script>
+                <script type="text/javascript" src="../js/menu/mlpushmenu.js"></script>
+                <!-- Javascript based browser feature detection for push menu -->
+                <script type="text/javascript" src="../js/lib/modernizr.push.custom.js"></script>
+                <script type="text/javascript" src="../js/lib/modernizr-2.6.2.min.js"></script>
+
+                <!--File Hierarchy Javascript-->
+                <!--<script type="text/javascript" src="../js/dndTree.js"></script>-->
+                <script type="text/javascript" src="../js/SquareTree.js"></script>
+                
+                <!--Workbench Routines -->
+                 <script type="text/javascript" src="../js/utils/workbenchutils.js"></script>
+                 
+                 <script type="text/javascript" src="../js/files/FileTable.js"></script>
+                
+
+
+                <!-- CSS -->
+                <!--Workbench CSS -->
+                <link rel="stylesheet" type="text/css" href="../CSS/wbstyles.css" />
+
+                <!--Pipped (Slider CSS)-->
+                <link rel="stylesheet" type="text/css" href="../CSS/jquery-ui-slider-pips.css" />
+                
+                
+                <!--JQuery CSS file-->
+                <link rel="stylesheet" type="text/css" href="../CSS/jquery-ui.min.css" />
+                
+                
+
+                <!--Menu CSS -->
+                <link rel="stylesheet" type="text/css" href="../CSS/normalize.css" />
+                <link rel="stylesheet" type="text/css" href="../CSS/menus.css" />
+                <link rel="stylesheet" type="text/css" href="../CSS/icons.css" />
+                <link rel="stylesheet" type="text/css" href="../CSS/component.css" />
+                
+                <!-- Import FontAwesome 4.2 
+                <link rel="stylesheet" href="../CSS/font-awesome.css">-->
+                
+                <!--Wizard CSS-->
+                <!--<link rel="stylesheet" href="../CSS/jquery.steps.css">-->
+                <!--<link rel="stylesheet" type="text/css" href="../CSS/smart_wizard.css" />-->
+                
+                <!-- Import FontAwesome 4.2 -->
+                <!--<link rel="stylesheet" href="../CSS/font-awesome.min.css">-->
+                <!--Buttons CSS-->
+                <!--<link rel="stylesheet" href="../CSS/fancy-buttons.css">-->
+<!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+<!--{"name":"Hierarchy Root","children": [{"name":"Level - 1 - Time Point 1 - ID: 1","children": [{"name":"Level - 2 - Treatment 1 - ID: 3","children": [{"name":"Level - 3 - File: Replicate - 0 | GSM118373_Rajagopalan_col0_leaf_nr.fa |  - ID: 7","children": []},{"name":"Level - 3 - File: Replicate - 1 | GSM154336_carrington_col0_flower_nr.fa |  - ID: 8","children": []}]},{"name":"Level - 2 - Treatment 2 - ID: 4","children": [{"name":"Level - 3 - File: Replicate - 0 | GSM118373_Rajagopalan_col0_leaf_nr.fa |  - ID: 9","children": []},{"name":"Level - 3 - File: Replicate - 1 | GSM154336_carrington_col0_flower_nr.fa |  - ID: 10","children": []}]}]},{"name":"Level - 1 - Time Point 2 - ID: 2","children": [{"name":"Level - 2 - Treatment 1 - ID: 5","children": []},{"name":"Level - 2 - Treatment 2 - ID: 6","children": []}]}]}-->
+<!--{"name":"Hierarchy Root","children": [{"name":"Level - 1 - Time Point 1 - ID: 1","children": []},{"name":"Level - 1 - Time Point 2 - ID: 2","children": []}]}-->
+
+<script>
+    function reloadHierarchy()
+                    {
+                        //alert("loading view");
+                        loadHierarchy();
+                        //console.log(document.getElementsByClassName("hierarchy_tree"));
+                    }
+</script>
+
+        </head>
+        <body>
+            <div class="container">
+                <!-- Push Wrapper -->
+                <div class="mp-pusher" id="mp-pusher">
+
+                    <!-- mp-menu -->
+                    <nav id="mp-menu" class="mp-menu">
+                        <div class="mp-level">
+                            <h2 class="icon icon-world">File Review</h2>
+                            <ul>
+                                
+                                <li id='continue_flow'><a href="#" onclick="continueFlow()">Continue Workflow</a></li>
+                                <li id='back_to_main'><a href="#" onclick="returnToMain()">Home</a></li>
+                                <li id="sizeClassControl" class="icon icon-arrow-left" >
+                                    <a class="icon icon-params" href="#">Size Class Controls</a>
+                                    <div class="mp-level">
+                                        <h2 class="icon icon-params">Size Class Controls</h2>
+                                        <a class="mp-back" href="#">back</a>
+                                        <ul>
+                                            <li style="margin: 0 0 10px 0;">
+                                                <label for="individualSizeClass" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">
+                                                    Add individual Size Class
+                                                </label>
+                                                <input type="number" id="individualSizeClass" align="right" name="individualSizeClass" value="10" step="1">
+                                            </li>
+                                            <li id='addToSize'><a href="#" onclick="addToSize()">add size class</a></li>
+                                            <li id='resetSizeSlider'><a href="#" onclick="resetSizeSlider()">reset size classes</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+
+                            </ul>
+                        </div>
+
+                    </nav>
+                    <!-- /mp-menu -->
+
+                    <div class="scroller"><!-- this is for emulating position fixed of the nav -->
+                        <div class="scroller-inner">
+
+
+                            <div class="content clearfix" >
+                                <div class="block block-80 clearfix">
+                                    <p><a href="#" id="trigger" class="menu-trigger">Open/Close Menu</a></p>
+
+
+                                </div>
+
+
+                            </div>
+                        </div><!-- /scroller-inner -->
+
+
+                        <div id="SCF_filtering">
+                            <fieldset>
+                                <legend >Size Class Filtering</legend>
+
+                                <div id="alternating-slider"></div>
+                            </fieldset>
+                        </div>
+                        <div id="file_review_div">
+
+                            <fieldset id="file_review_fieldset">
+
+                                <legend>File Review and Removal</legend>
+
+<!--                                <table class="filetable" id="fileReviewTable" cellspacing='0' >  cellspacing='0' is important, must stay 
+                                    <thead>
+                                        <tr>
+                                            <th>Sample ID</th>
+                                            <th id="sRNA_Header">
+                                                Small RNA Replicate Details 
+                                            </th>
+                                            <th id="deg_Header">
+                                                Degradome Replicate Details 
+                                            </th>
+                                            <th id="mRNA_Header">
+                                                mRNA Replicate Details 
+                                            </th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+
+
+                                </table>-->
+
+
+                            </fieldset>
+                        </div>
+
+                        <div id="H_vis">
+                            <fieldset>
+                                <legend >Hierarchy Visualisation</legend>
+
+                                <div id="tree-container" style="width: 1800px;height: 800px; overflow: scroll;" ></div>
+                            </fieldset>
+                        </div>
+
+                        <script>reloadHierarchy();</script>
+                
+
+                    </div><!-- /scroller -->
+                </div>
+            </div>
+
+
+
+            <script>
+                    
+                    var totalAddedSizeClasses = 2;
+                    var minRange = 10;
+                    var maxRange = 60;
+                    
+                    //resetSizeSlider();
+                    
+                    setupRangeSlider(16,28);
+
+                    new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
+                    
+                    var tableHTML;
+                    // New empty file review table inside the tage with this id. To be filled in later
+                    $("#file_review_fieldset").fileTable(
+                        {
+                           setup_mode: false,
+                           on_include_state_change: handleStateChangeOnReplicate
+                        });
+                        
+                    // add some debuggable elements if no app
+//                    if(typeof app === "undefined")
+//                    {
+//                        $("#file_review_fieldset").fileTable("addSample", "DB_SAMP1")
+//                        $("#file_review_fieldset").fileTable("addSample", "DB_SAMP2")
+//                        $("#file_review_fieldset").fileTable("add_sRNA_file", "DB_SAMP1", ["DB.fa", "DB2.fa"])
+//                        $("#file_review_fieldset").fileTable("add_sRNA_file", "DB_SAMP2", ["EC.fa", "EC2.fa"])
+//                    }
+                    
+                    function updateTable()
+                    {
+                        //alert("called " + tableHTML);
+                        document.getElementById("fileReviewTable").innerHTML = tableHTML;
+                    }
+                    
+                    function configureCheckBoxes()
+                    {
+                        var table = document.getElementById("fileReviewTable").getElementsByTagName('tbody')[0];
+                        for (var i = 0; i < table.rows.length;  i++) {
+                           //iterate through rows
+                           var row = table.rows[i];
+
+                           var inner_table = row.cells[1].getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
+                           for (var j = 0, inner_row; inner_row = inner_table.rows[j]; j++) {
+                               
+                               console.log(inner_row.cells[2].getElementsByTagName('input')[0]);
+                               //if(inner_row.cells[2].getElementsByTagName('input')[0].checked)
+                                //{
+                                    //alert("adding: "+inner_row.cells[1].getElementsByTagName("a")[0].innerHTML);
+                                 //   app.addToSelectedFiles(inner_row.cells[1].getElementsByTagName("a")[0].innerHTML);
+                                //}
+                           }
+                        }
+                    }
+                    
+                    function handleStateChangeOnReplicate(rowid,replicateID)
+                    {
+                        var result = "modified path";
+                        var path;
+                        var replicateModID;
+                        var sampleID;
+                        if(rowid.id === undefined)
+                        {
+                            //console.log(rowid);
+                            sampleID = rowid;
+                        }
+                        else
+                        {
+                            sampleID = rowid.id;
+                        }
+                        
+                        replicateModID =  sampleID + "_replicate_" + replicateID;
+                        
+                        var checkedID = sampleID + "_replicateEnabled_"+replicateID;
+                        
+                        path = document.getElementById(replicateModID);
+                        
+                        //console.log(path);
+                        
+                        var checkbox = document.getElementById(checkedID);
+                        
+                        if(!checkbox.checked)
+                        {
+                            //alert("checked");
+                            //path.className = path.className + " disablednode";
+                            path.setAttribute("class", "node disablednode");
+
+                        }
+                        else
+                        {
+                            path.setAttribute("class", "node");
+                        }
+                        //console.log(path);
+                    }
+                    
+                    function continueFlow()
+                    {
+                        if(typeof app !== 'undefined')
+                        {
+                            updateSizeClasses();
+                            
+//                            var table = document.getElementById("file_review_fieldset").getElementsByTagName('tbody')[0];
+//                            for (var i = 0; i < table.rows.length;  i++) {
+//                               //iterate through rows
+//                               var row = table.rows[i];
+//
+//                               var inner_table = row.cells[1].getElementsByTagName('table')[0].getElementsByTagName('tbody')[0];
+//                               for (var j = 0, inner_row; inner_row = inner_table.rows[j]; j++) {
+//
+//                                   if(inner_row.cells[2].getElementsByTagName('input')[0].checked)
+//                                    {
+//                                        //alert("adding: "+inner_row.cells[1].getElementsByTagName("a")[0].innerHTML);
+//                                        app.addToSelectedFiles(inner_row.cells[1].getElementsByTagName("a")[0].innerHTML);
+//                                    }
+//                               }
+//                            }
+                            $("#file_review_fieldset").find("input").each(function(f){
+                                //console.log($(this).parent().parent().find("a").text());
+                                if($(this).prop("checked"))
+                                    app.addToSelectedFiles($(this).parent().parent().find(".filename a").text());
+                            });
+                            app.setContinue(true);
+                            $("#continue_flow").find('a').addClass('disabled');
+                            $("#continue_flow").addClass('disabled');
+                            
+                            
+                        }
+                        else
+                        {
+                            var val = $("#alternating-slider").slider("values");
+                            //val.sort();
+                            console.log(val);
+                        }
+                    }
+                    
+                    function addToSize()
+                    {
+                        var sizeToAdd = document.getElementById("individualSizeClass").value;
+                        $("#alternating-slider").slider("values").push(sizeToAdd);
+                       // $("#alternating-slider").slider("refresh");
+                       
+                       $("#alternating-slider").slider('values',totalAddedSizeClasses,sizeToAdd);
+                       totalAddedSizeClasses++;
+                    }
+                    
+                    function updateSizeClasses()
+                    {
+                        var val = $("#alternating-slider").slider("values");
+
+                        if(typeof app !== 'undefined')
+                        {
+                            app.setMinMax(val[0],val[1]);
+                            var subArray = val.slice(2,val.length);
+                            subArray.forEach(function(entry)
+                            {
+                                app.addToRemovalList(entry);
+                            });
+                        }
+                        else
+                        {
+                            console.log(val);
+                        }
+                    }
+                    
+                    function setupRangeSlider(min,max)
+                    {
+                        minRange = min;
+                        maxRange = max;
+                        
+                        document.getElementById("individualSizeClass").value=minRange;
+               
+                        setupSlider();
+                        
+                    }
+                    function setupSlider()
+                    {
+                        $("#alternating-slider")
+                        .slider({
+                            max: maxRange,
+                            min: minRange,
+                            values: [minRange, maxRange]
+                        })
+                        .slider("pips", {
+                            step: 1,
+                            rest: "label",
+                            //suffix: " NT" ,
+                            labels: { first: "Min", last: "Max" }
+                        })
+                        .slider({
+                            change: function(event, ui) { 
+                                //alert(ui.value); 
+                            } 
+                        })
+                        .slider("float");
+                    }
+                    function resetSizeSlider()
+                    {
+                        // after a slider has been inialised
+                     //$("#alternating-slider").slider("pips", "destroy");
+                     /*$("#alternating-slider")
+                        .slider({
+                            max: maxRange,
+                            min: minRange,
+                            values: [minRange, maxRange]
+                        })
+                        .slider("pips", {
+                            step: 1,
+                            rest: "label",
+                            //suffix: " NT" ,
+                            labels: { first: "Min", last: "Max" }
+                        })
+                        .slider({
+                            change: function(event, ui) { 
+                                //alert(ui.value); 
+                            } 
+                        })
+                        .slider("float");*/
+        
+                        $("#alternating-slider")
+                                        .slider({
+                                            max: maxRange,
+                                            min: minRange,
+                                            values: [minRange, maxRange]
+                                        });
+                
+                        totalAddedSizeClasses = 2;
+                       
+                    }
+                    
+                
+            </script>
+
+            <!--<script src="../js/menu/overlay-menu.js"></script>-->
+        </body>
+</html>
+		

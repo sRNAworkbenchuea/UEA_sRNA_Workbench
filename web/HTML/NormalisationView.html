@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Normalisation Display</title>
+
+
+
+        <!--Javascript-->
+        <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>->>
+      
+        <!--JQuery files -->
+        <script type="text/javascript" src="../js/lib/jquery/jquery-1.11.2.min.js"></script>
+
+
+        <!--D3 Javascript -->
+        <script src="../js/lib/d3/d3.js"></script>
+        <script src="../js/lib/d3/d3.min.js"></script>
+        <script type="text/javascript" src="../js/lib/d3.legend.js"></script>
+
+        <!--Menu Javascript-->
+        <script src="../js/lib/classie.js"></script>
+        <script type="text/javascript" src="../js/menu/mlpushmenu.js"></script>
+        <!-- Javascript based browser feature detection for push menu -->
+        <script type="text/javascript" src="../js/lib/modernizr.push.custom.js"></script>
+        <script type="text/javascript" src="../js/lib/modernizr-2.6.2.min.js"></script>
+
+        <!--File Hierarchy Javascript-->
+        <script type="text/javascript" src="../js/dndTree.js"></script>
+
+        <!--Workbench Routines -->
+        <script type="text/javascript" src="../js/utils/workbenchutils.js"></script>
+
+
+
+        <!-- CSS -->
+        <!--Workbench CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/wbstyles.css" />
+
+
+        <!--Menu CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/normalize.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/menus.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/icons.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/component.css" />
+        
+        <style type="text/css">
+            td
+            {
+                padding:0 15px 0 15px;
+            }
+        </style>
+
+    </head>
+    <body>
+        <div class="container">
+            <!-- Push Wrapper -->
+            <div class="mp-pusher" id="mp-pusher">
+
+                <!-- mp-menu -->
+                <nav id="mp-menu" class="mp-menu">
+                    <div class="mp-level">
+                        <h2 class="icon icon-world">Normalisation Setup</h2>
+                        <ul>
+                            <li class="icon icon-arrow-left" id="export_options">
+                                <a class="icon icon-settings" href="#">Export</a>
+                                <div class="mp-level">
+                                    <h2 class="icon icon-display">Export</h2>
+                                    <a class="mp-back" href="#">back</a>
+                                    <ul>
+                                        <li id='exportToFASTA'  ><a  href="#" onclick="app.exportToFASTA()" >Export to FASTA</a></li>
+
+                                        <li id='exportToCSV'  ><a  href="#" onclick="app.exportToCSV()" >Export to CSV Matrix</a></li>
+
+                                    </ul>
+                                </div>
+                            </li>
+                            <li id='continue_flow'><a href="#" onclick="continueFlow()">Continue Workflow</a></li>
+                            <li id='back_to_main'  ><a  href="#" onclick="returnToMain()" >Home</a></li>
+
+
+
+                        </ul>
+                    </div>
+
+                </nav>
+                <!-- /mp-menu -->
+
+                <div class="scroller"><!-- this is for emulating position fixed of the nav -->
+                    <div class="scroller-inner">
+
+
+                        <div class="content clearfix" >
+                            <div class="block block-80 clearfix">
+                                <p><a href="#" id="trigger" class="menu-trigger">Open/Close Menu</a></p>
+
+
+                            </div>
+
+
+                        </div>
+                    </div><!-- /scroller-inner -->
+
+                    <section style="margin: 10px;">
+                        <fieldset  style="min-height:100px;">
+                            <legend><b> Scaling Normalisation </b> </legend>
+
+                            <table id="scalingNorms">
+                                <tr>
+                                    <td>
+                                        <input type="checkbox"  name="PT_N_radio" id="PT_N_radio" class="radio" checked />
+                                        <label for="PT_N_radio" style="font-size: 14px;">Per Total Normalisation</label>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox"   name="UQ_N_radio" id="UQ_N_radio" class="radio" checked />
+                                        <label for="UQ_N_radio" style="font-size: 14px; ">Upper Quartile Normalisation</label>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox"  name="TM_N_radio" id="TM_N_radio" class="radio" checked />
+                                        <label for="TM_N_radio" style="font-size: 14px; ">Trimmed Mean Normalisation</label>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="DES_N_radio" id="DES_N_radio" class="radio" checked />
+                                        <label for="DES_N_radio" style="font-size: 14px;">DESEQ Normalisation</label>
+                                    </td>
+                                    
+                                </tr>
+                            </table>
+                            
+                        </fieldset>
+                        <fieldset style="min-height:100px;">
+                            <legend><b> Rank Based Normalisation </b> </legend>
+                            
+                            <table id="rankBasedNorms" cellspacing="10">
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="Q_N_radio" id="Q_N_radio" class="radio" checked />
+                                        <label for="Q_N_radio" style="font-size: 14px;">Quantile Normalisation</label>
+                                    </td>
+
+                                </tr>
+                            </table>
+
+
+
+                        </fieldset>
+                        <fieldset style="min-height:100px;">
+                            <legend><b> Statistical Normalisation </b> </legend>
+
+                            <table  id="statsBasedNorms" cellspacing="10">
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="B_N_radio" id="B_N_radio" class="radio" checked />
+                                        <label for="B_N_radio" style="font-size: 14px;">Bootstrapping Normalisation</label>
+                                    </td>
+                                    
+                                    
+
+                                </tr>
+                            </table>
+
+
+
+                        </fieldset>
+                    </section>
+
+
+                </div><!-- /scroller -->
+            </div>
+        </div>
+
+        <script>
+
+            new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
+            setup();
+            
+            function setup()
+            {
+                document.getElementById("PT_N_radio").onclick= function() {
+                    if(document.getElementById("PT_N_radio").checked)
+                    {
+                        addNormToList("TC");
+                        
+                    }
+                    else
+                    {
+                        removeNormFromList("TC");
+                    }
+                };
+
+                document.getElementById("UQ_N_radio").onclick= function() {
+                    
+                    
+                    if(document.getElementById("UQ_N_radio").checked)
+                    {
+                        addNormToList("UQ");
+                        
+                    }
+                    else
+                    {
+                        removeNormFromList("UQ");
+                    }
+                };
+                
+                document.getElementById("TM_N_radio").onclick= function() {
+                    
+                    if(document.getElementById("TM_N_radio").checked)
+                    {
+                        addNormToList("TMM");
+                        
+                    }
+                    else
+                    {
+                        removeNormFromList("TMM");
+                    }
+                };
+                
+                document.getElementById("Q_N_radio").onclick= function() {
+                    
+                    if(document.getElementById("Q_N_radio").checked)
+                    {
+                        addNormToList("Q");
+                        
+                    }
+                    else
+                    {
+                        removeNormFromList("Q");
+                    }
+                };
+                
+                document.getElementById("B_N_radio").onclick= function() {
+                    
+                    if(document.getElementById("B_N_radio").checked)
+                    {
+                        addNormToList("B");
+                        
+                    }
+                    else
+                    {
+                        removeNormFromList("B");
+                    }
+                };
+                
+                document.getElementById("DES_N_radio").onclick= function() {
+                    
+                    if(document.getElementById("DES_N_radio").checked)
+                    {
+                        addNormToList("DE");
+                        
+                    }
+                    else
+                    {
+                        removeNormFromList("DE");
+                    }
+                };
+                
+            }
+            
+            function continueFlow()
+            {
+                if(typeof app !== 'undefined')
+                {
+                    app.setContinue(true);
+                    $("#continue_flow").find('a').addClass('disabled');
+                    $("#continue_flow").addClass('disabled');
+
+
+                }
+                else
+                {
+                    var val = $("#alternating-slider").slider("values");
+                    //val.sort();
+                    console.log(val);
+                }
+            }
+
+            
+            function setBusy(state)
+            {
+                alert("setting normalisation ready state: " + state);
+                if(state === 'true')
+                {
+                    alert("state is true");
+                    $("#export_options").find('a').addClass('disabled');
+
+                }
+                else if(state === 'false')
+                {
+                    alert("state is false");
+                    $("#export_options").find('a').removeClass('disabled');
+                }
+            }
+           
+
+            function disableAllElements()
+            {
+                $("#database_settings").find('a').addClass('disabled');
+            }
+            function enableAllElements()
+            {
+                $("#database_settings").find('a').removeClass('disabled');
+            }
+            
+            function removeNormFromList(type)
+            {
+                //console.log(type);
+                app.removeFromNorms(type);
+            }
+            
+            function addNormToList(type)
+            {
+                //console.log(type);
+                app.addToNorms(type);
+            }
+            
+            function insertNormalisationTypes()
+            {
+                if(document.getElementById("PT_N_radio").checked)
+                {
+                    app.addToNorms("TC");
+                }
+                if(document.getElementById("UQ_N_radio").checked)
+                {
+                    app.addToNorms("UQ");
+                }
+                if(document.getElementById("TM_N_radio").checked)
+                {
+                    app.addToNorms("TMM");
+                }
+                if(document.getElementById("Q_N_radio").checked)
+                {
+                    app.addToNorms("Q");
+                }
+                if(document.getElementById("B_N_radio").checked)
+                {
+                    app.addToNorms("B");
+                }
+                if(document.getElementById("DES_N_radio").checked)
+                {
+                    app.addToNorms("DE");
+                }
+           
+            }
+
+
+
+        </script>
+
+    </body>
+</html>

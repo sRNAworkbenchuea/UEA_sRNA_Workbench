@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>miR-PARE</title>
+        <link rel="stylesheet" href="../CSS/workflowModule.css">
+        <script src="../js/d3.v3.min.js"></script>
+        <script src="../js/hpRenderer.js"></script>
+        <script src="../js/HQLTableViewer.js"></script>
+        <script src="../js/utils/workbenchutils.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="../css/jquery.dataTables.css">
+        <link rel="stylesheet" type="text/css" href="../css/dataTables.colVis.css">
+        <script type="text/javascript" src="../js/jQuery/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="../js/datatables/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="../js/datatables/dataTables.colVis.js"></script>
+        <script type="text/javascript" src="../js/tplotter.js"></script>
+         <!--       <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+
+
+
+        <script>
+            
+            function drawSummaryTable(data, deliminter, nCols)
+            {
+                var summaryDiv = document.getElementById("summary");
+                var table = document.createElement("table");
+                summaryDiv.innerHTML += "<table>";
+                var dataArray = data.split(deliminter);
+        
+                for(var i=0; i<dataArray.length; i+=nCols)
+                {
+                   // console.log(i);
+                    var tr = document.createElement("tr");
+                    for(var j=0; j<nCols; j++)
+                    {
+                        var td = document.createElement("td");
+                        td.textContent = dataArray[i+j];
+                        tr.appendChild(td);
+                    }
+                    table.appendChild(tr);
+                }
+                summaryDiv.appendChild(table);
+            }
+            
+            function clearDropdown()
+            {
+                document.getElementById("predictor_selector").options.length = 0;
+            }
+
+            function addToDropdown(id, text)
+            {
+                var list = document.getElementById("predictor_selector");
+                var option = document.createElement("option");
+                option.setAttribute("id", id);
+                option.text = text;
+                list.add(option);
+            }
+
+            function selectDropdownOption(index)
+            {
+                var list = document.getElementById("predictor_selector");
+                list.options[index].selected = "true";
+            }
+
+            function init()
+            {
+               
+                createDataTable("", 'parent', {});
+                createDataTable("", 'interactions', {});
+                createDataTable("", 'predictions', {});
+
+                drawTable('parent');
+                drawTable('predictions');
+                drawTable('interactions');
+            }
+
+            function hideElement(id)
+            {
+                var e = document.getElementById(id);
+                if (e != null)
+                    e.style.disply = "none";
+            }
+            function showElement(id)
+            {
+                var e = document.getElementById(id);
+                if (e != null)
+                    e.style.disply = "block";
+            }
+
+            function show_full_screen_svg()
+            {
+
+                var fullscreen_svg_container = document.getElementById("full_screen_svg_container");
+                var fullscreen_svg = fullscreen_svg_container.getElementsByTagName("svg");
+                for (var i = 0; i < fullscreen_svg.length; i++) {
+
+                    fullscreen_svg[i].parentNode.removeChild(fullscreen_svg[i]);
+                }
+
+
+
+                var thumbnail_svg = document.getElementById("hp_svg");
+                if (thumbnail_svg.childNodes.length > 0)
+                {
+                    var svg_clone = thumbnail_svg.cloneNode(true);
+
+
+                    fullscreen_svg_container.appendChild(svg_clone);
+                    fullscreen_svg_container.style.display = "block";
+                    $(window).resize();
+
+                    var bg = document.getElementById("content");
+                    recDisableElement(bg);
+
+                }
+
+            }
+
+            function recDisableElement(element)
+            {
+                if (element.nodeType == 1)
+                {
+
+                    element.style.pointerEvents = 'none';
+                    // element.style.opacity = 0.5;
+                    var children = element.childNodes;
+                    for (var i = 0; i < children.length; i++)
+                    {
+
+                        recDisableElement(children[i]);
+                    }
+                }
+            }
+
+            function recEnableElement(element)
+            {
+                if (element.nodeType == 1)
+                {
+
+                    element.style.pointerEvents = 'auto';
+                    element.style.opacity = 1.0;
+                    var children = element.childNodes;
+                    for (var i = 0; i < children.length; i++)
+                    {
+
+                        recEnableElement(children[i]);
+                    }
+                }
+            }
+
+            function hide_full_screen_svg()
+            {
+                var bg = document.getElementById("content");
+                bg.setAttribute("class", "");
+                var fullscreen_svg_container = document.getElementById("full_screen_svg_container");
+                var fullscreen_svg = fullscreen_svg_container.getElementsByTagName("svg");
+                for (var i = 0; i < fullscreen_svg.length; i++) {
+
+                    fullscreen_svg[i].parentNode.removeChild(fullscreen_svg[i]);
+                }
+
+
+                fullscreen_svg_container.style.display = "none";
+                var bg = document.getElementById("content");
+                recEnableElement(bg);
+
+            }
+
+            function selectedOpt(element)
+            {
+                var id = element.options[element.options.selectedIndex].id;
+                app.setPredictor(id);
+            }
+
+            function exportSVG(svgID)
+            {
+                var node = document.getElementById(svgID);
+                var w = node.getBoundingClientRect().width;
+                var h = node.getBoundingClientRect().height;
+                var svg = new XMLSerializer().serializeToString(node);
+                app.exportSVG(svg, w, h);
+            }
+
+
+
+        </script>
+
+    </head>
+    <body onload="init();">
+        <div id="full_screen_svg_container" class="full_screen_svg" style="display:none;">
+            <div class="button" onclick="hide_full_screen_svg();" style="position:absolute; margin:10px;">close</div>
+        </div>
+        <div id="content">
+            <div class="tool_title">
+                <div class="button" style="display:inline;" id="gohome" onclick="app.goHome();">&#8617;</div>
+                <div class="button" style="float:right;" onclick="
+                    if (typeof app !== 'undefined'){
+                        app.saveJSON();
+                    }">Export All</div>
+                <h1>miR-PARE MODULE</h1>
+            </div>
+            <p>This module shows miRNA predictions that have functional and biogenesis predictions.</p>
+            <div id="summary"></div>
+            <div id="child_info" class="right_column" style="z-index:0; width:48% ; border-width: 0px; font-size:5pt;">
+                <div>
+                    <h2>Interactions (selected sRNA)</h2>
+                    <div class="right_column" id="tplot_canvas" style="width:40%; height:200px;">
+                        <div id="export_tplot" style="position: absolute;"onclick="exportSVG('tplot_svg');" class="button" style="float:left">export</div>
+                        <div style="font-size : 8pt;font-family : Helvetica, Arial, Sans-Serif; text-align: right">Degradome: 
+                            <select id="predictor_selector" onchange="selectedOpt(this);">
+                            </select>
+                        </div> 
+                        <svg id="tplot_svg" style="clear: right; background-color: white; border: 0px solid; width:100%; height:90%;">         
+
+
+                        </svg>
+
+
+                    </div>
+
+
+
+
+                    <div class="left_column">
+                        <div id="interactions" class="log_panel">
+
+
+                        </div>
+                    </div>
+
+                </div>
+                <br />
+                <h2 style="clear: right">Categorisations (selected sRNA)</h2>
+                <div class="right_column" id="hp_canvas" style="width:40%; height:200px;" onclick="show_full_screen_svg();">
+                     <div id="export_tplot" style="position: absolute;"onclick="exportSVG('hp_svg');" class="button" style="float:left">export</div>
+                        
+                    <svg id="hp_svg" style="background-color: white; border: 0px solid; width:100%; height:100%;"></svg>
+                </div>
+                <div class="left_column">
+
+                    <div id="predictions" class="log_panel"></div>
+
+
+
+                </div>
+
+
+
+            </div>
+            <div class="left_column">
+                <h2>sRNAs</h2>
+                <div id="parent" class="log_panel"></div>
+            </div>
+        </div>
+        
+        <div class="button" onclick="renderHairpin('/Users/ujy06jau/Workbench/mir160a.xrna', 'hp_svg', 54, 69, 11, 30);">test</div>
+        <div class="button" onclick="render_tplot('/Users/ujy06jau/Workbench/target/release/User/miRPARE_Data/2574_ResultVisualiser_tplot.json', 'tplot_svg');">tplot1</div>
+        <div class="button" onclick="render_tplot('/Users/ujy06jau/Workbench/target/release/User/miRPARE_Data/24332_ResultVisualiser_tplot.json', 'tplot_svg');">tplot2</div>
+    </body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Main Workflow Scene</title>
+        <meta charset="UTF-8">
+
+
+        <!-- CSS -->
+        <!--Workbench CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/wbstyles.css" />
+
+        <!--Menu CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/normalize.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/menus.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/icons.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/component.css" />
+
+        <!--tooltip CSS-->
+        <link rel="stylesheet" type="text/css" href="../CSS/tipped/tipped.css" />
+
+        <!-- Javascript -->
+        <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+        <!--JQuery files -->
+        <script type="text/javascript" src="../js/lib/jquery/jquery-1.11.2.min.js"></script>
+
+        <!--D3 Javascript -->
+        <script src="../js/lib/d3/d3.min.js"></script>
+        <!--<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>-->
+        <script type="text/javascript" src="../js/lib/d3.legend.js"></script>
+
+        <!--Menu Javascript-->
+        <script src="../js/lib/classie.js"></script>
+        <script type="text/javascript" src="../js/menu/mlpushmenu.js"></script>
+        <!-- Javascript based browser feature detection for push menu -->
+        <script type="text/javascript" src="../js/lib/modernizr.push.custom.js"></script>
+
+        <!--Progress Bar -->
+        <script type="text/javascript" src="../js/utils/radialProgress.js"></script>
+
+        <!--The workflow nodes -->
+        <script src="../js/workflow/graph-creator.js"></script>
+
+        <!--tooltip Javascript-->
+        <script type="text/javascript" src="../js/tipped/tipped.js"></script>
+        
+        
+        
+
+    </head>
+    <body>
+        <div class="container">
+            <!-- Push Wrapper -->
+            <div class="mp-pusher" id="mp-pusher">
+
+                <!-- mp-menu -->
+                <nav id="mp-menu" class="mp-menu">
+                    <div class="mp-level">
+                        <h2 class="icon icon-world">Workflow Menu</h2>
+                        <ul>
+                            <li class="icon icon-arrow-left" id="pre-conf_menu">
+                                <a class="icon icon-lab" href="#">Pre-configured Workflows</a>
+                                <div class="mp-level">
+                                    <h2 class="icon icon-lab">Pre-configured Workflows</h2>
+                                    <a class="mp-back" href="#">back</a>
+                                    <ul>
+                                        <li class="simple-tooltip" id='QC_PC_WF' title="A Workflow containing Quality Checks and Normalisation">
+                                            <a href="#" onclick="createQCFlow();
+                                                        return false">Create Quality Check Workflow</a>
+                                        </li>
+                                        <li class="simple-tooltip" id='QC_DE_WF' title="A Workflow containing Quality Checks, Normalisation and Differential Expression">
+                                            <a href="#" onclick="createQC_DE_Flow();
+                                                        return false">Create Quality Check and Differential Expression Workflow</a>
+                                        </li>
+                                        <li class="simple-tooltip" id='NORM_DE_WF' title="A Workflow containing Normalisation and Differential Expression">
+                                            <a href="#" onclick="createNORM_DE_Flow();
+                                                        return false">Create Normalisation and Differential Expression Workflow</a>
+                                        </li>
+                                        <li class="simple-tooltip" id='MC2_WF' title="A Workflow containing miRCat 2">
+                                            <a href="#" onclick="createMiCat2_Flow();
+                                                        return false">Create miRCat2 Workflow</a>
+                                        </li>
+                                        <li class="simple-tooltip" id='FM_DB_WF' title="A Workflow containing the Filter tool">
+                                            <a href="#" onclick="createFM_FilterWorkflow();
+                                                        return false">Create Filter Workflow</a>
+                                        </li>
+                                        <!--<li class="simple-tooltip" id='FM_DEG_WF' title="A Workflow containing the File manager and the degradome tool">
+                                            <a href="#" onclick="create_FM_DEG_Flow();
+                                                        return false">Create Degradome 2 Workflow</a>
+                                        </li>-->
+                                        <!--<li class="simple-tooltip" id='QC_DE_WF' title="A Workflow containing Quality Checks and Normalisation without any pause to review files,
+                                                                                        This may be useful if you are not using ">
+                                            <a href="#" onclick="createQC_DE_NP_Flow();return false">Create Quality Check Workflow with no pause</a>
+                                        </li>-->
+                                        <!--<li class="simple-tooltip" id='MP_WF'><a href="#" onclick="createMiRPAREWorkflow();
+                                                    return false">miRPARE</a></li>
+                                        <li class="simple-tooltip" id='MP_WF_CLI'><a href="#" onclick="createMiRPAREWorkflowCommandLine();
+                                                    return false">miRPARE (command line)</a></li>
+                                        <li class="simple-tooltip" id='PS_WF'><a href="#" onclick="createPAREsnipWorkflow();
+                                                    return false">PAREsnip</a></li>
+                                        <li class="simple-tooltip" id='MC_WF'><a href="#" onclick="createMiRCatWorkflow();
+                                                    return false">miRCat</a></li>
+                                        <li class="simple-tooltip" id='DE_WF'><a href="#" onclick="create_NOQC_DE_Flow();
+                                                    return false">Differential Expression</a></li>-->
+
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <li id='Begin'><a href="#" onclick="app.startWorkflow();">Begin Workflow</a></li>
+                            <li id='switch_to_swing'><a href="#" onclick="app.showVersion3();
+                                        return false">Show Version 3.2</a></li>
+
+                            <li class="icon icon-arrow-left" id="console_view">
+                                <a class="icon icon-news simple-tooltip" href="#" title="View information about the current run">View Console</a>
+                                <div class="mp-level">
+                                    <h2 class="icon icon-lab">Console</h2>
+                                    <a class="mp-back" href="#">back</a>
+                                    <textarea id="console_textarea"></textarea>
+                                </div>
+                            </li>
+                            <!--                                <li id='Debugger'><a href="#" onclick="app.debug()">Show Version 3.2</a></li>-->
+
+                            <!--<li id='test_busy'><a href="#" onclick="setWorkflowNodeGFXtoBusy('DataBase');return false">Test Busy</a></li>
+                            <li id='test_compl'><a href="#" onclick="setWorkflowNodeGFXtoComplete('DataBase');return false">Test Comp</a></li>-->
+
+
+                        </ul>
+                    </div>
+
+                </nav>
+                <!-- /mp-menu -->
+
+                <div class="scroller"><!-- this is for emulating position fixed of the nav -->
+                    <div class="scroller-inner">
+
+
+                        <div class="content clearfix" >
+                            <div class="block block-80 clearfix">
+                                <p><a href="#" id="trigger" class="menu-trigger" onclick="hideInfo()">Open/Close Menu</a></p>
+                                
+
+                                <div id="key" style="width: 60%;font-size: 8px; display: none">
+                                <fieldset>
+                                    <legend><font size="3"> Key </font> </legend>
+                                    <p><font color="#ff3300">Node is Processing</font></p>
+                                    <p><font color="#ffbf00">Waiting User Input</font></p>
+                                    <p><font color="#33ff00">Node has Completed</font></p>
+                                    <p><font color="#0000A0"> Node is ready</font></p>
+                                </fieldset>
+                                </div>
+                                <div id="welcomeInfo">
+                                <p>Welcome to the sRNA Workbench Version 4.4 Alpha (On Disk build)</p>
+                                <p>This is the third Alpha build. Please submit any crashes or bugs to the Website</p>
+                                <p>http://srna-workbench.cmp.uea.ac.uk</p>
+                                <br>
+                                <br>
+                                <p>Please use the open close menu to begin...</p>
+                                </div>
+
+                            </div>
+                            
+
+
+                        </div>
+                    </div><!-- /scroller-inner -->
+
+
+
+                    <div id="graph" style="overflow: auto">
+                        <!--<svg width="1135" height="447"><circle r="50"></circle><text text-anchor="middle" dy="-0"><tspan>PAREsnip2</tspan></text></svg>-->
+                    </div>
+                </div><!-- /scroller -->
+            </div>
+        </div>
+
+
+
+        <script src="../js/workflow/graph-creator.js"></script>
+       <!-- <script> createPreconfiguredFlow("/Users/ujy06jau/Workbench/web/json/miRPARE-check.json");</script>-->
+
+        <script>
+                                    new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
+
+                                    $(document).ready(function () {
+                                        Tipped.create('.simple-tooltip', {behavior: 'hide'});
+                                        
+                                        
+                                        
+
+                                    });
+                                    
+                                    
+                                    
+                                    function hideInfo()
+                                    {
+                                        document.getElementById("welcomeInfo").style.display="none";
+                                        document.getElementById("key").style.display="block";
+
+                                    }
+
+                                    function setWorkflowNodeGFXtoBusy(id)
+                                    {
+                                        setActiveNodeGFX(id);
+                                    }
+
+                                    function setWorkflowNodeGFXtoComplete(id)
+                                    {
+                                        setCompleteNodeGFX(id);
+                                    }
+                                    
+                                    function setWorkflowNodeGFXtoWaitingInput(id)
+                                    {
+                                        //alert("SettingID to waiting " + id);
+                                        setWaitingNodeGFX(id);
+                                    }
+                                    
+                                    function setWorkflowNodeGFXtoReady(id)
+                                    {
+                                        setReadyNodeGFX(id);
+                                    }
+
+                                    function setBusy(state)
+                                    {
+                                        if (state)
+                                        {
+                                            $("#pre-conf_menu").find('a').addClass('disabled');
+                                            $("#Begin").find('a').addClass('disabled');
+                                            $("#switch_to_swing").find('a').addClass('disabled');
+                                        }
+                                        else
+                                        {
+                                            $("#pre-conf_menu").find('a').removeClass('disabled');
+                                            $("#Begin").find('a').removeClass('disabled');
+                                            $("switch_to_swing").find('a').removeClass('disabled');
+                                        }
+                                    }
+
+                                    function addToConsoleText(text)
+                                    {
+                                        document.getElementById('console_textarea').value += text + '\n';
+                                    }
+
+        </script>
+
+    </body>
+</html>

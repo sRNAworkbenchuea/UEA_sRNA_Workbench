@@ -1,0 +1,560 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<title>File Hierarchy Display</title>
+                
+
+
+                <!--Javascript-->
+                
+                
+
+                <!--JQuery files -->
+                <script type="text/javascript" src="../js/lib/jquery/jquery-1.11.2.min.js"></script>
+                <!--<script type="text/javascript" src="../js/lib/jquery.cookie-1.3.1.js"></script>
+                <script type="text/javascript" src="../js/lib/jquery/jquery.validate.js"></script>-->
+
+                <!--wizard JS-->
+                <!--<script type="text/javascript" src="../js/steps/jquery.steps.js"></script>-->
+                <!--<script type="text/javascript" src="../js/wizards/jquery.smartWizard-2.0.min.js"></script>-->
+
+                <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+
+                
+
+                <!--D3 Javascript -->
+                <script src="../js/lib/d3/d3.js"></script>
+                <!--<script src="../js/lib/d3/d3.min.js"></script>-->
+                <!--<script type="text/javascript" src="../js/d3.v3.min.js"></script>-->
+                <!--<script type="text/javascript" src="../js/lib/d3.legend.js"></script>-->
+
+                <!--Menu Javascript-->
+                <script src="../js/lib/classie.js"></script>
+                <script type="text/javascript" src="../js/menu/mlpushmenu.js"></script>
+                <!-- Javascript based browser feature detection for push menu -->
+                <!--<script type="text/javascript" src="../js/lib/modernizr.push.custom.js"></script>-->
+                <!--<script type="text/javascript" src="../js/lib/modernizr-2.6.2.min.js"></script>-->
+
+                <!--File Hierarchy Javascript-->
+                <!--<script type="text/javascript" src="../js/dndTree.js"></script>-->
+                <script type="text/javascript" src="../js/SquareTree.js"></script>
+                
+                <!--Workbench Routines -->
+                 <script type="text/javascript" src="../js/utils/workbenchutils.js"></script>
+                
+                 <!--tooltip Javascript-->
+                <script type="text/javascript" src="../js/tipped/tipped.js"></script>
+
+
+                <!-- CSS -->
+                <!--Workbench CSS -->
+                <link rel="stylesheet" type="text/css" href="../CSS/wbstyles.css" />
+
+                <!--tooltip CSS-->
+                <link rel="stylesheet" type="text/css" href="../CSS/tipped/tipped.css" />
+
+                <!--Menu CSS -->
+                <link rel="stylesheet" type="text/css" href="../CSS/normalize.css" />
+                <link rel="stylesheet" type="text/css" href="../CSS/menus.css" />
+                <link rel="stylesheet" type="text/css" href="../CSS/icons.css" />
+                <link rel="stylesheet" type="text/css" href="../CSS/component.css" />
+                <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+
+                <!-- Import FontAwesome 4.2 
+                <link rel="stylesheet" href="../CSS/font-awesome.css">-->
+                
+                <!--Wizard CSS-->
+                <!--<link rel="stylesheet" href="../CSS/jquery.steps.css">-->
+                <!--<link rel="stylesheet" type="text/css" href="../CSS/smart_wizard.css" />-->
+                
+                <!-- Import FontAwesome 4.2 -->
+                <!--<link rel="stylesheet" href="../CSS/font-awesome.min.css">-->
+                <!--Buttons CSS-->
+                <!--<link rel="stylesheet" href="../CSS/fancy-buttons.css">-->
+
+<!--{"name":"Hierarchy Root","children": [{"name":"Level - 1 - Time Point 1 - ID: 1","children": [{"name":"Level - 2 - Treatment 1 - ID: 3","children": [{"name":"Level - 3 - File: Replicate - 0 | GSM118373_Rajagopalan_col0_leaf_nr.fa |  - ID: 7","children": []},{"name":"Level - 3 - File: Replicate - 1 | GSM154336_carrington_col0_flower_nr.fa |  - ID: 8","children": []}]},{"name":"Level - 2 - Treatment 2 - ID: 4","children": [{"name":"Level - 3 - File: Replicate - 0 | GSM118373_Rajagopalan_col0_leaf_nr.fa |  - ID: 9","children": []},{"name":"Level - 3 - File: Replicate - 1 | GSM154336_carrington_col0_flower_nr.fa |  - ID: 10","children": []}]}]},{"name":"Level - 1 - Time Point 2 - ID: 2","children": [{"name":"Level - 2 - Treatment 1 - ID: 5","children": []},{"name":"Level - 2 - Treatment 2 - ID: 6","children": []}]}]}-->
+<!--{"name":"Hierarchy Root","children": [{"name":"Level - 1 - Time Point 1 - ID: 1","children": []},{"name":"Level - 1 - Time Point 2 - ID: 2","children": []}]}-->
+
+<script>
+    function reloadHierarchy()
+                    {
+                        //alert("loading view");
+                        loadHierarchy();
+                    }
+</script>
+
+        </head>
+        <body >
+            <div class="container">
+                <!-- Push Wrapper -->
+                <div class="mp-pusher" id="mp-pusher">
+
+                    <!-- mp-menu -->
+                    <nav id="mp-menu" class="mp-menu">
+                        <div class="mp-level">
+                            <h2 class="icon icon-world">Sequence Data Setup</h2>
+                            <ul>
+                                <li id='Wizard_View'><a href="#" onclick="showWizard()">Show Wizard</a></li>
+                                <!--<li class="icon icon-arrow-left"> uncomment if we decide to put a full control in over the table
+                                    <a class="icon icon-lab" href="#">Experiment Structure</a>
+                                    <div class="mp-level">
+                                        <h2 class="icon icon-lab">Experiment Structure</h2>
+                                        <a class="mp-back" href="#">back</a>
+                                        <ul>
+                                            <li id='Wizard_View'><a href="#" onclick="showWizard()">Show Wizard</a></li>
+                                            
+                                            <li id='Manual_Mode' class="icon icon-arrow-left">
+                                                <a class="icon icon-data" href="#">Table Editor</a>
+                                                <div class="mp-level">
+                                                    <h2 class="icon icon-data">Table Editor</h2>
+                                                    <a class="mp-back" href="#">back</a>
+                                                    <ul>
+                                                        <li id='SCD_Options' class="icon icon-arrow-left">
+                                                            <a class="icon icon-data" href="#">Edit Table</a>
+                                                            <div class="mp-level">
+                                                                <h2 class="icon icon-data">Edit Table</h2>
+                                                                <a class="mp-back" href="#">back</a>
+                                                                <ul>
+                                                                    <li id='Show_Editor'><a href="#" >Show Editor</a></li>
+                                                                    <li id='Hide_Editor'><a href="#" >Hide Editor</a></li>
+                                                                    <li id='Reset_Editor'><a href="#">Reset Editor</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </li>
+                                                        <li id='Add_Genome'><a href="#" onclick="app.handleRequestGenomeFile()">Add Genome</a></li>
+                                                        <li id='Add_Transcriptome'><a href="#" onclick="app.handleRequestTranscriptomeFile()">Add Transcriptome</a></li>
+                                                        
+                                                    </ul>
+                                                </div>
+                                            </li>
+
+                                            
+                                            
+                                        </ul>
+                                    </div>
+                                </li>-->
+                                
+
+                                <li class="icon icon-arrow-left" id="database_settings">
+                                    <a class="icon icon-settings" href="#" onclick="checkDatabaseSettings()">Database Settings</a>
+                                    <div class="mp-level">
+                                        <h2 class="icon icon-display">Database Settings</h2>
+                                        <a class="mp-back" href="#">back</a>
+                                        <ul>
+                                            <li style="margin: 0 0 10px 0;">
+                                                <div id="checkbox" >
+                                                    <input type="checkbox" name="checkbox" id="enable_pat_filt_radio" class="radio" checked />
+                                                    <label for="enable_pat_filt_radio">Filter Repeated Hits</label>
+                                                </div>
+                                                
+                                            </li>
+                                            
+                                            <li style="margin: 0 0 10px 0;">
+                                                <label for="filter_hits" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Maximum Repeated Hits in the Database?</label>
+                                                <input type="number" id="filter_hits" align="right" name="filter_hits" value="200">
+                                            </li>
+                                            
+                                            <li style="margin: 0 0 10px 0;">
+                                                <label for="gaps_input" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Alignment Gaps</label>
+                                                <input type="number" class="simple-tooltip" id="gaps_input" align="right" name="gaps_input" value="0" title="Only applicable to Patman alignments">
+                                            </li>
+                                            
+                                            <li style="margin: 0 0 10px 0;">
+                                                <label for="mismatch_input" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Alignment Mismatches</label>
+                                                <input type="number" class="simple-tooltip" id="mismatch_input" align="right" name="mismatch_input" value="0" title="Applicable to both patman and bowtie mode">
+                                            </li>
+
+
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="icon icon-arrow-left" id="export">
+                                    <a class="icon icon-location" href='#'>Export</a>
+                                    <div class="mp-level">
+                                        <h2 class="icon icon-location">Export</h2>
+                                        <a class="mp-back" href="#">back</a>
+                                        <ul>
+                                            <li id='export_heirarchy'><a href="#" onclick="">Export Hierarchy</a></li>
+                                        </ul>                               
+                                    </div>
+                                </li>
+                                
+                                <li id='load_previous'><a href="#" onclick="loadPrevious()">Load previous</a></li>
+                                <li id='back_to_main'><a href="#" onclick="returnHome()">Home</a></li>
+
+                            </ul>
+                        </div>
+
+                    </nav>
+                    <!-- /mp-menu -->
+
+                    <div class="scroller"><!-- this is for emulating position fixed of the nav -->
+                        <div class="scroller-inner">
+
+
+                            <div class="content clearfix" >
+                                <div class="block block-80 clearfix">
+                                    <p><a href="#" id="trigger" class="menu-trigger">Open/Close Menu</a></p>
+                                    <p></p>
+
+
+                                </div>
+
+
+                            </div>
+                            <div id="tree-container" style="width: 1800px;height: 1800px; overflow: scroll;" ></div>
+
+                            <!--<script>reloadHierarchy();</script>-->
+                        </div><!-- /scroller-inner -->
+
+                        
+
+                  
+                        <!-- Uncomment this part when Oracle fix their stupid overflow error "Outstanding resource locks detected:", probably not until java 9 -->
+                        <!--
+                        <table class="mainwizardtable">
+                            <tr><td> 
+                                    <!-- Smart Wizard 
+                                    <div id="wizard" class="swMain">
+                                        <ul id="wizardlist">
+                                            <li><a href="#step-1">
+                                                    <span class="stepNumber">1</span>
+                                                    <span class="stepDesc">
+                                                        Step 1<br />
+                                                        <small>Setup samples</small>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            
+                                            <li><a href="#step-2">
+                                                    <span class="stepNumber">2</span>
+                                                    <span class="stepDesc">
+                                                        Step 2<br />
+                                                        <small>Select Files</small>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            
+                                        </ul>
+                                        <div id="step-1">	
+                                            <h2 class="StepTitle">Sample Setup</h2>
+                                            
+                                            <p>    
+                                                <label for="sampleID" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4;">What is the ID for this sample?</label>
+                                                <input id="sampleID" align="right" name="sampleID">
+                                            </p>
+                                            <p>
+                                                <label for="replicateCount" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4;">How many replicates per sample were sequenced?*</label>
+                                                <input id="replicateCount" name="replicateCount" align="right" type="number" min="1" required = "required" value="1" onchange="setReplicates()" >
+                                            </p>
+                                            <p>
+                                                <a href="#" class="fancy-button medium rounded blueHole square" onclick="addtabs()">
+                                                    Add Sample 
+                                                    <span class="icon">
+                                                        <i class="fa fa-square-o"></i>
+                                                    </span>
+                                                </a>
+                                            </p>
+
+                                        </div>
+                                        <div id="step-2" style="overflow: auto; height: 300px; width: 600px" >	
+                                            <h2 class="StepTitle">Select Files</h2>
+ 
+                                            <table class="filetable" id="fileInputTable" cellspacing='0' > <!-- cellspacing='0' is important, must stay -->
+
+                                                <!-- Table Header 
+                                                <thead>
+                                                    <tr>
+                                                        <th>Sample ID</th>
+                                                        <th>Replicate Details</th>
+                                                        <th>Configured?</th>
+                                                    </tr>
+                                                </thead>
+                                                <!-- Table Header 
+
+                                                <!-- Table Body 
+                                                <tbody>
+
+                                                    
+
+                                                </tbody>
+                                                <!-- Table Body 
+
+                                            </table>
+
+
+                                        </div>
+                                        
+                                       
+                                    </div>
+                                    <!-- End SmartWizard Content  	-
+
+                                </td></tr>
+                        </table>	
+                        -->
+
+                    </div><!-- /scroller -->
+                </div>
+            </div>
+
+
+
+            <script>
+
+                    new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
+                    
+                    var replicateCount = 0;
+                    var filter_repeats_CB = document.getElementById('enable_pat_filt_radio');
+                    
+                    window.onload = function () {
+                        filter_repeats_CB.onclick = setupRepeatHitsFilter;
+                        
+                    };
+                    
+                    
+                    $(document).ready(function() {
+                        Tipped.create('.simple-tooltip', {behavior: 'hide'});
+                        
+
+                        
+                      });
+               
+
+                    //set software to busy on this node
+                    function setBusy(state)
+                    {
+                        if(state)
+                        {
+                            $("#database_settings").find('a').addClass('disabled');
+                            $("#Wizard_View").find('a').addClass('disabled');
+                            
+                        }
+                        else
+                        {
+                            $("#database_settings").find('a').removeClass('disabled');
+                            $("#Wizard_View").find('a').removeClass('disabled');
+                        }
+                        
+                    }
+                    
+                    function setWaitingInput(state)
+                    {
+                        alert("called from");
+                    }
+                    //Database configuration
+                    function checkDatabaseSettings()
+                    {
+                        if(typeof app !== 'undefined')
+                        {
+                            if(app.canControlDatabase())
+                            {
+                                
+                            }
+                            else
+                            {
+                                $("#enable_pat_filt_radio").prop('disabled', true).addClass('disabled');
+                                $("#filter_hits").prop('disabled', true).addClass('disabled');
+                                $("#gaps_input").prop('disabled', true).addClass('disabled');
+                                $("#mismatch_input").prop('disabled', true).addClass('disabled');
+
+                                   
+                            }
+                        }
+                        else
+                        {
+                            alert("trigger");
+                        }
+                        
+                    }
+                    function setupRepeatHitsFilter()
+                    {
+                        
+                        if(filter_repeats_CB.checked)
+                        {
+                            //alert("checked");
+                            app.setFilterRepeats(true);
+                            var repeatHits = parseInt(document.getElementById('filter_hits').value);
+                            app.setupDatabaseFilter(repeatHits);
+                        }
+                        else
+                        {
+                            //alert("unchecked");
+                            app.setFilterRepeats(false);
+                        }
+                        var gaps = parseInt(document.getElementById('gaps_input').value);
+                        var mismatch = parseInt(document.getElementById('mismatch_input').value);
+                        app.setAlignmentGapsMismatch(gaps, mismatch);
+                    }
+                    
+                    //setup wizard section
+                    function addtabs()
+                    {
+                        setReplicates();
+                        //alert("wizardlist");
+
+                        // Find a <table> element with id="myTable":
+                        var table = document.getElementById("fileInputTable");
+
+                        // Create an empty <tr> element and add it to the 1st position of the table:
+                        var rowCount = table.rows.length;
+                        if(rowCount !== 1)
+                        {
+                            //rowCount -= 1;
+                        }
+                        var row = table.insertRow(rowCount);
+                        row.id = rowCount;
+                        if(rowCount %2 === 0)
+                            row.className = "even";
+
+                        // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+                        var cell1 = row.insertCell(0);
+                        var cell2 = row.insertCell(1);
+                        var cell3 = row.insertCell(2);
+                        
+                        var replicateRows = "";
+                        for(var i = 0; i < replicateCount; i++)
+                        {
+                            replicateRows+="<tr>";
+                            replicateRows+="<td>" + i + "</td>";
+                            replicateRows+="<td><a href='#'>Add File</a></td>";
+                            replicateRows+="</tr>";
+                        }
+
+                        var replicateCell_HTML = "<table class='filetable' id='fileInputTable' cellspacing='0' > " +
+                                                "<thead> " +
+                                                    "<tr>" +
+                                                        "<th>Replicate Number</th>" +
+                                                        "<th>Filename</th>" +
+                                                    "</tr>" +
+                                                "</thead>" +
+                                                "<tbody>" +
+                                                replicateRows +
+                                                "</tbody>" +
+                                            "</table>";
+                        // Add some text to the new cells:
+                        var sampleID = "N/A";
+                        sampleID += "<a href='#' onclick='removeRow(";
+                        sampleID += rowCount;
+                        sampleID += ")'><img src='../images/cross_black.png' alt='Cross' style='width:12px;height:12px'></a>";
+                        if(document.getElementById('sampleID').value !== "")
+                        {
+                            sampleID = document.getElementById('sampleID').value;
+                            sampleID += "<a href='#' onclick='removeRow(";
+                            sampleID += rowCount;
+                            sampleID += ")'><img src='../images/cross_black.png' alt='Cross' style='width:12px;height:12px'></a>";
+                        }
+                        cell1.innerHTML = sampleID;
+                        cell2.innerHTML = replicateCell_HTML;
+                        cell3.innerHTML = "NO";
+                        
+                    }
+                    function removeRow(rowid)
+                    {
+                        var row = document.getElementById(rowid);
+                        row.parentNode.removeChild(row);
+                    }
+                    function addfile()
+                    {
+                        alert("add file");
+                    }
+                    function setReplicates()
+                    {
+                        
+                        replicateCount = Number($("#replicateCount").val());
+                        //alert("replicates: " + replicateCount);
+                    }
+        
+                    function loadPrevious()
+                    {
+                        //alert("show");
+                        if(typeof app !== 'undefined')
+                        {
+                            if(app.canShowWizard(true))
+                                app.load_previous_inputs();
+                            else
+                            {
+                                //$("#load_previous").find('a').addClass('disabled');
+                            }
+                        }
+                        else
+                        {
+
+                        }
+
+                    }
+                    
+                    
+                    function showWizard()
+                    {
+                        //alert("show");
+                        if(typeof app !== 'undefined')
+                        {
+                            if(app.canShowWizard(true))
+                                app.showWizard();
+                            else
+                            {
+                                $("#load_previous").find('a').addClass('disabled');
+                            }
+                        }
+                        else
+                        {
+                            
+                        }
+                        
+                    }
+                    
+                    function returnHome()
+                    {
+                       //alert("returning");
+                       setupRepeatHitsFilter();
+                       returnToMain();
+                    }
+                    
+                    
+                    function hideInputControls()
+                    {
+                        //alert("hiding input");
+
+                        $("#load_previous").hide();
+                        $("#Wizard_View").hide();
+                        $("#export").hide();
+
+                    }
+                    
+                    function hideDatabaseControls()
+                    {
+                        //alert("hiding database");
+                        $("#database_settings").hide();
+
+                        
+                    }
+                    
+                    function debug()
+                    {
+                        alert("debug");
+                        if(typeof app !== 'undefined')
+                        {
+                            var entryMode = app.getEntryMode();
+                            alert(entryMode);
+                        }
+                        else
+                        {
+                            alert("NOT READY");
+                        }
+                        app.debug();
+                    }
+                    
+                    function debugFromJava()
+                    {
+                        alert("debug from java");
+                    }
+            </script>
+
+            <!--<script src="../js/menu/overlay-menu.js"></script>-->
+        </body>
+</html>
+		

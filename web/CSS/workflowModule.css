@@ -1,0 +1,381 @@
+input[type="checkbox"]{
+    display:inline-block;
+    width:19px;
+    height:19px;
+    margin:-1px 4px 0 0;
+    vertical-align:middle;
+    background:url(check_radio_sheet.png) left top no-repeat;
+    cursor:pointer;
+}
+
+
+.full_screen_svg { 
+    width: 90%;
+    height: 90%; 
+    border-style: solid; 
+    border-width: 1px;
+    background-color: white; 
+    z-index: 100; 
+
+ margin: auto;
+  position: fixed;
+  top: 0; left: 0; bottom: 0; right: 0;
+
+}
+
+.blur
+{
+    
+    -webkit-filter: blur(3px); -moz-filter: blur(3px); -o-filter: blur(3px); -ms-filter: blur(3px); filter: blur(3px);
+}
+
+.text_central {
+    top : 10%;
+    bottom : 10%;
+    vertical-align : central;
+}
+.body {
+    font-family : Helvetica, Arial, Sans-Serif;
+}
+h1 {
+    font-family : Helvetica, Arial, Sans-Serif;
+    padding : 10px;
+    font-size : 14pt;
+    display : inline;
+}
+p {
+    font-family : Helvetica, Arial, Sans-Serif;
+    font-size : 12pt;
+    color : gray;
+}
+.tool_title {
+    vertical-align : middle;
+    background-color : lightgray;
+    margin : 0;
+    padding : 10px;
+    border : 1px solid #666666;
+}
+h2 {
+    font-family : Helvetica, Arial, Sans-Serif;
+    padding : 0;
+    color : #666666;
+    font-size : 12pt;
+}
+.output {
+    overflow: hidden;
+    white-space : nowrap;
+    
+    font-family: monospace;
+}
+.progressbar {
+    font-family : Helvetica, Arial, Sans-Serif;
+}
+.preserve_whitespace {
+    white-space : pre;
+}
+pre {
+    margin : 0;
+}
+.fixed_block {
+    display : block;
+    overflow : scroll;
+    border : 1px solid black;
+    width : 100%;
+    padding : 0;
+}
+.fixed_block td, tr {
+    padding : 0;
+    margin : 0;
+}
+.fixed_block_noscroll {
+    display : block;
+    overflow : hidden;
+    width : 100%;
+}
+.panel {
+    border : 1px solid #666666;
+    overflow : hidden;
+    padding : 10px;
+    display : inline-block;
+    font-family : Helvetica, Arial, Sans-Serif;
+    font-size : 10pt;
+    color : #666666;
+    float : left;
+}
+.scroll_table {
+    overflow-x : auto;
+    width : 100%;
+}
+.log_panel {
+    border : 1px solid #666666;
+    overflow : hidden;
+    padding : 5px;
+    font-family : Helvetica, Arial, Sans-Serif;
+    font-size : 10pt;
+    color : #666666;
+    background-color : white;
+}
+.log_panel_title {
+    font-weight : bold;
+    font-size : 12pt;
+}
+.pageinfo {
+    font-weight : normal;
+    font-size : 10pt;
+    padding : 5px;
+}
+.panel_no_border_left {
+    overflow : hidden;
+    padding : 0;
+    display : inline-block;
+    font-family : Helvetica, Arial, Sans-Serif;
+    font-size : 10pt;
+    color : #666666;
+    float : left;
+}
+.panel_no_border_right {
+    overflow : hidden;
+    padding : 0;
+    display : inline-block;
+    font-family : Helvetica, Arial, Sans-Serif;
+    font-size : 10pt;
+    color : #666666;
+    float : right;
+}
+.button {
+    padding : 5px;
+    vertical-align : middle;
+    background-color : whitesmoke;
+    border : 1px solid #666666;
+    display : inline-block;
+    cursor : pointer;
+    font-family : Helvetica, Arial, Sans-Serif;
+    font-size : 9pt;
+    color : #666666;
+    margin : 2px;
+}
+.button:hover {
+    background-color : #ccc;
+}
+.scroll_table {
+    overflow-x : auto;
+    width : 100%;
+}
+table_old {
+    width : 100%;
+    border-collapse : collapse;
+    padding : 10px;
+    color : #666666;
+}
+td_old, th_old {
+    border : 1px solid #666666;
+    border-collapse : collapse;
+    font-family : "Courier New", Courier, monospace;
+    font-size : 8pt;
+    text-align : left;
+    white-space : nowrap;
+}
+.highlight {
+    color : black;
+    font-weight : bold;
+    background-color : greenyellow;
+}
+.left_column {
+    overflow : hidden;
+    white-space : nowrap;
+
+
+
+border-width: 1px;
+    font-family : Helvetica, Arial, Sans-Serif;
+}
+.right_column {
+    width:auto;
+        height:auto;
+    overflow : hidden;
+    white-space : nowrap;
+    margin-left: 5px;
+    float : right;
+    font-family : Helvetica, Arial, Sans-Serif;
+    border : 1px solid black;
+   
+}
+.highlight_text {
+    color : rgb(0, 100, 200);
+}
+.inline_right {
+    float : right;
+    display : inline-block;
+    vertical-align : inherit;
+}
+.inline_left {
+    float : left;
+    display : inline-block;
+    vertical-align : central;
+}
+.blockbuttons {
+    padding : 10px;
+    display : block;
+}
+.output {
+    padding : 10px;
+    font-family : "Courier New", Courier, monospace;
+    font-size : 10pt;
+}
+.parameter {
+    // padding : 2px;
+    font-size : 10pt;
+
+    font-family : Helvetica, Arial, Sans-Serif;
+    border-width:  1px;
+}
+
+.parameter_invalid {
+    //  padding : 2px;
+    font-size : 10pt;
+
+    background-color: rgb(255, 128, 128);
+    border-style: solid;
+    border-color: red;
+    border-width:  1px;
+    font-family : Helvetica, Arial, Sans-Serif;
+}
+.parameter_name {
+    text-align : left;
+    vertical-align : central;
+    font-weight : normal;
+    font-family : Helvetica, Arial, Sans-Serif;
+}
+.parameter_value {
+    text-align: right;
+    vertical-align : central;
+    font-weight : normal;
+}
+input[type="text"] {
+    width : 150px;
+}
+.parameter_value input[type="text"] {
+    width : 30px;
+    font-size : 8pt;
+}
+fieldset {
+    font-size : 10pt;
+    font-weight : bold;
+    padding : 5px;
+    margin-bottom : 5px;
+}
+.fixed_td {
+    display : block;
+    overflow-y : hidden;
+    margin : 0;
+}
+.fixed_td_red {
+    background-color : tomato;
+    display : block;
+    overflow-y : hidden;
+}
+.fixed_td_green {
+    background-color : greenyellow;
+    display : block;
+    overflow-y : hidden;
+}
+.selectedrow {
+    background-color : #99b1be;
+}
+.evenrow {
+    background-color : whitesmoke;
+}
+.headerrow {
+    background-color : #444444;
+    color : white;
+}
+.header_column_click:hover {
+    background-color : #777777;
+    cursor : pointer;
+}
+#link {
+    width : 300px;
+    height : 100px;
+    background-color : #69cb86;
+    border-top : 1px solid #666666;
+    border-bottom : 1px solid #666666;
+}
+.transparent {
+    position : absolute;
+    z-index : 100;
+    text-align : center;
+    font-family : Helvetica, Arial, Sans-Serif;
+    font-size : 20pt;
+    color : #333333;
+    border : 1px solid #666666;
+    font-weight : bold;
+}
+.loader {
+    width : inherit;
+    height : inherit;
+    margin : 10px;
+    position : absolute;
+    text-align : center;
+    font-family : Helvetica, Arial, Sans-Serif;
+    font-size : 16pt;
+    color : white;
+}
+.loader_new {
+    font-family : Helvetica, Arial, Sans-Serif;
+    font-size : 10pt;
+    width : inherit;
+    height : inherit;
+    background-color : lightblue;
+}
+.tool_log_show {
+    border : 1px solid #666666;
+    overflow : hidden;
+    padding : 5px;
+    font-family : Helvetica, Arial, Sans-Serif;
+    font-size : 10pt;
+    color : #666666;
+    overflow-y : auto;
+    overflow-x : auto;
+    background-color : white;
+}
+.tool_log_hide {
+    border : 1px solid #666666;
+    overflow : hidden;
+    padding : 5px;
+    font-family : Helvetica, Arial, Sans-Serif;
+    font-size : 10pt;
+    color : #666666;
+    overflow-y : auto;
+    overflow-x : auto;
+    background-color : white;
+}
+
+input[type=checkbox].css-checkbox {
+    position:absolute; z-index:-1000; left:-1000px; overflow: hidden; clip: rect(0 0 0 0); height:1px; width:1px; margin:-1px; padding:0; border:0;
+}
+
+input[type=checkbox].css-checkbox + label.css-label {
+    padding-left:31px;
+    height:26px; 
+    display:inline-block;
+    line-height:26px;
+    background-repeat:no-repeat;
+    background-position: 0 0;
+    font-size:36px;
+    vertical-align:middle;
+    cursor:pointer;
+
+}
+
+input[type=checkbox].css-checkbox:checked + label.css-label {
+    background-position: 0 -26px;
+}
+label.css-label {
+    background-image:url(http://csscheckbox.com/checkboxes/u/csscheckbox_6d8da7246012182a32a1a535acc2c352.png);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

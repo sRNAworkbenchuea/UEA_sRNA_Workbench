@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Main QC scene</title>
+        
+        <!--D3 Javascript -->
+        <!--<script type="text/javascript"  src="../js/lib/d3/d3.js"></script>-->
+
+        <script src="../js/lib/d3/d3.min.js"></script>
+        <script type="text/javascript" src="../js/lib/chroma.min.js"></script>
+        <script type="text/javascript" src="../js/lib/d3.legend.js"></script>
+       <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+        <!--JQuery files -->
+        <script type="text/javascript" src="../js/lib/jquery/jquery-1.11.2.min.js"></script>
+        
+        
+        <!--Workbench Utils-->
+        <script type="text/javascript" src="../js/utils/workbenchutils.js"></script>
+        
+        
+        <!--Workbench javascript -->
+        <script type="text/javascript" src="../js/wbFunctions.js"></script>
+        <script type="text/javascript" src="../js/options.js"></script>
+        <script type="text/javascript" src="../js/m-boxplots.js"></script>
+        <script type="text/javascript" src="../js/wbcolours.js"></script>
+        <script type="text/javascript" src="../js/scdplotter-alt.js"></script>
+        <script type="text/javascript" src="../js/maplotter.js"></script>
+        <script type="text/javascript" src="../js/mappingquality.js"></script>
+        <script type="text/javascript" src="../js/jaccard-table.js"></script>
+        <script type="text/javascript" src="../js/nucleotide-size-class.js"></script>
+        <script type="text/javascript" src="../js/Boxplot.js"></script>
+        <script type="text/javascript" src="../js/FCBoxplots.js"></script>
+        <script type="text/javascript" src="../js/MappingQualityBarplot.js"></script>
+       
+        <!--Menu Javascript -->
+        <script type="text/javascript" src="../js/lib/classie.js"></script>
+        <script type="text/javascript" src="../js/menu/mlpushmenu.js"></script>
+        <!-- Javascript based browser feature detection for push menu -->
+
+        <!--Dragdealer javascript-->
+        <script type="text/javascript" src="../js/dragdealer/dragdealer.js"></script>
+        
+        <!--UIfeedbacks javascript-->
+        <script type="text/javascript" src="../js/uifeedbacks.js"></script>
+        
+        <!--Progress Bar -->
+        <script type="text/javascript" src="../js/utils/radialProgress.js"></script>
+        
+        <!--Workbench Routines -->
+        <script type="text/javascript" src="../js/utils/workbenchutils.js"></script>
+        
+        <!--list js files -->
+        <script type="text/javascript" src="../js/FancySelect/fancySelect.js"></script>
+        
+        
+        <!--tooltip Javascript-->
+        <script type="text/javascript" src="../js/tipped/tipped.js"></script>
+
+
+        
+        <!--CSS-->
+ 
+        
+        <!--Menu CSS -->
+        <!--<link rel="stylesheet" type="text/css" href="../CSS/normalize.css" />-->
+        <link rel="stylesheet" type="text/css" href="../CSS/menus.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/icons.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/component.css" />
+        
+        <!--dragdealer CSS-->
+        <link href="../CSS/dragdealer.css" type="text/css" rel="stylesheet">
+
+        
+        <!--tooltip CSS-->
+        <link rel="stylesheet" type="text/css" href="../CSS/tipped/tipped.css" />
+        
+        <!--Workbench CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/wbstyles.css" />
+        
+        <!--list CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/FancySelect/fancySelect.css" />
+
+        <style type="text/css">
+                    td
+                    {
+                        padding:0 15px 0 15px;
+                    }
+        </style>
+
+    </head>
+    <body>
+       <script type="text/javascript" src="../js/lib/serializeWithStyles.js"></script> 
+    <div class="container">
+        <!-- Push Wrapper -->
+        <div class="mp-pusher" id="mp-pusher">
+
+            <!-- mp-menu -->
+            <nav id="mp-menu" class="mp-menu">
+                <div class="mp-level">
+                    <h2 class="icon icon-world">Plot View Options</h2>
+                    <ul>
+                        <li class="icon icon-arrow-left">
+                            <a class="icon icon-display" href="#">Plot Type</a>
+                            <div class="mp-level">
+                                <h2 class="icon icon-display">Plot Type</h2>
+                                <a class="mp-back" href="#">back</a>
+                                <ul>
+                                    <li id='BP_View'>
+                                        
+                                        
+                                        
+                                        <div id="boxplotDProgress" class ="determinateprogress" style="display:none"></div>
+                                        <div id="boxplotInDProgress" class="indeterminateprogress" style="display:none"></div>
+                                        <a href="#" onclick="showDiv(['aboxplot_div']);return false">Box Plot</a>
+                                        
+                                         <!--
+                                        <div class="indeterminateprogress">
+                                            <a href="#" onclick="showDiv(['aboxplot']);return false">Box Plot</a>
+                                        </div>
+                                        -->
+                                    </li>
+                                    
+                                    <li id='SCD_View'><a href="#"  onclick="showDiv(['scd_div']);return false">Size Class Distribution</a></li>
+                                    <li id='MA_View'><a href="#" onclick="showDiv(['maplot_div']);return false">M vs A Plots</a></li>
+                                    <li id='MBP_View'><a href="#" onclick="showDiv(['mboxplot_div']);return false">Fold Change Boxplots</a></li>
+                                    <li id='MQ_View'><a href="#" onclick="showDiv(['mapping_quality_div']);return false">Mapping Quality</a></li>
+                                    <li id="JT_View"><a href="#" onclick="showDiv(['jaccard_table_div']);return false">Jaccard Table</a></li>
+                                    <li id="NSCD_View"><a href="#" onclick="showDiv(['nscd_div']);return false">Nucleotide Composition</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li id='normalisation_submenu' class="icon icon-arrow-left">
+                            <a class="icon icon-news" href="#">Normalisation Type</a>
+                            <div class="mp-level">
+                                <h2 class="icon icon-news">Normalisation Type</h2>
+                                <a class="mp-back" href="#">back</a>
+                                <ul>
+                                    <li id='normalisations'>
+                                        <!-- Normalisations dynamically added here by updateNormalisationMenu -->
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                        </li>
+                        
+
+                        
+                        <li class="icon icon-arrow-left">
+                            <a class="icon icon-settings" href="#">Plot Options</a>
+                            <div class="mp-level">
+                                <h2 class="icon icon-display">Plot Options</h2>
+                                <a class="mp-back" href="#">back</a>
+                                <ul>
+                                    <li  >
+                                        <!-- Add all but the essential plot switches here -->
+                                        <div id="show_n_bp" style="display: none;">
+                                            <input type="checkbox" name="showbp" id="N_radio" class="radio" />
+                                            <label for="N_radio">Show Distribution Size</label>
+                                        </div>
+                                        <div id="as_percentage" style="display: none;">
+                                            <input type="checkbox" name="asperc" id="perc_check" class="radio" />
+                                            <label for="perc_check">As percentage</label>
+                                        </div>
+                                        <div id="show_bp_labels" style="display: none;">
+                                            <input type="checkbox" name="showbplab" id="show_bp_lab" class="radio" />
+                                            <label for="show_bp_lab">Show sample labels</label>
+                                        </div>
+                                        <div id="show_bp_legend" style="display: none;">
+                                            <input type="checkbox" name="showbpleg" id="show_bp_leg" class="radio" />
+                                            <label for="show_bp_leg">Show sample legend</label>
+                                        </div>
+                                    </li>
+                                    
+                                    <!-- Grouping options -->
+                                    <li id="grouping_options" class="icon icon-arrow-left"  style="visibility: hidden;">
+                                        <a class="icon icon-display" href="#">Grouping</a>
+                                        <div class="mp-level">
+                                            <h2 class="icon icon-display">Grouping</h2>
+                                            <a class="mp-back" href="#">back</a>
+                                            <ul>
+                                                <li id='grouping'>
+                                                    <div id="groupby_plot">
+                                                        <input type="radio" name="radio" id="gbplot_radio" class="radio" checked />
+                                                        <label for="gbplot_radio">Samples</label>
+                                                    </div>
+                                                    
+                                                    <div id="groupby_norm">
+                                                        <input type="radio" name="radio" id="gbnorm_radio" class="radio" />
+                                                        <label for="gbnorm_radio">Normalisation</label>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    
+                                    <!-- NC File options -->
+                                    <li id="NCFile_options" class="icon icon-arrow-left"  style="display:  none;">
+                                        <a class="icon icon-data" href="#">File Selection</a>
+                                        <div class="mp-level">
+                                            <h2 class="icon icon-data">File Selection</h2>
+                                            <a class="mp-back" href="#">back</a>
+                                            
+                                            <select id="NC_File_Select" onchange="initialiseNSCD()" style="width: 100%;">
+                                                
+                                            </select>
+                                        </div>
+                                    </li>
+                                    
+                                    <!-- Annotation submenu -->
+                                    <!-- If not in use, disable all checkboxes -->
+                                    <li id="annotation_submenu" class="icon icon-arrow-left" style="visibility: hidden;">
+                                        <a class="icon icon-news" href="#">Annotation Type</a>
+                                        <div class="mp-level">
+                                            <h2 class="icon icon-news">Annotation Type</h2>
+                                            <a class="mp-back" href="#">back</a>
+                                            <ul>
+                                                <li id='annotations'>
+                                                <!-- Annotations dynamically added here by update_annotation_menu -->
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <!-- END ANNOTATION -->
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="icon icon-arrow-left">
+                            <a class="icon icon-save" href='#'>Export</a>
+                            <div class="mp-level">
+                                <h2 class="icon icon-save">Export</h2>
+                                <a class="mp-back" href="#">back</a>
+                                <ul>
+                                        <li id='export_graph'><a href="#" onclick="saveSelectedChart()">Graph</a></li>
+                                        <li id='export_table'><a href="#" onclick="">Data (CSV)</a></li>
+                                        <li id='displayInBrowser' class="simple-tooltip" title="Show these graphs in your default web browser">
+                                            <a href="#" onclick="loadBrowserVersion()">Display in Browser</a>
+                                        </li>
+                                </ul>                               
+                            </div>
+                        </li>
+                        
+                         <li id='back_to_main'><a href="#" onclick="returnToMain()">Home</a></li>
+                         
+
+                    </ul>
+                </div>
+                                
+            </nav>
+            <!-- /mp-menu -->
+
+            <div class="scroller"><!-- this is for emulating position fixed of the nav -->
+                <div class="scroller-inner">
+
+                    
+                    <div class="content clearfix" >
+                        <div class="block block-80 clearfix">
+                            <p><a href="#" id="trigger" class="menu-trigger">Open/Close Menu</a></p>
+
+                            <table id="scdControlTable" style="display: none;">
+                                <tr>
+                                    <td>
+
+                                        <input type="radio" name="dataradio" id="nr_radio" class="radio" checked />
+                                        <label for="nr_radio">Non Redundant</label>
+
+                                    </td>
+                                    <td>
+
+                                        <input type="radio" name="dataradio" id="red_radio" class="radio"  />
+                                        <label for="red_radio">Redundant</label>
+
+
+                                    </td>
+                                    <td>
+
+                                        <input type="radio" name="dataradio" id="comp_radio" class="radio"  />
+                                        <label for="comp_radio">Complexity</label>
+
+                                    </td>
+
+
+
+                                </tr>
+                            </table>
+
+                            <table id="MAControlTable" style="display: none;">
+                                <tr>
+                                    <!--MA plot grouping radios-->
+                                    <td >
+                                        <input type="radio" name="dtRadio" id="dtma_radio" class="radio" checked />
+                                        <label for="dtma_radio">MA values</label>
+                                    </td>
+
+                                    <td >
+                                        <input type="radio" name="dtRadio" id="dtcorr_radio" class="radio"  />
+                                        <label for="dtcorr_radio">Data correlation</label>
+                                    </td>
+                                </tr>
+
+                            </table>
+
+                           
+
+                        </div>
+                        
+                        <div id="bp_window-slider" class="dragdealer" style="visibility: hidden">
+                            <div class="handle red-bar">
+                                <span class="value"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /scroller-inner -->
+
+                    
+                    
+                <div id="plotsection">
+                    <div id="aboxplot_div" style="width: 100%; height: 100%; "></div>
+                    <div id="mboxplot_div" style="width: 100%; height: 100%;"></div>
+                    <div id="scd_div" style="width: 100%; height: 100%;"></div>
+                    <div id="maplot_div" style="width: 100%; height: 100%;"></div>
+                    <div id="mapping_quality_div" style="width: 100%; height: 100%; margin: 0 auto;"></div>
+                    <div id="jaccard_table_div" style="width: 100%; height: 100%;" ></div>
+                    <div id="nscd_div" style="width: 100%; height: 100%;"></div>
+                    
+                </div>
+                
+                
+            </div><!-- /scroller -->
+
+        </div><!-- /pusher -->
+    </div><!-- /container -->
+    
+    <script>
+        /*
+        function setActive() {
+  aObj = document.getElementById('datatype').getElementsByTagName('a');
+  alert(aObj.length);
+  for(i=0;i<aObj.length;i++) {
+    
+      aObj[i].toggle();
+    
+    
+  }
+}*/
+    
+    $(document).ready(function() {
+                        Tipped.create('.simple-tooltip', {behavior: 'hide'});
+                        
+                      });
+        new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
+        
+        var firstMQLoad = true;
+        
+        var nr_radio = document.getElementById('nr_radio');
+        var red_radio = document.getElementById('red_radio');
+        var comp_radio = document.getElementById('comp_radio');
+        var perc_NR_radio = document.getElementById('perc_nr_radio');
+        var perc_R_radio = document.getElementById('perc_r_radio');
+        
+        
+        var gbnorm_radio = document.getElementById('gbnorm_radio');
+        var gbplot_radio = document.getElementById('gbplot_radio');
+        var dtma_radio = document.getElementById('dtma_radio');
+        var dtcorr_radio = document.getElementById('dtcorr_radio');
+        var bp_n_radio = document.getElementById('N_radio');
+        var perc_check = document.getElementById('perc_check');
+        var bplab = document.getElementById('show_bp_lab');
+        var bpleg = document.getElementById('show_bp_leg');
+
+
+        var BP_ProgressWheel;
+        
+        var stageName = "";
+        
+        var JSON_SCD = "SizeClassDistribution.json";
+        var JSON_AD = "AbundanceDistribution.json";
+        var JSON_MD = "MValueDistribution.json";
+        var JSON_MA = "DatabaseMA.json";
+        var JSON_CORR = "DatabaseMA_exp.json";
+        var JSON_JC = "JaccardTable.json";
+        var JSON_NC = "NucleotideSizeClassDistribution.json";
+        
+        setup();
+            
+            
+    //window.onload = function () {
+       function setup(){     
+           
+           //alert("loading");
+            
+        //Setup box plot buttons   
+        var BP_viewMnu = document.getElementById('BP_View');
+        BP_viewMnu.onclick = initialiseAbundanceDistribution;
+                
+        //setup SCD buttons
+        var scd_viewMnu = document.getElementById('SCD_View');
+        scd_viewMnu.onclick = initialiseSCD;
+        
+
+        //setup MA plot buttons
+        var MA_viewMnu = document.getElementById('MA_View');
+        MA_viewMnu.onclick = initialiseMA;
+        gbnorm_radio.onclick = buildMA;
+        gbplot_radio.onclick = buildMA;
+        dtma_radio.onclick = buildMA;
+        dtcorr_radio.onclick = buildMA;
+        
+        var MBP_viewMnu = document.getElementById('MBP_View');
+        MBP_viewMnu.onclick = initialiseMboxplots;
+
+        //setup mapping quality data buttons
+        var MQ_viewMnu = document.getElementById('MQ_View');
+        MQ_viewMnu.onclick = initialiseMappingQuality;
+        
+        var JT_viewMnu = document.getElementById('JT_View');
+        JT_viewMnu.onclick = initialiseJaccardTable;
+        
+        var NSCD_viewMnu = document.getElementById('NSCD_View');
+        NSCD_viewMnu.onclick = initialiseNSCD;
+        
+        //retrieve current stage name
+        if(typeof app !== 'undefined')
+        {
+
+              
+            stageName = app.getStageName();
+            alert("getting stage name script: " + stageName);
+            alert("report stage name: " + stageName); 
+        }
+        else
+        {
+            var url = window.location.href;
+            var params = url.split('?');            
+
+            if((params[1] === "") || (params[1] === undefined))
+            {           
+                stageName="SECONDREPORT";
+            }
+            else
+            {
+                stageName = params[1];
+            }
+            
+        }
+        
+        
+        //alert(stageName);
+        disableMenu(JSON_MA, MA_viewMnu);
+        disableMenu(JSON_MD, MBP_viewMnu);
+        disableMenu(JSON_SCD, scd_viewMnu);
+        disableMenu(JSON_SCD, MQ_viewMnu);
+        disableMenu(JSON_AD, BP_viewMnu);
+        disableMenu(JSON_JC, JT_viewMnu);
+        disableMenu(JSON_NC, NSCD_viewMnu);
+        
+    };
+    
+    normKeys = {
+    "RAW":"NONE", 
+    "TC":"PER_TOTAL", 
+    "UQ":"UPPER_QUARTILE", 
+    "TMM":"TRIMMED_MEAN", 
+    "Q":"QUANTILE", 
+    "B":"BOOTSTRAP",
+    "DE":"DESEQ"};
+
+var Mboxplots;
+var Aboxplots;
+var DDSlider;
+var MQBars;
+
+function disableMenu(json, menu)
+{
+    //alert("looking for: " + json);
+    //alert("full path: " + getDataLocation(json));
+    d3.json(getDataLocation(json), function(error, j){
+        if (typeof j === 'undefined' || j.length === 0) 
+        {
+            //alert("not defined or found");
+            $(menu).addClass("disabled");
+            $(menu).find('a').addClass('disabled');
+        }
+        else
+        {
+            $(menu).removeClass("disabled");
+            $(menu).find('a').removeClass('disabled');
+            //alert("found");
+        }
+    });
+}
+
+function getDataLocation(basename)
+{
+    //set stage name for all plot generation scripts
+
+    
+
+    var pathto = "../json/";
+    return pathto + stageName + basename;
+}
+
+function hideAllControls()
+{
+    document.getElementById("scdControlTable").style.display="none";
+    document.getElementById("MAControlTable").style.display="none";
+    
+    
+    document.getElementById("bp_window-slider").style.visibility="hidden";
+    document.getElementById("show_n_bp").style.display="none";
+    document.getElementById("show_bp_labels").style.display="none";
+    document.getElementById("show_bp_legend").style.display="none";
+
+    document.getElementById("grouping_options").style.visibility="hidden";
+    document.getElementById("as_percentage").style.display="none";
+    
+    document.getElementById("NCFile_options").style.display="none";
+
+}
+
+function updateAnnotationMenu(json, callback, radio)
+{
+    if(json){
+        //if(firstLoadAnnots)
+        //{
+            d3.select("#annotation_submenu").style("visibility", "visible");
+//        d3.json(jsonFile, function(error, json){
+            
+//            var types = d3.nest().key(function(d){return d.Annotations;}).entries(json);
+            var types = json.map(function(d){return d.Annotation;});
+            var uniqueTypes = {};
+            types.forEach(function(tarr){
+                if(tarr.constructor === Array){
+                    tarr.forEach(function(t){
+                        uniqueTypes[t] = 1;
+                    })
+                }
+                else
+                {
+                    uniqueTypes[tarr] = 1;
+                }
+            });
+            types = d3.keys(uniqueTypes);
+            //console.log(types);
+            var defaultCheckedAnnotation = types[0];
+            //console.log(defaultCheckedAnnotation);
+            
+            
+            // remove previous annotations
+            d3.select("#annotations").selectAll(".annotation_check").remove();
+            
+            // one div per annotation
+            var thisdiv = d3.select("#annotations")
+                    .selectAll(".annotation_check")
+                    .data(types, function(d){return d;}).enter()
+                    .append("div").attr("class", "annotation_check");
+
+            // add input checkbox to each div
+            var checkType = (radio) ? "radio" : "checkbox";
+            thisdiv.append("input")
+                   .attr("type", checkType).attr("name", "annot_radio").attr("id", function(d)
+                        {
+                            
+                            return d;
+                        }).attr("class", "radio")
+                   .on("click", callback).property("checked", function(d){
+                       
+                       return (d === defaultCheckedAnnotation );
+                    });
+
+           // add label to each div
+            thisdiv.append("label").attr("for", function(d){return d;})
+                    .text(function(d){return d;});
+//        });
+          //  firstLoadAnnots = false;
+        //}
+    }
+    else{
+        d3.select("#annotation_submenu").style("visibility", "hidden");
+        
+    }
+    
+}
+
+function updateNormalisationMenu(json, callback, radio)
+{
+    if(json){
+
+            d3.select("#normalisation_submenu").style("visibility", "visible");
+                    // remove previous normalisations
+            d3.select("#normalisations").selectAll(".normalisation_check").remove();
+
+            var types = d3.nest().key(function(d){;return d.Normalisation;}).entries(json);
+
+            var defaultCheckedAnnotation = types[0].key;
+
+            // one div per normalisation
+            var thisdiv = d3.select("#normalisations")
+                    .selectAll(".normalisation_check")
+                    .data(types, function(d){return d.key;}).enter()
+                    .append("div").attr("class", "normalisation_check");
+
+            // add input checkbox to each div
+            var checkType = (radio) ? "radio" : "checkbox";
+            thisdiv.append("input")
+                   .attr("type", checkType).attr("name", "norm_radio").attr("id", function(d){return d.key}).attr("class", "radio")
+                   .on("click", callback).property("checked", function(d){
+                       return (d.key === defaultCheckedAnnotation );
+                    });
+
+           // add label to each div
+            thisdiv.append("label").attr("for", function(d){return d.key})
+                    .text(function(d){return d.key;});
+
+    }
+    else{
+        d3.select("#normalisation_submenu").style("visibility", "hidden");
+        
+    }
+}
+
+// *** SIZE CLASS DISTRIBUTION *** //
+function initialiseSCD()
+{  
+
+    d3.json(getDataLocation(JSON_SCD), function(error, json){
+        //console.log(json);
+        updateNormalisationMenu(json, buildSCD, true);
+        updateAnnotationMenu(json, buildSCD);
+    });
+    
+    hideAllControls();
+    document.getElementById("scdControlTable").style.display="block";
+    document.getElementById('as_percentage').style.display = "block";
+    
+    nr_radio.onclick = buildSCD;
+    red_radio.onclick = buildSCD;
+    comp_radio.onclick = buildSCD;
+    perc_check.onclick = buildSCD;
+    
+    if(!scd.isinitialised())
+        scd.initialise();
+    buildSCD();
+}
+
+
+function buildSCD()
+{
+    if(perc_check.checked)
+        comp_radio.disabled = true;
+    else
+        comp_radio.disabled = false;
+    d3.json(getDataLocation(JSON_SCD), function(error, json){
+        //alert("here");
+        updateSelectedRadios();
+        options.updateOptions();
+
+        scd.build(json, perc_check.checked);
+    });
+}
+
+function initialiseAbundanceDistribution()
+{
+    d3.json(getDataLocation(JSON_AD), function(error, json){
+        updateNormalisationMenu(json, buildAbundanceDistribution, false);
+        updateAnnotationMenu(json, buildAbundanceDistribution);
+        var windows = d3.nest().key(function(d){return d.Window;}).entries(json).map(function(d){return d.key;});
+        //console.log(windows);
+        options.setBpWindows(windows);
+        //localStorage.bpWindow = boxplotWindows[0];
+        //options.updateOptions();
+
+    
+        hideAllControls();
+        document.getElementById("bp_window-slider").style.visibility="visible";
+        localStorage.bpWindow = windows[0];
+        document.getElementById("show_n_bp").style.display="block";
+        document.getElementById("show_bp_legend").style.display="block";
+        document.getElementById("show_bp_labels").style.display="block";
+        
+        $('#show_bp_labels').click(buildAbundanceDistribution)
+         $('#show_bp_leg').click(buildAbundanceDistribution)
+        
+
+        var keys = {chart: "Annotation", group: "Normalisation", box: "Filename", selection: "Window"};
+        Aboxplots = new BoxplotsByAnnotation("#aboxplot_div", keys, {drawXaxis: false});
+        if(options.availableBpWindows.length > 1){
+            initialiseBpSlider(Aboxplots);
+            updateBpSlider();
+        }
+        
+        
+        buildAbundanceDistribution();
+    });
+}
+
+function buildAbundanceDistribution()
+{
+    d3.json(getDataLocation(JSON_AD), function(error, json){
+        updateSelectedRadios();
+        options.updateOptions();
+
+        
+        var data = options.filterArray2(json, "Annotation", options.annotationTypes);
+        //console.log(options.annotationTypes);
+        data = options.filterArray2(data, "Normalisation", options.normTypes);
+        //console.log(options.normTypes);
+        
+        var selectionValue = options.bpWindow;
+        //console.log(selectionValue);
+        Aboxplots.build(data, selectionValue, undefined, $('#show_bp_lab').prop('checked'), $('#show_bp_leg').prop('checked') );
+//        boxplot.build(json);
+    });
+}
+
+function initialiseBpSlider(bpObject)
+{
+    DDSlider = new Dragdealer('bp_window-slider', {
+        steps: options.availableBpWindows.length,
+        speed: 1,
+        animationCallback: function (x, y) {
+
+            updateBpSlider();
+            $('#bp_window-slider .value').text(options.bpWindow);
+        },
+        callback: function (x, y) {
+            d3.json(getDataLocation(JSON_AD), function (error, json)
+            {
+                buildAbundanceDistribution();
+            });
+        }
+    });
+}
+
+function updateBpSlider()
+{
+    if (DDSlider !== undefined)
+    {
+        var bp_step = DDSlider.getStep();
+        localStorage.bpWindow = options.availableBpWindows[bp_step[0]-1];
+        options.updateOptions();
+    }
+}
+
+// *** M VALUE BOXPLOTS *** //
+function initialiseMboxplots()
+{
+    hideAllControls();
+    d3.json(getDataLocation(JSON_MD), function(error, json){
+        updateNormalisationMenu(json, buildMboxplots, false);
+        updateAnnotationMenu(json, buildMboxplots, true);
+    });
+    var keys = {chart: "Pair", group: "Normalisation", box: "Size", selection: "Annotation"};
+    Mboxplots = new BoxplotsByAnnotation("#mboxplot_div", keys, {maxGraphWidth:1000});
+    buildMboxplots();
+}
+
+function buildMboxplots()
+{
+    d3.json(getDataLocation(JSON_MD), function(error, json){
+        updateSelectedRadios();
+        options.updateOptions();
+        var data = options.filterArray2(json, "Normalisation", options.normTypes);
+        var selectionValue = options.annotationTypes[0];
+        Mboxplots.build(data, selectionValue, undefined, undefined, undefined, [0]);
+    });
+}
+
+function initialiseMA()
+{
+    d3.json(getDataLocation(JSON_MA), function(error, json){
+
+        updateNormalisationMenu(json, buildMA, false);
+        updateAnnotationMenu(json, buildMA);
+        hideAllControls();
+
+        document.getElementById("grouping_options").style.visibility="visible";
+        document.getElementById("MAControlTable").style.display="block";
+        
+        updateSelectedRadios();
+        options.updateOptions();
+        maplot.updateOptions();
+    
+        maplot.initialise(); 
+        maplot.build(json);
+        //buildMA();
+    });
+}
+
+function buildMA()
+{
+    updateSelectedRadios();
+    options.updateOptions();
+    maplot.updateOptions();
+
+    var inputData = JSON_MA;
+    if(maplot.dataType === "corr")
+        inputData = JSON_CORR;
+        
+    d3.json(getDataLocation(inputData), function(error, json){
+        maplot.build(json);
+    });
+}
+
+function disableMAMenu()
+{
+
+    $("#MA_View").find('a').addClass('disabled');
+    $("#MA_View").addClass('disabled');
+
+}
+function disableMDMenu()
+{
+
+    $("#MBP_View").find('a').addClass('disabled');
+    $("#MBP_View").addClass('disabled');
+
+}
+
+// *** NUCLEOTIDE SIZE CLASS *** //
+function initialiseNSCD()
+{
+    d3.json(getDataLocation(JSON_NC), function(error, json){
+        //updateNormalisationMenu(json, buildNSCD, true);
+        //updateAnnotationMenu(json, buildNSCD);
+        hideAllControls();
+        document.getElementById("NCFile_options").style.display="block";
+
+        if(!nscd.initialised)
+        {
+            console.log("initialising");
+            updateFileList(json);
+        }
+        nscd.initialise();
+        buildNSCD(json);
+    });
+}
+
+
+
+function updateFileList(json)
+{
+    //var result = getValues (json, "File");
+    var lookup = {};
+    var result = [];
+    
+    var x = document.getElementById("NC_File_Select");
+
+    for (var item, i = 0; item = json[i++];) {
+      var filename = item.File;
+
+      if (!(filename in lookup)) {
+        lookup[filename] = 1;
+        //result.push(filename);
+        var option = document.createElement("option");
+
+
+        option.text = filename;
+        x.add(option);
+      }
+    }
+    $('#NC_File_Select').fancySelect();
+
+    //console.log(result);
+}
+
+function buildNSCD(json)
+{
+       // Gets your select
+    var list = document.getElementById('NC_File_Select');
+
+    // Get the index of selected item, first item 0, second item 1 etc ...
+    var INDEX = list.selectedIndex;
+
+    //console.log(list[INDEX].value);
+    
+    nscd.build(json, list[INDEX].value);
+}
+
+
+
+
+// *** JACCARD TABLE *** //
+function initialiseJaccardTable()
+{
+    hideAllControls();
+    d3.json(getDataLocation(JSON_JC), function(error, json)
+    {
+        
+        updateNormalisationMenu(json, buildJaccardTable, false);
+        updateAnnotationMenu(false); // do not use annotations
+        
+        jaccard.intialise();
+        buildJT(json);
+    });
+
+}
+
+function buildJaccardTable()
+{
+    d3.json(getDataLocation(JSON_JC), function(error, json){
+        buildJT(json);
+    });
+}
+
+function buildJT(json)
+{
+    updateSelectedRadios();
+    options.updateOptions();
+    jaccard.build(json);
+}
+
+function initialiseMappingQuality()
+{
+    // We use the SCD to find totalled abundances
+    d3.json(getDataLocation(JSON_SCD), function(error, json){
+        updateAnnotationMenu(false); // annotations switching is not supported for now
+        updateNormalisationMenu(json, buildMappingQuality, true);
+        MQBars = new MappingQualityBarplot('#mapping_quality_div');
+        updateSelectedRadios();
+        options.updateOptions();
+        buildMQ(json, perc_check.checked);
+    })
+    
+    // Show the mapping quality controls
+    hideAllControls();
+    document.getElementById("scdControlTable").style.display="block";
+    document.getElementById('as_percentage').style.display = "block";
+    nr_radio.onclick = buildMappingQuality;
+    red_radio.onclick = buildMappingQuality;
+    comp_radio.onclick = buildMappingQuality;
+    perc_check.onclick = buildMappingQuality;
+    
+}
+
+function buildMQ(json, percentage){
+    MQBars.build(json, "Mapped", options.sizeClassDataType, percentage);
+}
+
+function buildMappingQuality()
+{
+    d3.json(getDataLocation(JSON_SCD), function(error, json){
+        updateSelectedRadios();
+        options.updateOptions();
+        buildMQ(json, perc_check.checked)
+    })
+}
+
+// *** MAPPING QUALITY *** //
+function updateMappingQualityData()
+{
+    hideAllControls();
+    document.getElementById("scdControlTable").style.display="block";
+    document.getElementById('as_percentage').style.display = "block";
+
+    //disable all normalisation radios
+     rawRadio.disabled = true; 
+        ptRadio.disabled = true;
+        qRadio.disabled = true; 
+        bRadio.disabled = true;   
+        desRadio.disabled = true; 
+        tmRadio.disabled = true; 
+        uqRadio.disabled = true; 
+
+    //register the callbacks
+    nr_radio.onclick = updateMappingQualityAndBuild;
+    red_radio.onclick = updateMappingQualityAndBuild;
+    comp_radio.onclick = updateMappingQualityAndBuild;
+//        perc_NR_radio.onclick = updateMappingQualityAndBuild;
+//        perc_R_radio.onclick = updateMappingQualityAndBuild;
+    perc_check.onclick = updateMappingQualityAndBuild;
+    if(firstMQLoad)
+    {
+        if(nr_radio.checked)
+        {
+            buildMappingQualityChart("Nonredundant");
+        }
+        else if(red_radio.checked)
+        {
+            buildMappingQualityChart("Redundant");
+        }
+        else if(comp_radio.checked)
+        {
+            buildMappingQualityChart("Complexity");
+        }
+        else if(perc_NR_radio.checked)
+        {
+            buildMappingQualityChart("PercentRedundant");
+        }
+        else if(perc_R_radio.checked)
+        {
+            buildMappingQualityChart("PercentNonredundant");
+        }
+        firstMQLoad = false;
+    }
+      else{ 
+        updateMappingQualityAndBuild();
+      }
+}
+
+function updateMappingQualityAndBuild()
+{
+
+
+    var type;
+    if(nr_radio.checked)
+    {
+        type="Nonredundant";
+    }
+    else if(red_radio.checked)
+    {
+        type="Redundant";
+    }
+    if(perc_check.checked)
+    {
+        type = "Percent"+type;
+    }
+    if(comp_radio.checked)
+    {
+        type="Complexity";
+    }
+
+    updateMappingQuality(type);
+
+}
+
+function initialiseNormRadios(d3Data, norm_callback, radio)
+{
+    // initialise normalisation radios using data imported by d3.
+    // To call this function do so inside a d3.json(d3Data){ initialiseNormRadios(d3Data) }
+    Object.keys(normKeys).forEach(function(n)
+    {
+        //console.log(n);
+        var result = find (d3Data, "Normalisation", n);
+        //console.log(result);
+        if(result !== null)
+        {
+            norm_radios[n].disabled = false;
+        }
+        else
+        {
+            norm_radios[n].disabled = true;
+        }
+        if(radio === true)
+        {
+            norm_radios[n].type = 'radio';
+        }
+        else
+        {
+            norm_radios[n].type = 'checkbox';
+        }
+        norm_radios[n].onclick = norm_callback;
+    });
+}
+
+function updateSelectedRadios()
+{
+    localStorage.COMP = comp_radio.checked;
+    localStorage.NR = nr_radio.checked;
+    localStorage.R = red_radio.checked;
+    if(gbnorm_radio.checked)
+    {
+        localStorage.groupBy = "Normalisation";       
+    }
+    else
+    {
+        localStorage.groupBy = "Plot";
+    }
+
+    if(dtma_radio.checked)
+    {
+        localStorage.maDataType = "ma";
+    }
+    else
+    {
+        localStorage.maDataType = "corr";
+    }
+
+
+    localStorage.bpShowNBar = bp_n_radio.checked;
+    localStorage.bpShowLabels = bplab.checked;
+    localStorage.bpShowLegend = bpleg.checked;
+}
+
+function updateBP_Progress(value)
+{
+    BP_ProgressWheel.value(value);
+    BP_ProgressWheel.render();
+}
+    /*
+     * Progress bar
+     */
+function setupProgressWheels() {
+
+/*
+        rp1 = radialProgress(document.getElementById('div1'))
+                .label("RADIAL 1")
+                .onClick(onClick1)
+                .diameter(150)
+                .value(10)
+                .render();
+*/
+
+BP_ProgressWheel = radialProgress(document.getElementById('boxplotDProgress'))
+                .diameter(70)
+                .value(100)
+                .render();
+       /*
+        window.setInterval(function(){
+            rp1.value(200);
+            rp1.render();
+          }, 1000);
+*/
+    }
+    
+    function saveSelectedChart()
+    {
+//        var svgData = new XMLSerializer().serializeToString($("#divLinks div:visible svg")[0]);
+//        console.log(svgData);
+        
+        var svgNode = $("#plotsection div:visible svg")[0];
+        
+        if(typeof(svgNode) === "undefined")
+        {
+            app.noChartSelected();
+        }
+        else{
+            //console.log(svgNode);
+            // Pull down all CSS into the svg dom
+            styles(svgNode);
+
+            // set extra attributes
+            setAttributes(svgNode);
+
+            var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
+
+            var svgData = doctype + outerHTML(svgNode);
+
+            // Add headers to the string
+
+            //console.log(svgData);
+            if(typeof app !== 'undefined')
+                app.saveToPDF(svgData);
+
+            //var s = new XMLSerializer();
+            //var d = document;
+            //var str = s.serializeToString(d);
+            //alert(str);
+        }
+        
+    }
+    
+    function setAttributes(el) {
+        el.setAttribute("version", "1.1");
+        el.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        el.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+    }
+    
+    function styles(dom) {
+        var used = "";
+        var sheets = document.styleSheets;
+        for (var i = 0; i < sheets.length; i++) {
+            //console.log(sheets[i])
+            if(sheets[i].href !== null && sheets[i].href.indexOf('wbstyles') >= 0)
+            {
+                //console.log("FOUND");
+                var rules = sheets[i].cssRules;
+                  if(rules !== null){
+                    var rlength = rules.length;
+                    for (var j = 0; j < rlength; j++) {
+                      var rule = rules[j];
+                      //console.log(rule);
+                      if (typeof(rule.style) !== "undefined" && rule.selectorText !== undefined) {
+                        if(rule.selectorText.indexOf("webkit") > -1){
+                            console.log("Skipping" + rule.selectorText);
+                        }
+                        else{
+
+                            var elems = dom.querySelectorAll(rule.selectorText);
+                            if (elems.length > 0) {
+                              used += rule.selectorText + " { " + rule.style.cssText + " }\n";
+                            }
+                        }
+                      }
+                    }
+                }
+            }
+        }
+
+        var s = document.createElement('style');
+        s.setAttribute('type', 'text/css');
+        s.innerHTML = "<![CDATA[\n" + used + "\n]]>";
+
+        var defs = document.createElement('defs');
+        defs.appendChild(s);
+        dom.insertBefore(defs, dom.firstChild);
+      }
+      
+    function outerHTML(el) {
+      var outer = document.createElement('div');
+      outer.appendChild(el.cloneNode(true));
+      return outer.innerHTML;
+    }
+
+    function loadBrowserVersion()
+    {
+        
+        app.loadBrowserVersion();
+    }
+
+    </script>
+    </body>
+</html>

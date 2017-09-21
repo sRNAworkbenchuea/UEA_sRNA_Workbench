@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>miRCat</title>
+        <link rel="stylesheet" href="../CSS/workflowModule.css">
+        <script src="../js/d3.v3.min.js"></script>
+        <script src="../js/HQLTableViewer.js"></script>
+        <script src="../js/ToolParameters.js"></script>
+        <script src="../js/StatusLog.js"></script>
+        <script src="../js/utils/workbenchutils.js"></script>
+
+
+        <link rel="stylesheet" type="text/css" href="../css/jquery.dataTables.css">
+        <script type="text/javascript" src="../js/jQuery/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="../js/datatables/jquery.dataTables.min.js"></script>
+        <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
+        <script>
+            var parameterSet = null;
+
+
+            function setParamValue(id, val)
+            {
+                document.getElementById(id).setAttribute("value", val);
+            }
+
+            function save()
+            {
+                try
+                {
+                    var p = [
+                        document.getElementById('extend').value,
+                        document.getElementById('min_energy').value,
+                        document.getElementById('min_length').value,
+                        document.getElementById('max_length').value,
+                        document.getElementById('max_genome_hits').value,
+                        document.getElementById('max_unpaired').value,
+                        document.getElementById('max_gaps').value,
+                        document.getElementById('min_gc').value,
+                        document.getElementById('min_locus_size').value,
+                        document.getElementById('orientation').value,
+                        document.getElementById('min_hairpin_len').value,
+                        document.getElementById('min_abundance').value,
+                        document.getElementById('cluster_sentinel').value,
+                        document.getElementById('min_paired').value,
+                        document.getElementById('max_overlap_percentage').value,
+                        document.getElementById('pval').value,
+                        document.getElementById('complex_loops').checked
+                    ];
+                    return app.save(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9],
+                            p[10], p[11], p[12], p[13], p[14], p[15], p[16]);
+                }
+                catch (err)
+                {
+                    alert("There was an error saving miRCat parameters");
+                }
+            }
+
+            function goBack()
+            {
+                try
+                {
+                    if (save())
+                    {
+                        app.goHome();
+                    }
+                }
+                catch (err)
+                {
+                    alert("There was an error going back to home.")
+                }
+            }
+
+            function init()
+            {
+                try
+                {
+                    parameterSet = new ToolParameters("parameterSet", "form");
+                    app.setUpParameters();
+                    app.initController();
+                    
+                    createDataTable("", 'predictions');
+                    drawTable('predictions');
+
+                }
+                catch (err)
+                {
+                    alert("There was an error initialising miRCat:" + err);
+                }
+            }
+
+            function exportTable()
+            {
+                try
+                {
+                    saveTable('predictions');
+                }
+                catch (err)
+                {
+                    alert("There was an error saving the output");
+                }
+            }
+
+            window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
+                alert("Error occured: " + errorMsg);//or any message
+                return false;
+            }
+        </script>
+
+    </head>
+    <body onload="init();">
+
+
+        <div class="tool_title">
+            <div class="button" style="display:inline;" id="gohome" onclick="goBack();">&#8617;</div>
+            <h1>miRCat MODULE</h1>
+                          <div class="button" style="float:right;" onclick="exportTable();">Export All</div>
+        </div>
+        <p>This module predicts miRNAs.</p>
+        <div id="right_column" class="right_column">
+            <div id="form"></div>
+
+
+        </div>
+        <div class="left_column">
+
+            <div id="predictions" class="log_panel"></div>
+            <h2>LOG</h2>
+            <div class="tool_log_show" style="height: 100px;"><div id="output" class="output"></div></div>
+        </div>
+
+    </body>
+</html>

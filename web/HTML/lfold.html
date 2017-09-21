@@ -1,0 +1,77 @@
+<html>
+    <head><link rel="stylesheet" href="../CSS/workflowModule.css">
+        <script src="../js/d3.v3.min.js"></script>
+
+        <script>
+            function printOutput(msg) {
+                document.getElementById("output").innerHTML = document.getElementById("output").innerHTML + msg;
+            }
+            function printPredictions(msg) {
+                document.getElementById("predictions").innerHTML = msg;
+            }
+            function setRecordID(i, n) {
+                document.getElementById("record_id").innerHTML = "Result " + i + " of " + n + ": ";
+            }
+            function printPredictionMessage(msg) {
+                document.getElementById("table_footer").innerHTML = msg;
+            }
+            function updateProgressBar(progress)
+            {
+                progressBar('#progressbar', 50, 10, "rgb(0, 100, 200)", "rgb(50, 50, 50)", "rgb(50, 50, 50)", progress);
+            }
+            function run()
+            {
+                app.run(document.getElementById('flank').value);
+            }
+            function save()
+            {
+                app.save(document.getElementById('flank').value);
+            }
+            function disableParameters()
+            {
+                document.getElementById("flank").setAttribute("disabled", "true");
+            }
+            setInterval(function () {
+                app.updateUI();
+            }, 250);
+
+        </script>
+
+    </head>
+    <body onload="updateProgressBar(0)">
+
+<div class="button" id="gohome" onclick="app.goHome();">Home</div>
+        <div class="fixed_block_noscroll">
+            <div class="inline_left"><h1>Biogenesis Predictor (LFold) </h1></div>
+            <div class="inline_right"><svg id='progressbar'></svg></div>
+        </div>
+        <div class="left_column">
+            <h2>Predictions List</h2>
+            <div id="recordID" class="inline_left"></div>
+            <div id="table_footer"></div>
+            <div class="inline_right">
+
+            </div>
+            </br></br>
+            <div class="fixed_block" id="tbl_fixed_block" style="height: 180px;">
+                <div id="predictions">
+
+                </div>
+            </div>
+
+
+            <h2>Log</h2>
+            <div class="fixed_block" style="height: 100px;"><div id="output" class="output"></div></div>
+        </div>
+        <div class="right_column">
+            <h2>Parameters</h2>
+            <form>
+                Flanking Region (nucleotides)<br/>
+                <input type="text" id="flank" name="flank" value="350">
+                <br/><br/>
+                <div class="button" onclick="save()">Save Parameters</div>
+            </form>
+        </div>
+
+    </body>
+</html>

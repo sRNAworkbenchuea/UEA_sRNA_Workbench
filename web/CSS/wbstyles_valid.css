@@ -1,0 +1,1073 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Oct 31, 2014, 4:13:31 PM
+    Author     : w0445959
+*/
+
+body {
+    font-family: sans-serif;
+    font-weight: 100;
+    margin: 10px;
+    color: #999;
+    overflow-y:scroll;
+    font-weight: 100;
+
+
+
+}
+
+
+
+.disabled{
+    pointer-events: none;
+    color: rgba(0,0,0,0.5);
+}
+
+.buttonDisabled{
+    pointer-events: none;
+    color: rgba(1,0,0,0.5);
+}
+
+
+div {
+    position: relative;
+
+
+
+}
+#plotsection {
+    position: relative;
+    top: 300px;
+    width:100%;
+    height: 100%;
+    float:left;
+    padding:10px; 
+    z-index: -1;
+}
+
+
+iframe {
+    position: relative;
+    height:100%;
+    width:100%;
+    border: none;
+    margin: 0;
+}
+#checkbox{
+    position: relative;
+    clear: both;
+    margin: 0 0px;
+    top: 0px;
+    right: 0px;
+}
+
+#datatype_perc_nr{
+    position: relative;
+    top: -240px;
+}
+#datatype_perc_r{
+    position: relative;
+    top: -166px;
+    right: -260px;
+}
+
+
+
+#datatype{
+    position: relative;
+    clear: both;
+    margin: 0 50px;
+    top: -10px;
+    right: -20px;
+    display:inline;
+
+}
+
+label {
+    width: 250px;
+    border-radius: 3px;
+    border: 1px solid #D1D3D4
+}
+h3 {
+        page-break-after: avoid;
+    }
+    
+/* hide input */
+input.radio:empty {
+    margin-left: -999px;
+    display: none;
+}
+
+/* style label */
+input.radio:empty ~ label {
+    position: relative;
+    float: left;
+    line-height: 2.5em;
+    text-indent: 3.25em;
+    margin-top: 2em;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+input.radio:empty ~ label:before {
+    position: absolute;
+    display: block;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    content: '';
+    width: 2.5em;
+    background: #D1D3D4;
+    border-radius: 3px 0 0 3px;
+}
+
+/* toggle hover */
+input.radio:hover:not(:checked) ~ label:before {
+    content:'\2714';
+    text-indent: .9em;
+    color: #C2C2C2;
+}
+
+input.radio:hover:not(:checked) ~ label {
+    color: #888;
+}
+
+/* toggle on */
+input.radio:checked ~ label:before {
+    content:'\2714';
+    text-indent: .9em;
+    color: #9CE2AE;
+    background-color: #4DCB6D;
+}
+
+input.radio:checked ~ label {
+    color: #777;
+}
+
+/* radio focus */
+input.radio:focus ~ label:before {
+    box-shadow: 0 0 0 3px #999;
+}
+
+.radios {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 550px;
+    margin-top: -20px;
+    margin-left: -275px;
+    background: linear-gradient(to bottom, #f5f5f5 0%, #fff 100%);
+    box-shadow: inset 0 0 6px rgba(0,0,0,.2), 0 0 0 1px rgba(0,0,0,.15);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.radios input {
+    position: absolute;
+    opacity: 0;
+}
+
+.radios input + label {
+    display: block;
+    float: left;
+    position: relative;
+    width: 110px;
+    height: 40px;
+    font: 700 13px/40px Lato, sans-serif;
+    text-align: center;
+    color: #999;
+    box-shadow: inset -1px 0 0 rgba(0,0,0,.15);
+    cursor: pointer;
+    transform: translateZ(0);
+}
+
+.radios label:last-child {
+    box-shadow: 0 0 0;
+}
+
+.radios label:after {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #555;
+    left: 12px;
+    top: -10px;
+    transform: translateY(0);
+    transition: transform .2s linear;
+}
+
+.radios input:checked + label {
+    color: #555;
+    transition: color .2s linear;
+}
+
+.radios input:checked + label:after {
+    transform: translateY(27px);
+    transition: transform .2s linear;
+}
+button {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.over
+{
+    fill:steelblue;
+}
+
+.under
+{
+    fill:lightgrey;
+}
+
+.axis path, .axis line{
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.axis text{
+    font-size:15px;
+}
+
+
+
+text {
+    font: 12px sans-serif;
+    font: 12px monospace;
+}
+
+svg {
+    display: block;
+}
+
+/* Chart specific CSS */
+/* mapping quality */
+#mapping_quality .y.axis path, #mapping_quality .y.axis line {
+    display: none;
+    /*stroke: #000;*/
+}
+#mapping_quality rect{
+    stroke-width:1px;
+}
+
+#mapping_quality{
+    position: absolute;
+    top: -300px;
+    right: -40px;
+}
+
+#nscd{
+    top: -450px;
+}
+
+#nscd path.nl{
+    fill: none;
+}
+
+#chart1 svg {
+
+    height: 500px;
+    min-width: 200px;
+    min-height: 100px;
+    /*
+      margin: 50px;
+      Minimum height and width is a good idea to prevent negative SVG dimensions...
+      For example width should be =< margin.left + margin.right + 1,
+      of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
+    */
+
+}
+#chart1 {
+    margin-top: 200px;
+    margin-left: 100px;
+    position: relative;
+    clear: both;
+    margin: 0 0px;
+    top: -350px;
+    right: 0px;
+
+
+}
+
+#scd {
+    top: -350px;
+}
+
+#aboxplot {
+    position: relative;
+    top: -350px;
+    right: 10px;
+}
+
+.boxplot .xgroup path, .boxplot .xgroup line {
+    display:none;
+}
+
+.bw{
+    stroke: #000;
+    stroke-width: 1.5px;
+    fill:#fff;
+}
+.whisker{
+    stroke-dasharray: 3,3;
+}
+
+.outliers circle{
+    fill: none;
+    stroke: #bbb;
+}
+
+.N{
+    fill: #D6E6E6;
+    stroke: none;
+}
+
+#bp_window-slider{
+    position: relative;
+    top: 80px;
+}
+
+#mboxplot{
+    position: relative;
+    top: -350px;
+    right: 10px;
+}
+
+#mboxplot.x line, #mboxplot.x path {
+    display: none;
+}
+
+#mboxplot line.midline{
+    stroke: #000;
+    stroke-width: 1.5px;
+    stroke-dasharray: 3,6;
+    stroke:#bbb;
+}
+
+#jaccard_table{
+    position: relative;
+    top: -350px;
+    right: -40px;
+}
+
+
+#bp_window-slider{
+    position: relative;
+    top: 80px;
+}
+
+#maplot {
+    top: -350px;
+    right: 0px;
+}
+
+#maplot .title text {
+    font-family: monospace;
+}
+
+#maplot rect.frame {
+    fill: #fff;
+    fill-opacity: .7;
+    stroke: #aaa;
+}
+
+/*#maplot .axis text {
+    font: 10px monospace;
+}*/
+
+#maplot .axis line {
+    display: none;
+}
+
+#maplot .axis path {
+    display: none;
+}
+
+#maplot circle {
+
+
+}
+
+
+
+
+.whisker
+{
+    stroke-dasharray: 3,3;
+}
+line.midline
+{
+    stroke: #000;
+    stroke-width: 1.5px;
+    stroke-dasharray: 3,6;
+    stroke:#bbb;
+}
+
+.outliers circle
+{
+    fill: none;
+    stroke: #bbb;
+}
+
+/*Toggle button styles*/
+#mboxplot.x line, #mboxplot.x path{
+    display: none;
+}
+
+
+
+.node {
+    cursor: pointer;
+
+
+}
+
+.disablednode {
+    cursor: not-allowed;
+    fill:crimson;
+
+}
+
+.overlay{
+    background-color:#EEE;
+}
+
+.node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+.node text {
+    font-size:10px; 
+    font-family:sans-serif;
+}
+
+.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
+    shape-rendering: crispEdges;
+}
+
+
+.name {
+  font-weight: bold;
+}
+
+.about {
+  fill: #777;
+  font-size: smaller;
+}
+
+
+
+.templink {
+    fill: none;
+    stroke: red;
+    stroke-width: 3px;
+}
+
+.ghostCircle.show{
+    display:block;
+}
+
+.ghostCircle, .activeDrag .ghostCircle{
+    display: none;
+}
+
+/*Text areas*/
+textarea
+{
+    border:1px solid #999999;
+    width:100%;
+    margin:5px 0;
+    padding:3px;
+
+
+
+}
+#console_textarea
+{
+    border:1px solid #999999;
+    width:100%;
+    height:80%;
+    margin-bottom: 5px;
+    padding:10px;
+
+    overflow: scroll;
+    outline: none;
+
+
+}
+.boxsizingBorder {
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+
+/* Overlay style */
+.overlay {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	background: rgba(153,204,51,0.9);
+}
+
+/* Overlay closing cross */
+.overlay .overlay-close {
+	width: 80px;
+	height: 80px;
+	position: absolute;
+	right: 20px;
+	top: 20px;
+	overflow: hidden;
+	border: none;
+	background: url(../images/cross.png) no-repeat center center;
+	text-indent: 200%;
+	color: transparent;
+	outline: none;
+	z-index: 100;
+}
+
+/* Menu style */
+.overlay nav {
+	text-align: center;
+	position: relative;
+	top: 50%;
+	height: 60%;
+	font-size: 54px;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+}
+
+.overlay ul {
+	list-style: none;
+	padding: 0;
+	margin: 0 auto;
+	display: inline-block;
+	height: 100%;
+	position: relative;
+}
+
+.overlay ul li {
+	display: block;
+	height: 20%;
+	height: calc(100% / 5);
+	min-height: 54px;
+}
+
+.overlay ul li a {
+	font-weight: 100;
+	display: block;
+	color: #fff;
+	-webkit-transition: color 0.2s;
+	transition: color 0.2s;
+}
+
+.overlay ul li a:hover,
+.overlay ul li a:focus {
+	color: #e3fcb1;
+}
+
+/* Effects */
+.overlay-hugeinc {
+	opacity: 0;
+	visibility: hidden;
+	-webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+	transition: opacity 0.5s, visibility 0s 0.5s;
+}
+
+.overlay-hugeinc.open {
+	opacity: 1;
+	visibility: visible;
+	-webkit-transition: opacity 0.5s;
+	transition: opacity 0.5s;
+}
+
+.overlay-hugeinc nav {
+	-webkit-perspective: 1200px;
+	perspective: 1200px;
+}
+
+.overlay-hugeinc nav ul {
+	opacity: 0.4;
+	-webkit-transform: translateY(-25%) rotateX(35deg);
+	transform: translateY(-25%) rotateX(35deg);
+	-webkit-transition: -webkit-transform 0.5s, opacity 0.5s;
+	transition: transform 0.5s, opacity 0.5s;
+}
+
+.overlay-hugeinc.open nav ul {
+	opacity: 1;
+	-webkit-transform: rotateX(0deg);
+	transform: rotateX(0deg);
+}
+
+.overlay-hugeinc.close nav ul {
+	-webkit-transform: translateY(25%) rotateX(-35deg);
+	transform: translateY(25%) rotateX(-35deg);
+}
+
+#tree-container{
+    opacity: 1;
+}
+
+/*Worflow CSS*/
+
+#toolbox{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin-bottom: 0.5em;
+    margin-left: 1em;
+    border: 2px solid #EEEEEE;
+    border-radius: 5px;
+    padding: 1em;
+    z-index: 5;
+}
+
+#toolbox input{
+    width: 30px;
+    opacity: 0.4;
+}
+#toolbox input:hover{
+    opacity: 1;
+    cursor: pointer;
+}
+
+#hidden-file-upload{
+    display: none;
+}
+
+#download-input{
+    margin: 0 0.5em;
+}
+
+.conceptG text{
+    pointer-events: none;
+}
+
+marker{
+    fill: #333;
+}
+
+g.conceptG circle{
+    fill: #F6FBFF;
+    stroke: #333;
+    stroke-width: 2px;
+}
+
+g.conceptG:hover circle{
+    fill: rgb(200, 238, 241);
+}
+
+g.selected circle{
+    fill: rgb(250, 232, 255);
+     
+}
+g.active circle{
+    stroke: #ff3300;
+  
+  
+}
+
+g.completed circle{
+   stroke: #33ff00;
+}
+
+g.waiting circle{
+   stroke: #FFFF00;
+}
+g.ready circle{
+   stroke: #0000A0;
+}
+
+g.selected:hover circle{
+    fill: rgb(250, 232, 255);
+   
+}
+
+path.link {
+    fill: none;
+    stroke: #333;
+    stroke-width: 2px;
+    cursor: default;
+}
+
+path.link:hover{
+    stroke: rgb(94, 196, 204);
+}
+
+g.connect-node circle{
+    fill: #BEFFFF;
+}
+
+path.link.hidden{
+    stroke-width: 0;
+}
+
+path.link.selected {
+    stroke: rgb(229, 172, 247);
+}
+
+/**
+Wizard Divs
+*/
+#wizard{
+
+    
+}
+
+table.filetable{
+    
+}
+table.filetable a:link {
+	color: #666;
+	font-weight: bold;
+	text-decoration:none;
+}
+table.filetable  a:visited {
+	color: #999999;
+	font-weight:bold;
+	text-decoration:none;
+}
+
+table.filetable  a:active,
+table.filetable  a:hover {
+	color: #bd5a35;
+	text-decoration:underline;
+}
+
+table.filetable  {
+	font-family:Arial, Helvetica, sans-serif;
+	color:#666;
+	font-size:12px;
+	text-shadow: 1px 1px 0px #fff;
+	background:#eaebec;
+	margin:20px;
+	border:#ccc 1px solid;
+
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+
+	-moz-box-shadow: 0 1px 2px #d1d1d1;
+	-webkit-box-shadow: 0 1px 2px #d1d1d1;
+	box-shadow: 0 1px 2px #d1d1d1;
+}
+
+table.filetable  th {
+	padding:21px 25px 22px 25px;
+	border-top:1px solid #fafafa;
+	border-bottom:1px solid #e0e0e0;
+
+	background: #ededed;
+	background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#ebebeb));
+	background: -moz-linear-gradient(top,  #ededed,  #ebebeb);
+}
+
+table.filetable  th:first-child {
+	text-align: left;
+	padding-left:20px;
+}
+table.filetable  tr:first-child th:first-child {
+	-moz-border-radius-topleft:3px;
+	-webkit-border-top-left-radius:3px;
+	border-top-left-radius:3px;
+}
+table.filetable  tr:first-child th:last-child {
+	-moz-border-radius-topright:3px;
+	-webkit-border-top-right-radius:3px;
+	border-top-right-radius:3px;
+}
+
+table.filetable  tr {
+	text-align: center;
+	padding-left:20px;
+}
+
+/* offset styles */
+table.wb_table{
+    	font-family:Arial, Helvetica, sans-serif;
+	color:#666;
+	font-size:12px;
+	text-shadow: 1px 1px 0px #fff;
+	background:#eaebec;
+	margin:20px;
+	border:#ccc 1px solid;
+
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+
+	-moz-box-shadow: 0 1px 2px #d1d1d1;
+	-webkit-box-shadow: 0 1px 2px #d1d1d1;
+	box-shadow: 0 1px 2px #d1d1d1;
+}
+table.wb_table tr[chosen=true]{
+    background:blue;
+}
+
+table.filetable  td:first-child {
+	text-align: left;
+	padding-left:20px;
+	border-left: 0;
+}
+
+table.filetable  td {
+	padding:18px;
+	border-top: 1px solid #ffffff;
+	border-bottom:1px solid #e0e0e0;
+	border-left: 1px solid #e0e0e0;
+
+	background: #fafafa;
+	background: -webkit-gradient(linear, left top, left bottom, from(#fbfbfb), to(#fafafa));
+	background: -moz-linear-gradient(top,  #fbfbfb,  #fafafa);
+}
+
+table.filetable  tr.even td {
+	background: #f6f6f6;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8), to(#f6f6f6));
+	background: -moz-linear-gradient(top,  #f8f8f8,  #f6f6f6);
+}
+table.filetable  tr:last-child td {
+	border-bottom:0;
+}
+table.filetable  tr:last-child td:first-child {
+	-moz-border-radius-bottomleft:3px;
+	-webkit-border-bottom-left-radius:3px;
+	border-bottom-left-radius:3px;
+}
+table.filetable  tr:last-child td:last-child {
+	-moz-border-radius-bottomright:3px;
+	-webkit-border-bottom-right-radius:3px;
+	border-bottom-right-radius:3px;
+}
+table.filetable  tr:hover td {
+	background: #f2f2f2;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#f0f0f0));
+	background: -moz-linear-gradient(top,  #f2f2f2,  #f0f0f0);	
+}
+
+
+
+
+table.mainwizardtable{
+    
+    height: 600px;
+    
+ }
+.mainwizardtable caption {  }
+.mainwizardtable td, th {}
+.mainwizardtable th {  }
+.mainwizardtable thead th {  }
+.mainwizardtable .odd td {  }
+.mainwizardtable .odd th {  }
+.mainwizardtable td a, td a:link {  }
+.mainwizardtable td a:visited {  }
+.mainwizardtable td a:hover, td a:focus {  }
+.mainwizardtable th a, td a:active {  }
+.mainwizardtable tfoot th, tfoot td {  }
+.mainwizardtable th + td {  }
+/*
+tree container (file hierarchy)
+*/
+#tree-container{
+    
+    
+}
+/**
+Section for progress bar radial CSS
+*/
+
+/*
+Determinate progress wheel
+*/
+
+.determinateprogress {
+    position: relative;
+    top: 5px;
+    width: 50px;
+    height: 50px;
+    box-sizing: border-box;
+    float: right;
+
+}
+.background {
+    fill: #FFFFFF;
+    fill-opacity: 0.01;
+}
+
+.component {
+    fill: #e1e1e1;
+}
+
+.component .label {
+    font-family: Myriad, "Helvetic Neue", Helvetica, Arial;
+    font-weight: 100;
+    text-anchor: middle;
+    color: #FFFFFF;
+    fill: #FFFFFF;
+}
+
+.arc {
+    stroke-weight:0.1;
+    
+    
+    fill: #55d737;
+}
+
+
+.arc2 {
+    stroke-weight:0.1;
+    fill: #FFFFFF;
+}
+
+
+
+.radial-svg {
+    display: block;
+    margin: 0 auto;
+}
+
+/*
+Infinite (indeterminate) progress wheel
+*/
+.indeterminateprogress,
+.indeterminateprogress:before,
+.indeterminateprogress:after {
+  border-radius: 50%;
+}
+.indeterminateprogress:before,
+.indeterminateprogress:after {
+  position: absolute;
+  content: '';
+}
+.indeterminateprogress:before {
+  width: 5.2em;
+  height: 10.2em;
+  background: #336ca6;
+  border-radius: 10.2em 0 0 10.2em;
+  top: -0.1em;
+  left: -0.1em;
+  -webkit-transform-origin: 5.2em 5.1em;
+  transform-origin: 5.2em 5.1em;
+  -webkit-animation: load2 2s infinite ease 1.5s;
+  animation: load2 2s infinite ease 1.5s;
+}
+.indeterminateprogress {
+  font-size: 2px;
+  text-indent: -99999em;
+  margin: 5em auto;
+  position: relative;
+  float: right;
+  right: 5px;
+  top: 5px;
+  width: 10em;
+  height: 10em;
+  box-shadow: inset 0 0 0 1em #FFF;
+  
+}
+.indeterminateprogress:after {
+  width: 5.2em;
+  height: 10.2em;
+  background: #336ca6;
+  border-radius: 0 10.2em 10.2em 0;
+  top: -0.1em;
+  left: 5.1em;
+  -webkit-transform-origin: 0px 5.1em;
+  transform-origin: 0px 5.1em;
+  -webkit-animation: load2 2s infinite ease;
+  animation: load2 2s infinite ease;
+}
+.indeterminateprogress:hover{
+    opacity: 0.6;
+}
+
+/*
+* Connected lists
+*/
+
+ul.sortable li {
+	position: relative;
+}
+
+ul.boxy {
+	list-style-type: none;
+	padding: 4px 4px 0 4px;
+	margin: 0px;
+	
+}
+ul.boxy li {
+	cursor:move;
+	margin-bottom: 4px;
+	padding: 2px 2px;
+	border: 1px solid #ccc;
+	background-color: #eee;
+}
+
+ul.boxier {
+	list-style-type: none;
+	padding: 4px 4px 0 4px;
+	margin: 0px;
+	width: 10em;
+	font-size: 15px;
+	font-family: "Courier New", Courier, monospace;
+	font-variant: small-caps;
+}
+ul.boxier li {
+	cursor:move;
+	margin-bottom: 4px;
+	padding: 2px 2px;
+	border: 1px solid #c00;
+	background-color: #eee;
+}
+
+
+@-webkit-keyframes load2 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load2 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+   
+
+/***************************************/
+
+@media screen and (max-height: 30.5em) {
+	.overlay nav {
+		height: 70%;
+		font-size: 34px;
+	}
+	.overlay ul li {
+		min-height: 34px;
+	}
+}
+

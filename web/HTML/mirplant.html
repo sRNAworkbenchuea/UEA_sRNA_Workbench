@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>miRPlant</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="../CSS/workflowModule.css">
+        <script src="../js/d3.v3.min.js"></script>
+        <script src="../js/HQLTableViewer.js"></script>
+        <script src="../js/ToolParameters.js"></script>
+        <script src="../js/StatusLog.js"></script>
+        <script src="../js/utils/workbenchutils.js"></script>
+
+
+        <link rel="stylesheet" type="text/css" href="../css/jquery.dataTables.css">
+        <script type="text/javascript" src="../js/jQuery/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="../js/datatables/jquery.dataTables.min.js"></script>
+
+
+        <script>
+
+            function disableInputs()
+            {
+                var element = document.getElementById("browse_for_file");
+                if (element != null)
+                {
+                    element.style.pointerEvents = 'none';
+                }
+            }
+
+            function save()
+            {
+
+                app.save(document.getElementById("path").value);
+            }
+
+            function init()
+            {
+
+                createDataTable("", 'predictions');
+                drawTable('predictions');
+            }
+        </script>
+    </head>
+
+    <body onload="init();">
+        <div class="tool_title">
+            <div class="button" style="display:inline;" id="gohome" onclick="app.goHome();">&#8617;</div>
+            <h1>miRPlant MODULE</h1>
+        </div>
+        <h2>Enter filepath of miRPlant result:</h2>
+        <div>
+
+            <input id="path" style="width: 300px;" type="text" disabled="disabled">
+            <div id="browse_for_file" class="button" onclick="app.browseFile();">...</div>
+        </div>
+        <h2>Predictions</h2>
+        <div>
+            <div id="predictions" class="log_panel"></div>
+        </div>
+    </body>
+</html>

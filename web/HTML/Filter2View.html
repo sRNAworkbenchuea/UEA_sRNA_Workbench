@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Filter Two Display</title>
+
+
+
+        <!--Javascript-->
+        <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+      
+        <!--JQuery files -->
+        <script type="text/javascript" src="../js/lib/jquery/jquery-1.11.2.min.js"></script>
+
+        
+        <!--D3 Javascript -->
+        <!--<script src="../js/lib/d3/d3.js"></script>-->
+        <!--<script src="../js/lib/d3/d3.min.js"></script>-->
+        <script type="text/javascript"  src="../js/lib/d3V4/d3.v4.min.js"></script>
+
+        <script type="text/javascript" src="../js/lib/d3.legend.js"></script>
+
+        <!--Menu Javascript-->
+        <script src="../js/lib/classie.js"></script>
+        <script type="text/javascript" src="../js/menu/mlpushmenu.js"></script>
+        <!-- Javascript based browser feature detection for push menu -->
+        <script type="text/javascript" src="../js/lib/modernizr.push.custom.js"></script>
+        <script type="text/javascript" src="../js/lib/modernizr-2.6.2.min.js"></script>
+
+
+        <!--Workbench Routines -->
+        <script type="text/javascript" src="../js/utils/workbenchutils.js"></script>
+        
+        <!--File input table-->
+        <script type="text/javascript" src="../js/files/FileTable.js"></script>
+
+
+        <!--tooltip Javascript-->
+        <script type="text/javascript" src="../js/tipped/tipped.js"></script>
+
+
+        <!--Datatables Javascript-->
+        <script type="text/javascript" src="../js/datatables/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="../js/datatables/dataTables.colVis.js"></script>
+        <script type="text/javascript" src="../js/datatables/dataTables.tableTools.js"></script>
+        
+        <!--Tabs Javascript-->
+        <script type="text/javascript" src="../js/tabs.js"></script>
+
+
+        <!-- CSS -->
+        <!--Workbench CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/wbstyles.css" />
+        
+        <!--tabs CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/tabstyles.css" />
+        
+        <!--Biojs CSS -->
+        <!--<link rel="stylesheet" type="text/css" href="../CSS/biojs/bootstrap.css" />-->
+        <link rel="stylesheet" type="text/css" href="../CSS/biojs/spectrum.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/biojs/style.css" />
+
+
+
+        <!--Datatables CSS-->
+        <link rel="stylesheet" type="text/css" href="../css/jquery.dataTables.css">
+        <link rel="stylesheet" type="text/css" href="../css/dataTables.colVis.css">
+        <link rel="stylesheet" type="text/css" href="../css/dataTables.tableTools.css">
+
+        <!--tooltip CSS-->
+        <link rel="stylesheet" type="text/css" href="../CSS/tipped/tipped.css" />
+
+        <!--Menu CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/normalize.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/menus.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/icons.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/component.css" />
+
+
+        <!-- Import FontAwesome 4.2 -->
+        <link rel="stylesheet" href="../CSS/font-awesome.min.css">
+
+        <!--Buttons CSS-->
+        <link rel="stylesheet" href="../CSS/fancy-buttons.css">
+
+        <style type="text/css">
+            /* graph styles */
+            .axis path{
+                display: none;
+            }
+
+            td
+            {
+                padding:0 5px 0 5px;
+                /*word-wrap: break-word;*/
+
+            }
+            #source_sample_list, #reference_list, #observed_list {
+                border: 1px solid #eee;
+                width: 142px;
+                min-height: 20px;
+                list-style-type: none;
+                margin: 0;
+                padding: 5px 0 0 0;
+                float: left;
+                margin-right: 10px;
+                content: ""; /* fa-square-o */
+            }
+            #sortable1 li, #sortable2 li {
+                margin: 0 5px 5px 5px;
+                padding: 5px;
+                font-size: 1.2em;
+                width: 120px;
+            }
+
+            table.mc_results tr td:first-child {
+                text-align: center;
+            }
+
+            table.mc_results tr td:first-child:before {
+                content: "\f096"; /* fa-square-o */
+                font-family: FontAwesome;
+            }
+
+            table.mc_results tr.selected td:first-child:before {
+                content: "\f046"; /* fa-check-square-o */
+            }
+
+            table.mc_results tr_default td:first-child {
+                text-align: center;
+            }
+
+            table.mc_results tr_default td:first-child:before {
+
+            }
+
+            table.mc_results tr_default.selected td:first-child:before {
+
+            }
+
+            .precur_col
+            {
+                word-wrap: break-word;
+                width: 10px;
+                height: 100px;
+            }
+            
+            
+            textarea{
+                font-family: "Courier New", Courier, monospace;
+                height: 100%; 
+                width: 100%; 
+                white-space: pre;
+                word-wrap: normal;
+                overflow-x: scroll;
+            }
+
+
+
+        </style>
+
+    </head>
+    <body>
+        <div class="container">
+            <!-- Push Wrapper -->
+            <div class="mp-pusher" id="mp-pusher">
+
+                <!-- mp-menu -->
+                <nav id="mp-menu" class="mp-menu">
+                    <div class="mp-level">
+                        <h2 class="icon icon-world">Filter 2 Setup</h2>
+                        <ul>
+
+                            <li class="icon icon-arrow-left" id="parameter_options">
+                                <a class="icon icon-settings" href="#" onclick="loadParams()">Parameters</a>
+                                <div class="mp-level" style="overflow: auto">
+                                    <h2 class="icon icon-display">Parameters</h2>
+                                    <a class="mp-back" href="#">back</a>
+
+                                    <ul>
+                                        <li>
+
+                                            <!--<section style="margin: 10px;">
+                                                <fieldset  style="min-height:100px;">
+                                                    <legend><b> Organism Type </b> </legend>-->
+
+                                            <table id="FilterParams" style="margin-bottom: 50px">
+                                                <tr>
+
+                                                    <td>
+                                                        <input type="checkbox" name="defaultOptions" id="defaultOptions" class="radio" onclick="setDefaults()" checked />
+                                                        <label class="simple-tooltip" for="defaultOptions" title="Sets all options to the defaults">Set defaults</label>
+                                                    </td>
+                                                </tr>
+
+                                                <tr style="border-bottom: 1px solid white;">
+                                                    <td style="padding-top: 1em;">
+
+                                                    </td>  
+                                                </tr>
+
+                                                <tr>
+                                                    <td style="padding-top: 1em;">
+                                                        <label for="min_length" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Minimum length</label>
+                                                        <input class="simple-tooltip" type="number" id="min_length" align="right"  value="20" title="The minimum sequence length allowed through the filter">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding-top: 1em;">
+                                                        <label for="max_length" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Maximum length</label>
+                                                        <input class="simple-tooltip" type="number" id="max_length" align="right"  value="24" title="The maximum sequence length allowed through the filter">
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td style="padding-top: 1em;">
+                                                        <label for="min_abundance" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Minimum abundance</label>
+                                                        <input class="simple-tooltip" type="number" id="min_abundance" align="right"  value="5" title="The minium abundance allowed through the filter">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding-top: 1em;">
+                                                        <label for="max_abundance" style="width: 100px;border-radius: 0px;border: 0px solid #D1D3D4; margin: 5px;">Maximum abundance</label>
+                                                        <input class="simple-tooltip" type="number" id="max_abundance" align="right"  value="100000" title="The maximum abundance allowed through the filter">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input type="checkbox" name="filter_low_comp" id="filter_low_comp" class="radio"  />
+                                                        <label class="simple-tooltip" for="filter_low_comp" title="If checked, low complexity sequences are removed">Filter low complexity</label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td >
+                                                        <input type="checkbox" name="filter_invalid" id="filter_invalid" class="radio"  />
+                                                        <label class="simple-tooltip" for="filter_invalid" title="If checked, invalid sequences are removed" >Filter invalid</label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td >
+                                                        <input type="checkbox" name="trrna" id="trrna" class="radio"  />
+                                                        <label class="simple-tooltip" for="trrna" title="If checked, transfer and ribosomal RNAs are removed" >Filter trRNA</label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td >
+                                                        <input type="checkbox" name="trrna_sense_only" id="trrna_sense_only" class="radio" />
+                                                        <label class="simple-tooltip" for="trrna_sense_only" title="If checked, transfer and ribosomal RNAs on the sense strand only are removed" >Sense strand only</label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td >
+                                                        <input type="radio" name="output_type" id="output_nr" class="radio" checked />
+                                                        <label class="simple-tooltip" for="output_nr" title="If checked, only unique sequences and counts are output" >Non redundant output</label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td >
+                                                        <input type="radio" name="output_type" id="output_r" class="radio" />
+                                                        <label class="simple-tooltip" for="output_r" title="If checked, all sequences are output" >Redundant output</label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td >
+                                                        <input type="checkbox" name="filter_genome_hits" id="filter_genome_hits" class="radio" />
+                                                        <label class="simple-tooltip" for="filter_genome_hits" title="If checked, only hits that align to the genome are allowed through the filter" >Filter genome matching</label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td >
+                                                        <input type="checkbox" name="filter_kill_list" id="filter_kill_list" class="radio" onclick="addKillList()" />
+                                                        <label class="simple-tooltip" for="filter_kill_list" title="If checked, only hits that are not found in the (user supplied) kill list are allowed through the filter" >Filter kill list</label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td >
+                                                        <input type="checkbox" name="add_discard_log" id="add_discard_log" class="radio"  onclick="addDiscard()"/>
+                                                        <label class="simple-tooltip" for="add_discard_log" title="If checked, discarded sequences will be added to a log file (user supplied)" >Add to discard log</label>
+                                                    </td>
+                                                </tr>
+
+                                            </table>
+
+                                            <!--</fieldset>
+                                            
+
+                                        </section>-->
+                                        </li>
+                                    </ul>
+
+                                </div>
+                            </li>
+
+                            <li id='set_output'><a href="#" onclick="setOutputDIR()">Set output directory</a></li>
+                            <li id='updaterfam'  ><a  href="#" onclick="updateRFAM()" >Update the RFAM database</a></li>
+
+                            <li id='continue_flow'><a href="#" onclick="continueFlow()">Continue Workflow</a></li>
+                            <li id='back_to_main'  ><a  href="#" onclick="returnToMain()" >Home</a></li>
+
+                            <!--<li id='debug'  ><a  href="#" onclick="debug()" >debug</a></li>-->
+
+
+
+                        </ul>
+                    </div>
+
+                </nav>
+                <!-- /mp-menu -->
+
+                <div class="scroller"><!-- this is for emulating position fixed of the nav -->
+                    <div class="scroller-inner">
+
+
+                        <div class="content clearfix" >
+                            <div class="block block-80 clearfix">
+                                <p><a href="#" id="trigger" class="menu-trigger" onclick="loadParams()">Open/Close Menu</a></p>
+
+
+                            </div>
+
+
+                        </div>
+                    </div><!-- /scroller-inner -->
+
+                    <fieldset  style="min-height:100px;">
+                        <legend><b> Files Waiting </b> </legend>
+
+                        <table id="waitingFiles">
+                            <tbody>
+
+                            </tbody>
+                        </table>
+
+                    </fieldset>
+                    <fieldset  style="min-height:100px;">
+                        <legend><b> Files Completed </b> </legend>
+
+                        <table id="completedFiles">
+                            <tbody>
+
+                            </tbody>
+                        </table>
+
+                    </fieldset>
+                    
+
+
+                    <nav class="nav nav--active">
+                        <ul class="nav__list">
+                            <li class="nav__item">
+                                <a href="" class="nav__link">
+                                    <div class="nav__thumb color1" data-letter=""></div>
+                                    <p class="nav__label">Results</p>
+                                </a>
+                            </li>
+                            <li class="nav__item"  id="inputNav">
+                                <a href="" class="nav__link">
+                                    <div class="nav__thumb color2" data-letter=""></div>
+                                    <p class="nav__label">Input Counts</p>
+                                </a>
+                            </li>
+                            <li class="nav__item" id="lengthNav">
+                                <a href="" class="nav__link">
+                                    <div class="nav__thumb color3" data-letter=""></div>
+                                    <p class="nav__label">Length Filter</p>
+                                </a>
+                            </li>
+                            <li class="nav__item"  id="compNav">
+                                <a href="" class="nav__link">
+                                    <div class="nav__thumb color4" data-letter=""></div>
+                                    <p class="nav__label">Complexity Filter</p>
+                                </a>
+                            </li>
+                            <li class="nav__item" id="abundNav">
+                                <a href="" class="nav__link">
+                                    <div class="nav__thumb color5" data-letter=""></div>
+                                    <p class="nav__label">Abundance Filter</p>
+                                </a>
+                            </li>
+                            <li class="nav__item"  id="invalidNav">
+                                <a href="" class="nav__link">
+                                    <div class="nav__thumb color6" data-letter=""></div>
+                                    <p class="nav__label">Invalid Sequence Filter</p>
+                                </a>
+                            </li>
+                            <li class="nav__item" id="killNav">
+                                <a href="" class="nav__link">
+                                    <div class="nav__thumb color7" data-letter=""></div>
+                                    <p class="nav__label">Kill List Filter</p>
+                                </a>
+                            </li>
+                            <li class="nav__item" id="genomeNav">
+                                <a href="" class="nav__link">
+                                    <div class="nav__thumb color8" data-letter=""></div>
+                                    <p class="nav__label">Genome Filter</p>
+                                </a>
+                            </li>
+                            <li class="nav__item" id="trNav">
+                                <a href="" class="nav__link">
+                                    <div class="nav__thumb color9" data-letter=""></div>
+                                    <p class="nav__label">transfer and ribosomal RNA Filter</p>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="burger burger--close" style="display:none">
+                            <div class="burger__patty"></div>
+                        </div>
+                    </nav>
+
+                    <div class="page">
+                        <section class="section section--active color1" data-letter="" >
+                            <article class="section__wrapper">
+                                <h1 class="section__title">Viewing the filter results</h1>
+                                <p>Use your 'left' and 'right' arrow keys to navigate the stats screen or click each tab. <br> Each row in the table corresponds to a single file.</p>
+                            </article>
+                        </section>
+                        <section class="section color2" data-letter="Stage 1"  id="inputPage">
+                            <article class="section__wrapper">
+                                <h1 class="section__title">Input Counts</h1>
+                                <fieldset  style="min-height:100px;">
+                                    <legend><b> Inputs </b> </legend>
+
+                                    <table id="inputResults">
+                                        <tbody>
+                                            <tr>
+                                                <th>Filename</th>
+                                                <th>Redundant Count</th>
+                                                <th>Non Redundant Count</th>
+                                            </tr>
+                                            <tr id="input_defaultRow">
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </fieldset>
+                            </article>
+                        </section>
+                        <section class="section color3" data-letter="Stage 2"  id="lengthPage">
+                            <article class="section__wrapper">
+                                <h1 class="section__title">Length Filter</h1>
+                                <fieldset  style="min-height:100px;">
+                                    <legend><b> Length Filtering </b> </legend>
+
+                                    <table id="lengthResults">
+                                        <tbody>
+                                            <tr>
+                                                <th>Filename</th>
+                                                <th>Redundant Count</th>
+                                                <th>Non Redundant Count</th>
+                                            </tr>
+                                            <tr id="length_defaultRow">
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </fieldset>                            
+                            </article>
+                        </section>
+                        <section class="section color4" data-letter="Stage 3" id="compPage">
+                            <article class="section__wrapper">
+                                <h1 class="section__title">Complexity Filter</h1>
+                                <fieldset  style="min-height:100px;">
+                                    <legend><b> Complexity Filter </b> </legend>
+
+                                    <table id="compResults">
+                                        <tbody>
+                                            <tr>
+                                                <th>Filename</th>
+                                                <th>Redundant Count</th>
+                                                <th>Non Redundant Count</th>
+                                            </tr>
+                                            <tr id="comp_defaultRow">
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </fieldset>                            
+                            </article>
+                        </section>
+                        <section class="section color5" data-letter="Stage 4" id="abundPage">
+                            <article class="section__wrapper">
+                                <h1 class="section__title">Abundance Filter</h1>
+                                <fieldset  style="min-height:100px;">
+                                    <legend><b> Abundance Filter </b> </legend>
+
+                                    <table id="abundanceResults">
+                                        <tbody>
+                                            <tr>
+                                                <th>Filename</th>
+                                                <th>Redundant Count</th>
+                                                <th>Non Redundant Count</th>
+                                            </tr>
+                                            <tr id="abund_defaultRow">
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </fieldset>                            
+                            </article>
+                        </section>
+                        <section class="section color6" data-letter="Stage 5"  id="invalidPage">
+                            <article class="section__wrapper">
+                                <h1 class="section__title">Invalid Sequence Filter</h1>
+                                <fieldset  style="min-height:100px;">
+                                    <legend><b> Invalid Sequence Filter </b> </legend>
+
+                                    <table id="invalidResults">
+                                        <tbody>
+                                            <tr>
+                                                <th>Filename</th>
+                                                <th>Redundant Count</th>
+                                                <th>Non Redundant Count</th>
+                                            </tr>
+                                            <tr id="invalid_defaultRow">
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </fieldset>                            
+                            </article>
+                        </section>
+                        <section class="section color7" data-letter="Stage 6"  id="killPage">
+                            <article class="section__wrapper">
+                                <h1 class="section__title">Kill List Filter</h1>
+                                <fieldset  style="min-height:100px;">
+                                    <legend><b> Kill List Filter </b> </legend>
+
+                                    <table id="killListResults">
+                                        <tbody>
+                                            <tr>
+                                                <th>Filename</th>
+                                                <th>Redundant Count</th>
+                                                <th>Non Redundant Count</th>
+                                            </tr>
+                                            <tr id="kill_defaultRow">
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </fieldset>                            
+                            </article>
+                        </section>
+                        <section class="section color8" data-letter="Stage 7"  id="genomePage">
+                            <article class="section__wrapper">
+                                <h1 class="section__title">Genome Filter</h1>
+                                <fieldset  style="min-height:100px;">
+                                    <legend><b> Genome Filter </b> </legend>
+
+                                    <table id="genomeResults">
+                                        <tbody>
+                                            <tr>
+                                                <th>Filename</th>
+                                                <th>Redundant Count</th>
+                                                <th>Non Redundant Count</th>
+                                            </tr>
+                                            <tr id="genome_defaultRow">
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </fieldset>                            
+                            </article>
+                        </section>
+                        <section class="section color9" data-letter="Stage 8"  id="trPage">
+                            <article class="section__wrapper">
+                                <h1 class="section__title">t/rRNA Filter</h1>
+                                <fieldset  style="min-height:100px;">
+                                    <legend><b> transfer and ribosomal RNA Filter </b> </legend>
+
+                                    <table id="trRNAResults">
+                                        <tbody>
+                                            <tr>
+                                                <th>Filename</th>
+                                                <th>Redundant Count</th>
+                                                <th>Non Redundant Count</th>
+                                            </tr>
+                                            <tr id="tr_defaultRow">
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </fieldset>                            
+                            </article>
+                        </section>
+                    </div>
+
+                </div><!-- /scroller -->
+                
+            </div>
+        </div>
+        <script>
+            
+            
+            
+             $(document).ready(function() 
+             {
+                Tipped.create('.simple-tooltip', {behavior: 'hide'});
+
+                //document.getElementById('trrna').onclick=function(){EnableSenseStrandFilter();};
+                $('#trrna').click(function() {
+                    $("#trrna_sense_only").prop("checked", this.checked);
+                    //$('#trrna_sense_only').toggle(this.checked);
+                });
+
+
+                setDefaults();
+
+
+              });
+
+            new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
+  
+            var firstLoad = true;
+
+            function setOutputDIR()
+            {
+                if(typeof app !== 'undefined')
+                {
+                    app.setOutputDir();
+                }
+            }
+
+            function continueFlow()
+            {   
+                if (typeof app !== 'undefined')
+                {
+                    loadParams();
+                    app.createParams(
+                                $('#min_length').val(),  
+                                $('#max_length').val(),
+                                $('#min_abundance').val(), 
+                                $('#max_abundance').val(), 
+                                $('#filter_low_comp').is(":checked"),
+                                $('#filter_invalid').is(":checked"),
+                                $('#trrna').is(":checked"),
+                                $('#trrna_sense_only').is(":checked"),
+                                $('#output_nr').is(":checked"),
+                                $('#output_r').is(":checked"),
+                                $('#filter_genome_hits').is(":checked"),
+                                $('#filter_kill_list').is(":checked"),
+                                $('#add_discard_log').is(":checked")
+                                );
+                    if (app.checkReadyStatus())
+                    {
+                        $("#continue_flow").find('a').addClass('disabled');
+                        $("#continue_flow").addClass('disabled');
+             
+                         app.setContinue(true);                      
+                        
+                        
+    
+                    }
+
+
+                }
+                else
+                {
+                    addFileToWaitingTable("test path", 'Sample1Rep1');
+                    //;
+                }
+                
+            }
+
+            function debug()
+            {
+                addRowToInputStats("testFilename", 10, 1000);
+            }
+
+            function addFileToWaitingTable(toAdd, id)
+            {
+                $('#waitingFiles').find('tbody')
+                .append($('<tr>')
+                    .attr("id", id)
+                    .append($('<td>')
+                    .text(toAdd)
+                    )
+                );
+
+            }
+            
+            function addFileToFinishedTable(toAdd, id)
+            {
+                $(id).remove();
+                $('#completedFiles').find('tbody')
+                .append($('<tr>')
+                    .attr("id", id)
+                    .append($('<td>')
+                    .text(toAdd)
+                    )
+                );
+
+            }
+
+            function setBusy(state)
+            {
+                if (state === 'true')
+                {
+                    $("#export_options").find('a').addClass('disabled');
+                    $("#settings_options").find('a').addClass('disabled');
+
+
+                }
+                else if (state === 'false')
+                {
+                    $("#export_options").find('a').removeClass('disabled');
+                }
+            }
+
+
+            function disableAllElements()
+            {
+                $("#database_settings").find('a').addClass('disabled');
+            }
+            function enableAllElements()
+            {
+                $("#database_settings").find('a').removeClass('disabled');
+            }
+            
+            function loadParams()
+            {
+                if(firstLoad)
+                {
+                    setDefaults();
+                    firstLoad = false;
+                }
+            }
+
+            /*
+             * 
+             * @returns {undefined}
+             */
+            function setDefaults()
+            {
+                var defaultPath = '';
+                if(typeof app !== 'undefined')
+                {
+                    alert("setting defaults");
+                    
+                    defaultPath = app.getDefaultParamsPath();
+                   
+                    if (window.File && window.FileReader && window.FileList && window.Blob) 
+                    {
+                        // Great success! All the File APIs are supported.
+
+                        getFileObject(defaultPath, function (fileObject) {
+
+
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                               // var textArea = document.getElementById("alignmentText");
+                               var fileData = e.target.result;
+                               var fileSplit = fileData.split("\n");
+                               //console.log(fileSplit);
+                               for(var i = 0; i < fileSplit.length; i++)
+                               {
+                                   var dataSplit = fileSplit[i].split("=");
+                                   //console.log(dataSplit[1]);
+                                   switch(dataSplit[0].toLowerCase().trim())
+                                   {
+                                        case "min_length": 
+                                            document.getElementById("min_length").value = dataSplit[1].trim();
+                                            break;
+
+                                        case "max_length": 
+                                            document.getElementById("max_length").value = dataSplit[1].trim();
+                                            break;
+
+                                        case "min_abundance":
+                                            document.getElementById("min_abundance").value = dataSplit[1].trim();
+                                            break;
+
+                                        case "max_abundance":
+                                            document.getElementById("max_abundance").value = dataSplit[1].trim();
+                                            break;
+                                            
+                                        case "filter_low_comp":
+                                            if(dataSplit[1].trim() === 'true')
+                                                $("#filter_low_comp").prop("checked", true);
+                                            else
+                                                $("#filter_low_comp").prop("checked", false);
+                                            break;
+                                            
+                                        case "filter_invalid":
+                                            if(dataSplit[1].trim() === 'true')
+                                                $("#filter_invalid").prop("checked", true);
+                                            else
+                                                $("#filter_invalid").prop("checked", false);
+                                            break;
+                                            
+                                        case "trrna":
+                                            if(dataSplit[1].trim() === 'true')
+                                                $("#trrna").prop("checked", true);
+                                            else
+                                                $("#trrna").prop("checked", false);
+                                            break;
+                                            
+                                        case "trrna_sense_only":
+                                            if(dataSplit[1].trim() === 'true')
+                                                $("#trrna_sense_only").prop("checked", true);
+                                            else
+                                                $("#trrna_sense_only").prop("checked", false);
+                                            break;
+                                            
+                                        case "make_nr":
+                                            if(dataSplit[1].trim() === 'true')
+                                                $("#make_nr").prop("checked", true);
+                                            else
+                                                $("#make_nr").prop("checked", false);
+                                            break;
+                                            
+                                        case "filter_genome_hits":
+                                            if(dataSplit[1].trim() === 'true')
+                                                $("#filter_genome_hits").prop("checked", true);
+                                            else
+                                                $("#filter_genome_hits").prop("checked", false);
+                                            break;
+                                            
+                                        case "filter_kill_list":
+                                            if(dataSplit[1].trim() === 'true')
+                                                $("#filter_kill_list").prop("checked", true);
+                                            else
+                                                $("#filter_kill_list").prop("checked", false);
+                                            break;
+                                            
+                                        case "add_discard_log":
+                                            if(dataSplit[1].trim() === 'true')
+                                                $("#add_discard_log").prop("checked", true);
+                                            else
+                                                $("#add_discard_log").prop("checked", false);
+                                            break;
+
+                                        default:
+                                            if(!dataSplit[0] === "\n")
+                                                alert("Param " + dataSplit[0] + " is not a valid parameter");
+                                   }
+
+
+                               }
+
+                               // textArea.value = fileData;
+                            };
+                            reader.onerror = function(event){
+                                 console.error("File could not be read! Code " + event.target.error.code);
+                            };
+                            reader.readAsText(fileObject);
+                        }); 
+                    } 
+                    else 
+                    {
+                      //  alert('The File APIs are not fully supported in this browser.');
+                    }
+                }
+            }
+            
+            function addKillList()
+            {
+                if( (typeof app !== 'undefined') && ($('#filter_kill_list').is(":checked")) )
+                {
+                    app.setKillList();
+                }
+            }
+            
+            function addDiscard()
+            {
+                if( (typeof app !== 'undefined') && ($('#add_discard_log').is(":checked")) )
+                {
+                    app.setDiscardLog();
+                }
+                
+            }
+
+            /* 
+             * Control the stats menu from here
+             */
+            var currentDataLetter = 'a';
+            function nextChar(c) {
+                return String.fromCharCode(c.charCodeAt(0) + 1);
+            }
+            
+            function addRowToInputStats(filename, redCount,nrCount)
+            {
+                //document.getElementById('inputNav').style.display = 'inline';
+                //document.getElementById('inputPage').style.display = 'inline';
+                $('#input_defaultRow').remove();
+
+                $('#inputResults').find('tbody')
+                    .append($('<tr>')
+                    .append($('<td>').text(filename))
+                    .append($('<td>').text(redCount))
+                    .append($('<td>').text(nrCount))
+
+                );
+            }
+            
+            function addRowToLengthStats(filename, redCount,nrCount)
+            {
+                //document.getElementById('lengthNav').style.display = 'inline';
+                //document.getElementById('lengthPage').style.display = 'inline';
+                $('#length_defaultRow').remove();
+                $('#lengthResults').find('tbody')
+                    .append($('<tr>')
+                    .append($('<td>').text(filename))
+                    .append($('<td>').text(redCount))
+                    .append($('<td>').text(nrCount))
+
+                );
+            }
+            function addRowToCompStats(filename, redCount,nrCount)
+            {
+                //document.getElementById('compNav').style.display = 'inline';
+                //document.getElementById('compPage').style.display = 'inline';
+                $('#comp_defaultRow').remove();
+               
+                $('#compResults').find('tbody')
+                    .append($('<tr>')
+                    .append($('<td>').text(filename))
+                    .append($('<td>').text(redCount))
+                    .append($('<td>').text(nrCount))
+
+                );
+            }
+            function addRowToAbundStats(filename, redCount,nrCount)
+            {
+                //document.getElementById('abundNav').style.display = 'inline';
+                //document.getElementById('abundPage').style.display = 'inline';
+                $('#abund_defaultRow').remove();
+
+                $('#abundanceResults').find('tbody')
+                    .append($('<tr>')
+                    .append($('<td>').text(filename))
+                    .append($('<td>').text(redCount))
+                    .append($('<td>').text(nrCount))
+
+                );
+            }
+            function addRowToInvalidStats(filename, redCount,nrCount)
+            {
+                //document.getElementById('invalidNav').style.display = 'inline';
+                //document.getElementById('invalidPage').style.display = 'inline';
+                $('#invalid_defaultRow').remove();
+
+                $('#invalidResults').find('tbody')
+                    .append($('<tr>')
+                    .append($('<td>').text(filename))
+                    .append($('<td>').text(redCount))
+                    .append($('<td>').text(nrCount))
+
+                );
+            }
+            function addRowToKillListStats(filename, redCount,nrCount)
+            {
+                //document.getElementById('killNav').style.display = 'inline';
+                //document.getElementById('killPage').style.display = 'inline';
+                $('#kill_defaultRow').remove();
+
+                $('#killListResults').find('tbody')
+                    .append($('<tr>')
+                    .append($('<td>').text(filename))
+                    .append($('<td>').text(redCount))
+                    .append($('<td>').text(nrCount))
+
+                );
+            }
+            function addRowToGenomeStats(filename, redCount,nrCount)
+            {
+                //document.getElementById('genomeNav').style.display = 'inline';
+                //document.getElementById('genomePage').style.display = 'inline';
+                $('#genome_defaultRow').remove();
+
+                $('#genomeResults').find('tbody')
+                    .append($('<tr>')
+                    .append($('<td>').text(filename))
+                    .append($('<td>').text(redCount))
+                    .append($('<td>').text(nrCount))
+
+                );
+            }
+            function addRowTotrRNAStats(filename, redCount,nrCount)
+            {
+                //document.getElementById('trNav').style.display = 'inline';
+                //document.getElementById('trPage').style.display = 'inline';
+
+                $('#tr_defaultRow').remove();
+
+                $('#trRNAResults').find('tbody')
+                    .append($('<tr>')
+                    .append($('<td>').text(filename))
+                    .append($('<td>').text(redCount))
+                    .append($('<td>').text(nrCount))
+
+                );
+            }
+
+            /*
+             * updateRFAM
+             */
+
+             function updateRFAM()
+             {
+                 if(typeof app !== 'undefined')
+                 {
+                     app.updateRFAM();
+                 }
+             }
+        </script>
+
+    </body>
+</html>
