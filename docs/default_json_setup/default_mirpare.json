@@ -1,0 +1,80 @@
+{
+  "srna_files": [
+	{
+      "srna_filename": "/srna1_nr.fa"
+	},
+	{
+      "srna_filename": "/srna2_nr.fa"
+	}
+  ],
+  "genome_filename": "/genome.fa",
+  "transcriptome_filename": "/transcripts.fa",
+  "annotation_filename": "/annotations.gff3",
+  "degradome_files": [
+	{
+      "degradome_filename": "/degradome1.fa"
+	},
+	{
+      "degradome_filename": "/degradome2.fa"
+	}
+  ],
+  "paresnip_files": [
+   {
+  	"paresnip_filename": "/paresnip1.fa"
+	},
+	{
+  	"paresnip_filename": "/paresnip2.fa"
+	}
+ 
+  ],
+  "mircat_parameters": [
+	{
+  	"extend": 100.0,
+      "min_energy": -25.0,
+      "min_paired": 17,
+  	"max_gaps": 3,
+      "max_genome_hits": 16,
+  	"min_length": 20,
+      "max_length": 22,
+  	"min_gc": 20,
+      "max_unpaired": 50,
+      "max_overlap_percentage": 80,
+      "min_locus_size": 1,
+      "orientation": 80,
+      "min_hairpin_len": 60,
+      "complex_loops": true,
+  	"pval": 0.05,
+      "min_abundance": 1,
+      "cluster_sentinel": 200
+	}
+  ],
+  "paresnip_parameters": [
+	{
+      "min_sRNA_abundance": 1,
+      "subsequences_are_secondary_hits": false,
+      "output_secondary_hits_to_file": false,
+      "use_weighted_fragments_abundance": true,
+      "category_0": true,
+      "category_1": true,
+      "category_2": true,
+      "category_3": true,
+      "category_4": true,
+      "discard_tr_rna": true,
+      "discard_low_complexity_srnas": true,
+      "discard_low_complexity_candidates": true,
+      "min_fragment_length": 20,
+      "max_fragment_length": 21,
+      "min_sRNA_length": 19,
+      "max_sRNA_length": 24,
+      "allow_single_nt_gap": true,
+      "allow_mismatch_position_11": true,
+      "allow_adjacent_mismatches": true,
+      "max_mismatches": 4.5,
+      "calculate_pvalues": true,
+      "number_of_shuffles": 100,
+      "pvalue_cutoff": 0.05,
+      "do_not_include_if_greater_than_cutoff": true,
+      "auto_output_tplot_pdf": false
+	}
+  ]
+}

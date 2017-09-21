@@ -1,0 +1,29 @@
+
+{
+    "closed": "2017-02-16 15:10:56",
+    "searchSequence": "AGTTACGGCCATACCTCAGAGAATATACCGTATCCCGTTCGATCTGCGAAGTTAAGCTCTGAAGGGCGTCGTCAGTACTATAGTGGGTGACCATATGGGAATACGACGTGCTGTAGCTT",
+    "hits": {
+        "5S_rRNA": [{
+                "score": "104.9",
+                "E": "2.8e-24",
+                "acc": "RF00001",
+                "end": "119",
+                "alignment": {
+                    "user_seq": "#SEQ           1 AGUUACGGCCAUACCUCAGAGAAUAUACCGUAUCCCGUUCGAUCUGCGAAGUUAAGCUCUGAAGGGCGUCGUCAGUACUAUAGUGGGUGACCAUAUGGGAAUACGACGUGCUGUAGCUU 119       ",
+                    "hit_seq": "#CM            1 gccuGcggcCAUAccagcgcgaAagcACcgGauCCCAUCcGaACuCcgAAguUAAGcgcgcUugggCcagggUAGUAcuagGaUGgGuGAcCuCcUGggAAgaccagGugccgCaggcc 119       ",
+                    "ss": "#SS              (((((((((,,,,<<-<<<<<---<<--<<<<<<______>>-->>>>-->>---->>>>>-->><<<-<<----<-<<-----<<____>>----->>->-->>->>>))))))))):           ",
+                    "match": "#MATCH           :: U:C:GCCAUACC ::G:GAA ::ACCG AUCCC+U+CGA CU CGAA::UAAGC:C:: +GGGC: :G  AGUACUA  +UGGGUGACC+  UGGGAA+AC:A:GUGC:G:A ::+           ",
+                    "pp": "#PP              ***********************************************************************************************************************           ",
+                    "nc": "#NC                                                                                                                                                "
+                },
+                "strand": "+",
+                "id": "5S_rRNA",
+                "GC": "0.49",
+                "start": "1"
+            }]
+    },
+    "opened": "2017-02-16 15:09:07",
+    "numHits": 1,
+    "started": "2017-02-16 15:10:48",
+    "jobId": "DCF74870-F459-11E6-9E62-263C307CE5B7"
+}

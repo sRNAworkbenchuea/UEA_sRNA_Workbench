@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>The CoLIDE Tool</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Designed and developed by UEA Computational Biology Laboratory" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body class="doc">
+    <div class="container">
+      <div class="bannerArea">
+
+        <div class="toplogo"><a href="http://srna-workbench.cmp.uea.ac.uk/"><img src="images/transparent.gif" width="365" height="90" border="0" /></a></div>
+      </div>
+      <div class="contentArea">
+        <div class="content">
+          <div class="contentMiddle">
+            <h1>The CoLIDE Tool</h1>
+
+            <p>The CoLIDE tool is designed for the general prediction of small RNA loci
+            from multi sample experiments (with or without replicate data)</p>
+<p>The tool first requires information on how many samples form the experiment.</p>
+
+<div align="left"><img src="../images/ScreenShots/colideQ1.png" alt="CoLIDE how many samples?"/></div>
+
+<p>From here it will require you to input the files that relate to each sample:</p>
+<p>Required Parameters:</p>
+<ul>
+<li>Genome File: The location of the genome file in FASTA format.</li>
+<li>Sample Names: The locations of the sRNA samples and their optional replicates</li>
+</ul>
+
+<p>Input files are entered using the box displayed below:</p>
+
+<div align="left"><img src="../images/ScreenShots/CoLIDEfileIOBox.png" alt="CoLIDE file input image"/></div>
+
+<p>Each sample can be modified (i.e. have files added and removed) individually by selecting the desired sample number 
+from the table below:</p>
+
+<div align="left"><img src="../images/ScreenShots/CoLIDEsampleMod.png" alt="CoLIDE file input image"/></div>
+
+<p>Series Type Parameters</p>
+<ul>
+<li>Ordered Series: (select this option if order is important to the experiment e.g. time series)</li>
+<li>Unordered Series: (select this option if order is not important to the experiment e.g. organ series)</li>
+</ul>
+
+<p>The Confidence Interval (CI)s are also controlled using the following parameters which represents the percentage of replicated
+measurements to be included in each CI. </p>
+
+<p>Non Replicate Data - Confidence Interval Control</p>
+<ul>
+<li>Percentage CI: This determines the percentage to add to either side of the normalised expression</li>
+</ul>
+<p>Replicate Data - Confidence Interval Control</p>
+<ul>
+<li>Min Max: Use the minimum and maximum normalised expression value to determine the confidence interval (100%) </li>
+<li>+-SD: CI is mean +- 1 standard deviation (67%)</li>
+<li>+-r(2)SD: CI is mean +- standard deviation divided by the square root of 2 (50%) </li>
+<li>+-2SD: Ci is mean +- 2 X standard deviation</li>
+</ul>
+
+<p>Percentage Overlap: controls the amount each confidence interval must overlap to be considered a straight pattern </p>
+
+<p>The results are presented in a Table as shown in the image below. </p>
+
+<div align="left"><img src="../images/ScreenShots/CoLIDEresultsTable.png" alt="CoLIDE output image"/></div>
+
+<p>The headers for each column contains the description of the data and the name of the sample file.
+Locus-data is shown in a table with the following columns:</p>
+
+		<ul>
+		<li>ID: Split by chromosome/scaffold: each locus is numbered per chromosome.</li>
+		<li>Start: Start coordinate for locus </li>
+		<li>End: End coordinate for locus</li>
+		<li>Length: Locus length</li>
+		<li>P-Val: The probability value for the locus as calculated from the chi-square statistic</li>
+		<li>Sample 1-n: The expression series for this locus</li>
+		<li>Chromosome: The chromosome this locus resides on</li>
+		<li>Differential Expression: The absolute differential expression for this locus</li>
+		</ul>
+
+
+            <p>
+            The context menu operates on the currently selected result line. </p>
+            <div align="center"><img src="../images/ScreenShots/CoLIDERightClick.png" alt="CoLIDE right click image"/></div>
+    	<ul>
+			<li>Export individual sequences: Export the sequences that form the locus to FASTA </li>
+			<li>Output entire locus: Export the entire locus sequence from the genome to FASTA </li>
+			<li>Show locus in genome view: display the selected locus using standard arrow view in <a href="./vissr.html">VisSR</a> </li>
+			<li>Show locus in aggregate genome view: display the selected locus as a compressed view in <a href="./vissr.html">VisSR</a> </li>
+		</ul>
+
+<p>More information on visualisation can be found in the <a href="./CoLIDE-view.html">Viewing CoLIDE results in VisSR</a> page</p>
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+        <div style="clear:both;"></div>
+      </div>
+      <div class="footerArea">
+        <div class="copyright">&copy; 2011 UEA Computational Biology Laboratory </div>
+      </div>
+    </div>
+  </body>
+</html>

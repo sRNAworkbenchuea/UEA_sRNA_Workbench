@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>The miRCat Tool</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Designed and developed by UEA Computational Biology Laboratory" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body class="doc">
+    <div class="container">
+      <div class="bannerArea">
+
+        <div class="toplogo"><a href="http://srna-workbench.cmp.uea.ac.uk/"><img src="images/transparent.gif" width="365" height="90" border="0" /></a></div>
+      </div>
+      <div class="contentArea">
+        <div class="content">
+          <div class="contentMiddle">
+            <h1>The SiLoCo Tool</h1>
+
+            <p>This tool predicts sRNA loci using the method described in [1] and [2]. It
+also enables the user to compare the expression profile of sRNA loci between
+difererent samples.
+In order to determine the relative position of sRNAs, the reads are mapped
+to the reference genome using PatMaN [3]. Only full-length, perfect matches
+are accepted as hits. The genome-matching reads are normalised [4] and
+weighted by repetitiveness. The normalisation method divides hit counts
+by the number of redundant reads that match the genome. The normalised
+count, for each distinct read, is given in \hits per 1 million matching reads".
+Because it is impossible to decide where a sRNA with multiple matches to
+the genome originated, we correct the normalised read-abundance for repet-
+itiveness by dividing it by the number of matches to the genome. The result
+is a weighted hit count.
+The method uses the normalised and weighted read-abundance and relative
+position of sRNAs on the reference genome to predict the sRNA loci. A
+locus must have a minimum of 3 weighted sRNA hits (this threshold can be
+adjusted using the min hits parameter) and no gap (absence of sRNA
+hits) longer than 300nt (this threshold can be adjusted using the sRNA loci distance
+parameter).</p>
+<p>The datasets must contain sRNA sequence reads in FASTA
+format, in redundant form, i.e. with one entry for each read. Sequences
+shorter than 18nt (minsize parameter) or longer than 30nt (maxsize
+parameter) will be removed.</p>
+
+<p>Required Parameters:</p>
+<ul>
+<li>Genome File: The location of the genome file in FASTA format.</li>
+<li>sample names: The locations of the sRNA samples</li>
+</ul>
+<p>Input files are entered using the box displayed below:</p>
+
+<div align="center"><img src="../images/ScreenShots/SilocoFiles.png" alt="SiLoCo file input image"/></div>
+
+<p>Optional Parameters</p>
+<ul>
+<li>sRNA loci distance: The maximum gap length in a locus, default max gap = 300).</li>
+<li>max size: The maximum length of a sRNA.(18 maxsize 35, default maxsize = 25).</li>
+<li>min size: The minimum length of a sRNA.(18 minsize 35, default minsize = 25).</li>
+<li>min sRNA locus size: The minimum number of sRNAs in a locus.(1 min hits, default min hits = 3).</li>
+<li>max genome hits: The maximum number of times a sRNA can hit the genome.(18 minsize 35, default minsize = 18).</li>
+</ul>
+
+<p>The results are presented in a Table as shown in the image below. </p>
+
+<div align="center"><img src="../images/ScreenShots/SiLocoTable.png" alt="SiLoCo output image"/></div>
+
+<p>The headers for each column contains the description of the data and the name of the sample file.
+Locus-data is shown in a tree strucutre table. Clicking on a chromosome will display data in the following columns:</p>
+
+		<ul>
+		<li>Chromosome, start/end position and length
+		Genomic location and length of locus in nucleotides. Some incomplete
+		genomes may not yet be assembled into chromosomes and the accessions listed here may be scaffolds or bacs instead. The list is initially
+		sorted by chromosome and position.</li>
+		<li>Raw count
+		Sum of read abundances in samples 1 and 2 that from the locus (not
+		corrected for repetitiveness).</li>
+		<li>Weighted count 
+		Sum of raw read abundances divided by number of matches of each
+		sequence to the genome.</li>
+		<li>Normalised count 
+		Sum of weighted counts divided by the total number of genome-matching
+		reads in each sample, given in \hits per 1 million genome-matching
+		reads. Normalised counts (abundances) are comparable between samples.</li>
+		</ul>
+
+            <p>
+            The context menu operates on the currently selected result line. 'Show in Genome View' will display the selected locus in <a href="./vissr.html">VisSR</a>. The user can either show the locus in <a href="./CoLIDE-view.html">arrow view or aggregated view.</a> </p>
+			<p> [1] Attila Molnar, Frank Schwach, David J Studholme, Eva C Thuene-
+mann, and David C Baulcombe. mirnas control gene expression in the
+single-cell alga chlamydomonas reinhardtii. Nature, 447(7148):1126
+1129, Jun 2007 [2]  Rebecca A Mosher, Frank Schwach, David Studholme, and David C
+Baulcombe. Polivb induences rna-directed dna methylation indepen-
+dently of its role in sirna biogenesis. Proc Natl Acad Sci U S A,
+105(8):31453150, Feb 2008 [3]  Kay Prufer, Udo Stenzel, Michael Dannemann, Richard E Green,
+Michael Lachmann, and Janet Kelso. Patman: rapid alignment of short
+sequences to large databases. Bioinformatics, 24(13):1530{1531, Jul
+2008 [4]  Ali Mortazavi, Brian A Williams, Kenneth McCue, Lorian Schaevter,
+and Barbara Wold. Mapping and quantifying mammalian transcrip-
+tomes by rna-seq. Nat Methods, 5(7):621:628, Jul 2008 </p>
+
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+        <div style="clear:both;"></div>
+      </div>
+      <div class="footerArea">
+        <div class="copyright">&copy; 2011 UEA Computational Biology Laboratory </div>
+      </div>
+    </div>
+  </body>
+</html>

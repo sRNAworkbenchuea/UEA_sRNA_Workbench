@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>UEA sRNA Workbench</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Designed and developed by UEA Computational Biology Laboratory" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body class="doc">
+    <div class="container">
+      <div class="bannerArea">
+        <div class="toplogo"><a href="http://srna-workbench.cmp.uea.ac.uk/"><img src="images/transparent.gif" width="365" height="90" border="0" /></a></div>
+      </div>
+      <div class="contentArea">
+        <div class="content">
+          <div class="contentMiddle">
+            <h1>The Adaptor Remover Tool</h1>
+
+            <p>When sequencing devices produce a list small RNAs, often the minimum read length exceeds the length of the small RNA.
+ 			  Depending on the device, this results in sequenced reads with adaptor sequences at one, or both, ends of the read.
+              The Adaptor Removal tool can remove these adaptor sequences from multiple files making sRNA data ready for analysis and processing by other tools.</p>
+
+            
+			<p>The tool is able to quickly and efficiently process high-throughput sequenced data in FastQ or a FastA formats 
+			to produce a FastA file containing trimmed reads with redundancy removed. The tool processes the input file in the
+			following manner:
+			<ul>
+                <li>Optionally trim 5' adaptor from beginning of all reads.  Reads not containing a 5' adaptor, if specified, are discarded.</li>
+				<li>Trim 3' adaptor from end of all reads.  Reads not containing a 3' adaptor are discarded.</li>
+				<li>All trimmed sequences outside a user specified length range are discarded.</li>
+			</ul>
+            
+			<p>5' adaptor trimming is an optional step because some sequencing devices automatically trim the 5' adaptors from sequenced data.
+              For example, Solexa/Illumina reads start at the first base of the sRNA and contain only the 3' adaptor, whereas 454 datasets 
+			  contain both the 5' and the 3' adaptors, as shown in the diagram below.</p>
+			  
+			<br/>
+            <div align="center"><img src="../images/ScreenShots/AR3.png" alt="AR 3 image"/></div>  
+
+            <p>The adaptor matching process looks for exact matches in each read to the adaptor sequence. Therefore it will not trim reads 
+			  with adaptors containing mismatches. In addition it is common, particularly in reads from Illumina/Solexa devices, that the 
+			  adaptor is truncated in the raw read. For these reasons it is preferable to match using a truncated version of the adaptor sequence. 
+			  In practice, the first 8nt of the 3' adaptor and/or the last 8nt of the 5' adaptor sequence are normally sufficient.  
+			  This behaviour is easily controllable via the GUI interface (as shown below), which allows users to specify the full adaptor sequence and 
+			  then enter the number of nucleotides to use in the matching algorithm. The user must
+			  specify each file to be processed in the first text box and a directory to output the data. The tool will then create new files in the chosen
+			  directory and assign _AR to the original filename. The user can also choose to overwrite files by checking the box. 
+			  In addition, a set of commonly used adaptor sequences are readily available
+			  from drop down menus, saving the user time when processing data sets using commmon adaptors.</p>
+              			  
+			<br/>
+            <div align="center"><img src="../images/ScreenShots/AR1.png" alt="AR 1 image"/></div>
+			
+            <p>After processing has completed, the user can view a table of the job's execution statistics and a table representing the 
+			length distribution of trimmed reads in the results panel shown below the input panel, as shown in the Figure below. This information is
+			also output to file.</p>
+
+            <br/>
+            <div align="center"><img src="../images/ScreenShots/AR2.png" alt="AR 2 image"/></div>
+            <p>In addition, the user can view the size class distribution as a bar chart if desired.</p>
+			<div align="center"><img src="../images/ScreenShots/AR4.png" alt="AR 4 image"/></div>
+            <p>The output file uses a non-redundant format. 
+            The format is in FASTA with the following properties:</P>
+            <p>
+            >SEQUENCE(ABUNDANCE) <br/>
+            >SEQUENCE </p>
+            <p>For example, if the sequence: TTCAGAGTTTACAGTCCGACGATCTCGTATGCCGTC appeared
+            50 times within a FASTQ file, after stripping the adapter sequence GATCTCGTATGCCGTC
+            the result would appear just once in the output file as:</p>
+            <p>
+            >TTCAGAGTTTACAGTCCGAC(50)<br/>
+            TTCAGAGTTTACAGTCCGAC
+            </p>
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+        <div style="clear:both;"></div>
+      </div>
+      <div class="footerArea">
+        <div class="copyright">&copy; 2011 UEA Computational Biology Laboratory </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+

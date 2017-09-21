@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.web.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<ScrollPane fx:id="mainScrollPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <content>
+      <StackPane fx:id="mainStackPane">
+         <children>
+            <AnchorPane id="AnchorPane" fx:id="mainWorkflowAnchor" minHeight="-Infinity" minWidth="-Infinity" prefHeight="588.0" prefWidth="688.0" styleClass="mainFxmlClass">
+                <stylesheets>
+                    <URL value="@/styles/Styles.css" />
+                </stylesheets>
+               <children>
+                  <WebView fx:id="workflowWebView" layoutX="9.0" layoutY="3.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </StackPane>
+   </content>
+</ScrollPane>

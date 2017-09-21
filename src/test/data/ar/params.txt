@@ -1,0 +1,2 @@
+adaptor_sequence_3=TTTTAAAA
+adaptor_sequence_5=ATCGGCTA

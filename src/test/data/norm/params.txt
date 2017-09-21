@@ -1,0 +1,11 @@
+min_length=16
+max_length=35
+output_suffix=_norm
+log_base=10
+min_abundance=1
+weight_by_hits=false
+percentage_m_trim=30
+percentage_a_trim=5
+weight_factors=true
+reference_sample_name=<choose automatically>
+rnaseq_quantile_normalisation=true

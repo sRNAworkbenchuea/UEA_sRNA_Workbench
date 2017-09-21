@@ -1,0 +1,29 @@
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>C:\Users\w0445959\LocalDisk\SRNA_WORKBENCH_LEGACY\srna-workbenchV3.01-Copy\sRNAWorkbenchStartup.jar</jar>
+  <outfile>C:\Users\w0445959\LocalDisk\SRNA_WORKBENCH_LEGACY\srna-workbenchV3.01-Copy\UEA_sRNAWorkbench.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>false</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest></manifest>
+  <icon>C:\Users\w0445959\LocalDisk\PostDoc\NetBeansProjects\sRNAWorkbench\src\uk\ac\uea\cmp\srnaworkbench\images\ApplicationIcons\WindowsIcon\workbench_transparent.ico</icon>
+  <classPath>
+    <mainClass>srnaworkbenchstartup.SRNAWorkbenchStartup</mainClass>
+    <cp>.\data</cp>
+    <cp>.\ExeFiles</cp>
+    <cp>.\hs</cp>
+    <cp>.\lib</cp>
+  </classPath>
+  <jre>
+    <path></path>
+    <minVersion>1.6.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+  </jre>
+</launch4jConfig>

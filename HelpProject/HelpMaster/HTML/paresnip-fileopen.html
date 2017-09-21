@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>PAREsnip</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Designed and developed by UEA Computational Biology Laboratory" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body class="doc">
+      <div class="container">
+        <div class="bannerArea">
+          <div class="toplogo">
+            <a href="http://srna-workbench.cmp.uea.ac.uk/">
+              <img src="images/transparent.gif" width="365" height="90" border="0" />
+            </a>
+          </div>
+        </div>
+        <div class="contentArea">
+          <div class="content">
+            <div class="contentMiddle">
+              <h1>Open input files</h1>
+
+              The inputs for PAREsnip are:
+
+              <ul>
+                <li>the mRNA dataset (transcriptome),</li>
+                <li>the transcript degradation fragments obtained from a PARE experiment (degradome),</li>
+                <li>the small RNA dataset (sRNAome), and</li>
+                <li>the genome sequence</li>
+              </ul>
+              PARE is an abbreviation of Parallel Analysis of RNA Ends.<br/>
+              <br/>
+              The first three files are required but the genome is optional.
+              When included, the genome is used to filter out sRNAs that do not map to the genome.
+              All of the inputs must be in FASTA format and must only contain the characters 'A', 'C', 'G', 'T' and 'U'.
+              Sequences containing unknown characters and ambiguity codes are discarded as they cannot be accurately aligned.
+              FASTQ to FASTA and adaptor removal tools are provided within the Workbench.<br/>
+              <br/>
+              Clicking 'Open' will show the 'Choose Data' dialog where you may browse your computer and select your input files.
+              It is important to tell PAREsnip which files contain the transcripts, the degradome, the small RNAs and the genome.
+              This is done by making sure the correct radio-button at the top-left is selected.<br/>
+              <br/>
+              <img src="../images/ScreenShots/paresnip-choosedata.jpg" ></img><br/>
+              <br/>
+              Once the input files are set PAREsnip is ready to begin an analysis.
+              However, the parameters may need adjustment.
+              Details are given in the <a href="./paresnip-run.html">Run</a> section.
+            </div>
+            <div style="clear:both;"></div>
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+        <div class="footerArea">
+          <div class="copyright">&copy; 2011 UEA Computational Biology Laboratory </div>
+        </div>
+      </div>
+    </body>
+</html>

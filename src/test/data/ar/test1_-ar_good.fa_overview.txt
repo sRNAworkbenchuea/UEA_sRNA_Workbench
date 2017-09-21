@@ -1,0 +1,8 @@
+Total number of sequences in input file (test1.fa):[total, distinct]: 1 1
+Sequences remaining after 5' adaptor removal (ATCGGCTA):[total, distinct]: 1 1
+Sequences remaining after 3' adaptor removal (TTTTAAAA):[total, distinct]: 1 1
+Sequences remaining after length range filtering (16-35):[total, distinct]: 1 1
+
+sRNA length distribution (for remaining sequences):
+[length (nt), total reads, distinct reads]
+27	1	1

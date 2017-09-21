@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>Sequence Alignment</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Designed and developed by UEA Computational Biology Laboratory" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body class="doc">
+    <div class="container">
+      <div class="bannerArea">
+
+        <div class="toplogo"><a href="http://srna-workbench.cmp.uea.ac.uk/"><img src="images/transparent.gif" width="365" height="90" border="0" /></a></div>
+      </div>
+      <div class="contentArea">
+        <div class="content">
+          <div class="contentMiddle">
+            <h1>Sequence Alignment</h1>
+
+            <p>The Sequence Alignment tool allows a user to align multiple FastA files containing short reads to another FastA file containing 
+			long reads. The most common use case is to align sRNA data file with a genome file to produce a list of hits. The tools
+			pipeline involves performing some basic pre-processing (which the user has some ability to customise), running the sequence
+			alignment tool itself, which currently is patman <cite>(Prüfer et al., 2008)</cite>, to align the sequences to the genome, and
+			finally to perform some optional post-processing.  This tool make sequence alignment a much simpler task for the user by providing
+			an easy to use GUI and pipelineing commonly performed actions together with the actual sequence alignment process.			
+			</p>
+
+            <br/>
+            <div align="center"><img src="../images/ScreenShots/seqalign.png" alt="seq align image"/> </div>
+
+			<p>To use the tool, the user must enter a short read file path, a long read file path and specify where the file output file
+			should be saved.  All other options on the GUI are optional.</p>
+			
+			<p>The tool does a certain amount of pre-processing before sequence alignment, regardless of whether the user checks the "Enable
+			pre-processing" box.  This is to ensure that short read data being passed to the sequence aligner is in a suitable format and
+			only contains reads that are likely to deliver sensible results.  Specifically, the short read data is filtered to remove: 
+						
+			<ul>
+                <li>Any sequences less than 16nt long</li>
+				<li>Any sequences containing less than 3 distinct nucleotides</li>
+				<li>Any sequences containing invalid nucleotides (i.e. those containing nucleotides other than {'A',T','G','C'}.</li>
+			</ul>
+			
+			Optionally, the user can specify additional pre-processing parameters:
+			
+			<ul>
+                <li>Minimum sequence length (capped at 16nt)</li>
+				<li>Maximum sequence length (capped at 50nt)</li>
+				<li>Minimum abundance</li>
+			</ul>
+			  
+            <p>After the short reads file has been pre-processed, it is automatically passed to the patman alignment program, with the user
+			specified parameters, which are:
+			
+			<ul>
+				<li>Maximum allowed mismatches (capped at 3nt)</li>
+				<li>Maximum allowed consecutive gaps (capped at 3nt)</li>
+				<li>Select whether to align to the positive strand of the long read file only (unchecking this box allows for searching
+				of both positive and negative strands along the long reads).
+				<li>Select whether to align to the negative strand of the long read file only (unchecking this box allows for searching
+				of both positive and negative strands along the long reads).				
+				<li>Specify the chunk size for the short read file.  This option is there to limit the amount of data patman is required to
+				process in one go.  On some platforms patman is limited to 2GB of process space so reducing the amount of data it is required
+				to process may allow it to proceed if memory is a problem.  The default setting of 3000000 should allow the vast majority of
+				jobs to succeed on any platform, but if out of memory errors are reported, consider reducing this figure.  Small performance
+				gains are possible by increasing this figure when processing large sRNA files, however please keep in mind that the larger
+				this figure the higher the risk of the alignment failing.</li>
+			</li>
+			
+			<p>After alignment the user can optionally decide to do further filtering of aligned hits based on the short reads weighted
+			abundance.  The weighted abundance is calculated by dividing the distinct short read abundance by the number of times the distinct
+			short read aligned to the genome.</p>
+
+            <p><cite>Prüfer K, et al. PatMaN: rapid alignment of short sequences to large databases. Bioinformatics 2008;24:1530-1531</cite></p>
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+        <div style="clear:both;"></div>
+      </div>
+      <div class="footerArea">
+        <div class="copyright">&copy; 2011 UEA Computational Biology Laboratory </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+

@@ -1,0 +1,49 @@
+<launch4jConfig>
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>srna-workbench\sRNAWorkbenchStartup.jar</jar>
+  <outfile>C:\Users\w0445959\LocalDisk\SRNA_WORKBENCH_LEGACY\srna-workbenchV3.1\UEA_sRNAWorkbench.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>false</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest></manifest>
+  <icon>C:\Users\w0445959\LocalDisk\PostDoc\NetBeansProjects\sRNAWorkbench\src\uk\ac\uea\cmp\srnaworkbench\images\ApplicationIcons\WindowsIcon\workbench_transparent.ico</icon>
+  <classPath>
+    <mainClass>srnaworkbenchstartup.SRNAWorkbenchStartup</mainClass>
+    <cp>.\srna-workbench\data</cp>
+    <cp>.\srna-workbench\ExeFiles</cp>
+    <cp>.\srna-workbench\hs</cp>
+    <cp>.\srna-workbench\lib</cp>
+    <cp>.\srna-workbench\Workbench.jar</cp>
+  </classPath>
+  <jre>
+    <path></path>
+    <minVersion>1.7.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+  </jre>
+  <versionInfo>
+    <fileVersion>3.0.0.0</fileVersion>
+    <txtFileVersion>1.0</txtFileVersion>
+    <fileDescription>The UEA small RNA Workbench</fileDescription>
+    <copyright>University of East Anglia Computational Biology Department</copyright>
+    <productVersion>3.0.0.0</productVersion>
+    <txtProductVersion>1.0</txtProductVersion>
+    <productName>The UEA small RNA Workbench</productName>
+    <companyName>University of East Anglia</companyName>
+    <internalName>Computational Biology</internalName>
+    <originalFilename>UEA_sRNAWorkbench.exe</originalFilename>
+  </versionInfo>
+  <messages>
+    <startupErr>An error occurred while starting the application.</startupErr>
+    <bundledJreErr>This application was configured to use a bundled Java Runtime Environment but the runtime is missing or corrupted.</bundledJreErr>
+    <jreVersionErr>This application requires a Java Runtime Environment</jreVersionErr>
+    <launcherErr>The registry refers to a nonexistent Java Runtime Environment installation or the runtime is corrupted.</launcherErr>
+    <instanceAlreadyExistsMsg>An application instance is already running.</instanceAlreadyExistsMsg>
+  </messages>
+</launch4jConfig>

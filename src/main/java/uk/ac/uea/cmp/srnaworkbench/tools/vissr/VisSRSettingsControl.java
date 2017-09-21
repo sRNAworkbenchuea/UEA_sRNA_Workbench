@@ -1,0 +1,875 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package uk.ac.uea.cmp.srnaworkbench.tools.vissr;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import java.util.logging.Level;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import uk.ac.uea.cmp.srnaworkbench.swing.customcomponentrenderers.ComboBoxRenderer;
+import uk.ac.uea.cmp.srnaworkbench.utils.GroupButtonUtils;
+import static uk.ac.uea.cmp.srnaworkbench.utils.LOGGERS.WorkbenchLogger.LOGGER;
+import uk.ac.uea.cmp.srnaworkbench.utils.StringUtils;
+import uk.ac.uea.cmp.srnaworkbench.utils.Tools;
+
+/**
+ *
+ * @author w0445959
+ */
+public class VisSRSettingsControl extends javax.swing.JDialog
+{
+  //private Color[] totalColourArray;
+  
+  private JRadioButton[] seqColor_RB_list = new JRadioButton[16]; 
+  private Color[] seqColorList = new Color[18];
+  
+  private ArrayList<Color> gffColourList = new ArrayList<>();
+  List<String> comboBoxTextList = new ArrayList<>();
+  
+  private final int _ODD_TIER_COLOUR_LOC = 16;
+  private final int _EVEN_TIER_COLOUR_LOC = 17;
+ 
+  
+  private ComboBoxRenderer CB_renderer;
+  private List<String> originalComboBoxModel;
+  
+  //private HashMap<String, Color> GFF_Colours;
+
+  /**
+   * Creates new form VisSRSettingsControl
+   */
+  public VisSRSettingsControl( JFrame parent, boolean modal )
+  {
+    super( parent, modal );
+    
+    initComponents();
+    
+    setup();
+    
+    resetSeqColourLengths();
+    resetTierColours();
+    resetGFFColours();
+    
+    CB_renderer = new ComboBoxRenderer(GFF_annotations_LB);
+    
+  }
+  private void setup()
+  {
+    seqColor_RB_list[0] = seqColour15;
+    seqColor_RB_list[1] = seqColour16;
+    seqColor_RB_list[2] = seqColour17;
+    seqColor_RB_list[3] = seqColour18;
+    seqColor_RB_list[4] = seqColour19;
+    seqColor_RB_list[5] = seqColour20;
+    seqColor_RB_list[6] = seqColour21;
+    seqColor_RB_list[7] = seqColour22;
+    seqColor_RB_list[8] = seqColour23;
+    seqColor_RB_list[9] = seqColour24;
+    seqColor_RB_list[10] = seqColour25;
+    seqColor_RB_list[11] = seqColour26;
+    seqColor_RB_list[12] = seqColour27;
+    seqColor_RB_list[13] = seqColour28;
+    seqColor_RB_list[14] = seqColour29;
+    seqColor_RB_list[15] = seqColour30;
+
+    
+    this.sequenceColourChooser.getSelectionModel().addChangeListener(
+      new ChangeListener()
+      {
+        @Override
+        public void stateChanged( ChangeEvent e )
+        {
+          Color newColour = sequenceColourChooser.getColor();
+          if ( selectedColourChange_BG.getSelection() != null && selectedColourChange_BG.getSelection().isSelected() )
+          {
+
+            JRadioButton b = GroupButtonUtils.getSelectedRadioButton( selectedColourChange_BG, null, null );
+            String name = b.getName();
+            if(name.equals("modGFF"))
+            {
+              int selectedIndex = GFF_annotations_LB.getSelectedIndex();
+              String fullText = GFF_annotations_LB.getSelectedItem().toString();
+              String stripedText = fullText.substring( 0, fullText.indexOf( "(" ) );
+              stripedText += "(" + newColour.getRed() + "," + newColour.getGreen() + "," + newColour.getBlue() + ")";
+              gffColourList.set(selectedIndex, newColour);
+              comboBoxTextList.set(selectedIndex, stripedText);
+              updateGFF_ComboBoxColours(selectedIndex);
+              //System.out.println( "" );
+            }
+            else
+            {
+
+              String fullText = b.getText();
+              String stripedText = fullText.substring( 0, fullText.indexOf( "(" ) );
+              stripedText += "(" + newColour.getRed() + "," + newColour.getGreen() + "," + newColour.getBlue() + ")";
+              b.setText( stripedText );
+              b.setForeground( newColour );
+
+
+              int potentialSizeClass = StringUtils.safeIntegerParse( name, -1 );
+              //modifying the seq colours
+              if ( potentialSizeClass > 0 )
+              {
+                seqColorList[potentialSizeClass-15] = newColour;
+              }
+              else if(name.equals( "EvenTier"))
+              {
+                seqColorList[_EVEN_TIER_COLOUR_LOC] = newColour;
+              }
+              else if(name.equals( "OddTier"))
+              {
+                seqColorList[_ODD_TIER_COLOUR_LOC] = newColour;
+              }
+            }
+          }
+          //banner.setForeground( newColor );
+        }
+      } );
+    
+    
+  }
+  /**
+   * This method is called from within the constructor to initialize the form.
+   * WARNING: Do NOT modify this code. The content of this method is always
+   * regenerated by the Form Editor.
+   */
+  @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        selectedColourChange_BG = new javax.swing.ButtonGroup();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel3 = new javax.swing.JPanel();
+        alignedGlyphPnl = new javax.swing.JPanel();
+        seqColour15 = new javax.swing.JRadioButton();
+        seqColour28 = new javax.swing.JRadioButton();
+        seqColour27 = new javax.swing.JRadioButton();
+        seqColour26 = new javax.swing.JRadioButton();
+        seqColour25 = new javax.swing.JRadioButton();
+        seqColour24 = new javax.swing.JRadioButton();
+        seqColour23 = new javax.swing.JRadioButton();
+        seqColour22 = new javax.swing.JRadioButton();
+        seqColour21 = new javax.swing.JRadioButton();
+        seqColour20 = new javax.swing.JRadioButton();
+        seqColour19 = new javax.swing.JRadioButton();
+        seqColour18 = new javax.swing.JRadioButton();
+        seqColour17 = new javax.swing.JRadioButton();
+        seqColour16 = new javax.swing.JRadioButton();
+        seqColour30 = new javax.swing.JRadioButton();
+        seqColour29 = new javax.swing.JRadioButton();
+        resetDefaultSeqLengthCol = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        GFF_Pnl = new javax.swing.JPanel();
+        resetDefaultGFFCol = new javax.swing.JButton();
+        GFF_annotations_LB = new javax.swing.JComboBox();
+        modifyGFFColours = new javax.swing.JRadioButton();
+        tierBackgroundPnl = new javax.swing.JPanel();
+        resetDefaultTierCol = new javax.swing.JButton();
+        oddTierColourRB = new javax.swing.JRadioButton();
+        evenTierColourRB = new javax.swing.JRadioButton();
+        colourChooserPnl = new javax.swing.JPanel();
+        sequenceColourChooser = new javax.swing.JColorChooser();
+        closeBtn = new javax.swing.JButton();
+        resetAllDefaults = new javax.swing.JButton();
+
+        setTitle(org.openide.util.NbBundle.getMessage(VisSRSettingsControl.class, "VisSRSettingsControl.title")); // NOI18N
+        setAutoRequestFocus(false);
+        setBackground(new java.awt.Color(120, 120, 120));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
+
+        jPanel3.setBackground(new java.awt.Color(120, 120, 120));
+
+        alignedGlyphPnl.setBackground(new java.awt.Color(120, 120, 120));
+        alignedGlyphPnl.setBorder(javax.swing.BorderFactory.createTitledBorder(null, org.openide.util.NbBundle.getMessage(VisSRSettingsControl.class, "VisSRSettingsControl.alignedGlyphPnl.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, new java.awt.Color(255, 255, 255))); // NOI18N
+
+        seqColour15.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour15);
+        seqColour15.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour15.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour15, "Sequence Length 15: (0,0,255)");
+        seqColour15.setName("15"); // NOI18N
+
+        seqColour28.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour28);
+        seqColour28.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour28.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour28, "Sequence Length 28: (255,0,0)");
+        seqColour28.setName("28"); // NOI18N
+
+        seqColour27.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour27);
+        seqColour27.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour27.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour27, "Sequence Length 27: (255,0,0)");
+        seqColour27.setName("27"); // NOI18N
+
+        seqColour26.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour26);
+        seqColour26.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour26.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour26, "Sequence Length 26: (255,0,0)");
+        seqColour26.setName("26"); // NOI18N
+
+        seqColour25.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour25);
+        seqColour25.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour25.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour25, "Sequence Length 25: (255,0,0)");
+        seqColour25.setName("25"); // NOI18N
+
+        seqColour24.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour24);
+        seqColour24.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour24.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour24, "Sequence Length 24: (255,0,0)");
+        seqColour24.setName("24"); // NOI18N
+
+        seqColour23.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour23);
+        seqColour23.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour23.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour23, "Sequence Length 23: (255,0,0)");
+        seqColour23.setName("23"); // NOI18N
+
+        seqColour22.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour22);
+        seqColour22.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour22.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour22, "Sequence Length 22: (255,0,0)");
+        seqColour22.setName("22"); // NOI18N
+
+        seqColour21.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour21);
+        seqColour21.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour21.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour21, "Sequence Length 21: (255,0,0)");
+        seqColour21.setName("21"); // NOI18N
+
+        seqColour20.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour20);
+        seqColour20.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour20.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour20, "Sequence Length 20: (255,0,0)");
+        seqColour20.setName("20"); // NOI18N
+
+        seqColour19.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour19);
+        seqColour19.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour19.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour19, "Sequence Length 19: (255,0,0)");
+        seqColour19.setName("19"); // NOI18N
+
+        seqColour18.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour18);
+        seqColour18.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour18.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour18, "Sequence Length 18: (255,0,0)");
+        seqColour18.setName("18"); // NOI18N
+
+        seqColour17.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour17);
+        seqColour17.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour17.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour17, "Sequence Length 17: (255,0,0)");
+        seqColour17.setName("17"); // NOI18N
+
+        seqColour16.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour16);
+        seqColour16.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour16.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour16, "Sequence Length 16: (255,0,0)");
+        seqColour16.setName("16"); // NOI18N
+
+        seqColour30.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour30);
+        seqColour30.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour30.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour30, "Sequence Length 30: (255,0,0)");
+        seqColour30.setName("30"); // NOI18N
+
+        seqColour29.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(seqColour29);
+        seqColour29.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        seqColour29.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(seqColour29, "Sequence Length 29: (255,0,0)");
+        seqColour29.setName("29"); // NOI18N
+
+        resetDefaultSeqLengthCol.setBackground(new java.awt.Color(120, 120, 120));
+        resetDefaultSeqLengthCol.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 13)); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(resetDefaultSeqLengthCol, org.openide.util.NbBundle.getMessage(VisSRSettingsControl.class, "VisSRSettingsControl.resetDefaultSeqLengthCol.text")); // NOI18N
+        resetDefaultSeqLengthCol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetDefaultSeqLengthColActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout alignedGlyphPnlLayout = new javax.swing.GroupLayout(alignedGlyphPnl);
+        alignedGlyphPnl.setLayout(alignedGlyphPnlLayout);
+        alignedGlyphPnlLayout.setHorizontalGroup(
+            alignedGlyphPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(alignedGlyphPnlLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(alignedGlyphPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(seqColour15)
+                    .addComponent(seqColour16)
+                    .addComponent(seqColour17)
+                    .addComponent(seqColour18)
+                    .addComponent(seqColour19)
+                    .addComponent(seqColour21)
+                    .addComponent(seqColour20)
+                    .addComponent(seqColour22))
+                .addGap(134, 134, 134)
+                .addGroup(alignedGlyphPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, alignedGlyphPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(seqColour23)
+                        .addComponent(seqColour24)
+                        .addComponent(seqColour25)
+                        .addComponent(seqColour26)
+                        .addComponent(seqColour27))
+                    .addComponent(seqColour29, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(seqColour28, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(seqColour30, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 108, Short.MAX_VALUE)
+                .addComponent(resetDefaultSeqLengthCol)
+                .addGap(23, 23, 23))
+        );
+        alignedGlyphPnlLayout.setVerticalGroup(
+            alignedGlyphPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(alignedGlyphPnlLayout.createSequentialGroup()
+                .addGroup(alignedGlyphPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(alignedGlyphPnlLayout.createSequentialGroup()
+                        .addComponent(seqColour15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seqColour16)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seqColour17)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seqColour18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seqColour19)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seqColour20)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seqColour21)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seqColour22))
+                    .addGroup(alignedGlyphPnlLayout.createSequentialGroup()
+                        .addGap(29, 29, 29)
+                        .addComponent(seqColour24)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seqColour25)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seqColour26)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seqColour27))
+                    .addGroup(alignedGlyphPnlLayout.createSequentialGroup()
+                        .addComponent(seqColour23)
+                        .addGap(122, 122, 122)
+                        .addComponent(seqColour28)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seqColour29)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(alignedGlyphPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(seqColour30)
+                            .addComponent(resetDefaultSeqLengthCol))))
+                .addGap(8, 8, 8))
+        );
+
+        jPanel1.setBackground(new java.awt.Color(120, 120, 120));
+
+        GFF_Pnl.setBackground(new java.awt.Color(120, 120, 120));
+        GFF_Pnl.setBorder(javax.swing.BorderFactory.createTitledBorder(null, org.openide.util.NbBundle.getMessage(VisSRSettingsControl.class, "VisSRSettingsControl.GFF_Pnl.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.white)); // NOI18N
+
+        resetDefaultGFFCol.setBackground(new java.awt.Color(120, 120, 120));
+        resetDefaultGFFCol.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 13)); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(resetDefaultGFFCol, org.openide.util.NbBundle.getMessage(VisSRSettingsControl.class, "VisSRSettingsControl.resetDefaultGFFCol.text")); // NOI18N
+        resetDefaultGFFCol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetDefaultGFFColActionPerformed(evt);
+            }
+        });
+
+        GFF_annotations_LB.setMaximumRowCount(50);
+        GFF_annotations_LB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                GFF_annotations_LBActionPerformed(evt);
+            }
+        });
+
+        modifyGFFColours.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(modifyGFFColours);
+        modifyGFFColours.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        modifyGFFColours.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(modifyGFFColours, org.openide.util.NbBundle.getMessage(VisSRSettingsControl.class, "VisSRSettingsControl.modifyGFFColours.text")); // NOI18N
+        modifyGFFColours.setName("modGFF"); // NOI18N
+
+        javax.swing.GroupLayout GFF_PnlLayout = new javax.swing.GroupLayout(GFF_Pnl);
+        GFF_Pnl.setLayout(GFF_PnlLayout);
+        GFF_PnlLayout.setHorizontalGroup(
+            GFF_PnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(GFF_PnlLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(GFF_PnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(GFF_PnlLayout.createSequentialGroup()
+                        .addComponent(resetDefaultGFFCol)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(modifyGFFColours))
+                    .addComponent(GFF_annotations_LB, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        GFF_PnlLayout.setVerticalGroup(
+            GFF_PnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(GFF_PnlLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(GFF_annotations_LB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(100, 100, 100)
+                .addGroup(GFF_PnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(resetDefaultGFFCol)
+                    .addComponent(modifyGFFColours))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        tierBackgroundPnl.setBackground(new java.awt.Color(120, 120, 120));
+        tierBackgroundPnl.setBorder(javax.swing.BorderFactory.createTitledBorder(null, org.openide.util.NbBundle.getMessage(VisSRSettingsControl.class, "VisSRSettingsControl.tierBackgroundPnl.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.white)); // NOI18N
+
+        resetDefaultTierCol.setBackground(new java.awt.Color(120, 120, 120));
+        resetDefaultTierCol.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 13)); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(resetDefaultTierCol, org.openide.util.NbBundle.getMessage(VisSRSettingsControl.class, "VisSRSettingsControl.resetDefaultTierCol.text")); // NOI18N
+        resetDefaultTierCol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetDefaultTierColActionPerformed(evt);
+            }
+        });
+
+        oddTierColourRB.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(oddTierColourRB);
+        oddTierColourRB.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        oddTierColourRB.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(oddTierColourRB, org.openide.util.NbBundle.getMessage(VisSRSettingsControl.class, "VisSRSettingsControl.OddTier.text")); // NOI18N
+        oddTierColourRB.setName("OddTier"); // NOI18N
+
+        evenTierColourRB.setBackground(new java.awt.Color(120, 120, 120));
+        selectedColourChange_BG.add(evenTierColourRB);
+        evenTierColourRB.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+        evenTierColourRB.setForeground(new java.awt.Color(255, 255, 255));
+        org.openide.awt.Mnemonics.setLocalizedText(evenTierColourRB, org.openide.util.NbBundle.getMessage(VisSRSettingsControl.class, "VisSRSettingsControl.EvenTier.text")); // NOI18N
+        evenTierColourRB.setName("EvenTier"); // NOI18N
+
+        javax.swing.GroupLayout tierBackgroundPnlLayout = new javax.swing.GroupLayout(tierBackgroundPnl);
+        tierBackgroundPnl.setLayout(tierBackgroundPnlLayout);
+        tierBackgroundPnlLayout.setHorizontalGroup(
+            tierBackgroundPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tierBackgroundPnlLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(tierBackgroundPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(resetDefaultTierCol)
+                    .addComponent(oddTierColourRB)
+                    .addComponent(evenTierColourRB))
+                .addContainerGap(86, Short.MAX_VALUE))
+        );
+        tierBackgroundPnlLayout.setVerticalGroup(
+            tierBackgroundPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tierBackgroundPnlLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(oddTierColourRB)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(evenTierColourRB)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(resetDefaultTierCol)
+                .addContainerGap())
+        );
+
+        colourChooserPnl.setBackground(new java.awt.Color(120, 120, 120));
+        colourChooserPnl.setBorder(javax.swing.BorderFactory.createTitledBorder(null, org.openide.util.NbBundle.getMessage(VisSRSettingsControl.class, "VisSRSettingsControl.colourChooserPnl.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.white)); // NOI18N
+
+        sequenceColourChooser.setBackground(new java.awt.Color(120, 120, 120));
+        sequenceColourChooser.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 12)); // NOI18N
+
+        javax.swing.GroupLayout colourChooserPnlLayout = new javax.swing.GroupLayout(colourChooserPnl);
+        colourChooserPnl.setLayout(colourChooserPnlLayout);
+        colourChooserPnlLayout.setHorizontalGroup(
+            colourChooserPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(colourChooserPnlLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(sequenceColourChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        colourChooserPnlLayout.setVerticalGroup(
+            colourChooserPnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, colourChooserPnlLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(sequenceColourChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(GFF_Pnl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tierBackgroundPnl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(colourChooserPnl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(GFF_Pnl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tierBackgroundPnl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(colourChooserPnl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        org.openide.awt.Mnemonics.setLocalizedText(closeBtn, org.openide.util.NbBundle.getMessage(VisSRSettingsControl.class, "VisSRSettingsControl.closeBtn.text")); // NOI18N
+        closeBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeBtnActionPerformed(evt);
+            }
+        });
+
+        resetAllDefaults.setBackground(new java.awt.Color(120, 120, 120));
+        resetAllDefaults.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 13)); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(resetAllDefaults, org.openide.util.NbBundle.getMessage(VisSRSettingsControl.class, "VisSRSettingsControl.resetAllDefaults.text")); // NOI18N
+        resetAllDefaults.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetAllDefaultsActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(alignedGlyphPnl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(closeBtn)
+                        .addGap(18, 18, 18)
+                        .addComponent(resetAllDefaults)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(alignedGlyphPnl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(closeBtn)
+                    .addComponent(resetAllDefaults))
+                .addContainerGap())
+        );
+
+        jScrollPane1.setViewportView(jPanel3);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 11, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 847, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+  
+  private void resetSeqColourLengths()
+  {
+    VisSRGlobals.resetToDefaults();
+    Map<Integer, Color> colourMap = VisSRGlobals.getColourMap();
+    int current_RB_index = 0;
+    for(Entry<Integer, Color> e : new TreeMap<>(colourMap).entrySet())
+    {
+      String fullText = seqColor_RB_list[current_RB_index].getText();
+      String stripedText = fullText.substring( 0, fullText.indexOf( "(" ) );
+      stripedText += "(" + e.getValue().getRed() + "," + e.getValue().getGreen() + "," + e.getValue().getBlue() + ")";
+      seqColor_RB_list[current_RB_index].setText( stripedText );
+      seqColor_RB_list[current_RB_index].setForeground( e.getValue() );
+
+      seqColorList[current_RB_index] = e.getValue();
+      current_RB_index++;
+    }
+  }
+  private void applySeqColourChanges()
+  {
+    for ( int i = 0; i < seqColor_RB_list.length; i++ )
+    {      
+      VisSRGlobals.setColourForLength( i+15, seqColorList[i]);
+    }
+  }
+  private void resetTierColours()
+  {
+    TierParameters.resetTierColours();
+    String fullText = this.oddTierColourRB.getText();
+
+    String stripedText = fullText.substring( 0, fullText.indexOf( "(" ) );
+    stripedText += "(" + TierParameters.ODDS_COLOUR.getRed() + "," + TierParameters.ODDS_COLOUR.getGreen() + "," + TierParameters.ODDS_COLOUR.getBlue() + ")";
+    oddTierColourRB.setText( stripedText );
+    oddTierColourRB.setForeground( TierParameters.ODDS_COLOUR );
+    
+
+    fullText = this.evenTierColourRB.getText();
+    stripedText = fullText.substring( 0, fullText.indexOf( "(" ) );
+    stripedText += "(" + TierParameters.EVENS_COLOUR.getRed() + "," + TierParameters.EVENS_COLOUR.getGreen() + "," + TierParameters.EVENS_COLOUR.getBlue() + ")";
+    evenTierColourRB.setText( stripedText );
+    evenTierColourRB.setForeground( TierParameters.EVENS_COLOUR );
+    
+    seqColorList[_ODD_TIER_COLOUR_LOC] = TierParameters.ODDS_COLOUR;
+    seqColorList[_EVEN_TIER_COLOUR_LOC] = TierParameters.EVENS_COLOUR;
+  }
+  private void applyTierColourChanges()
+  {
+    TierParameters.setEVENS_COLOUR( seqColorList[_EVEN_TIER_COLOUR_LOC] );
+    TierParameters.setODDS_COLOUR( seqColorList[_ODD_TIER_COLOUR_LOC] );
+  }
+  private void resetGFFColours()
+  {
+    if ( originalComboBoxModel != null )
+    {
+      gffColourList.clear();
+      comboBoxTextList.clear();
+
+      VisSRSequenceHelper.resetGFF_Type_Colours();
+      for ( String gffType : originalComboBoxModel )
+      {
+        Color colorForGFFType = VisSRSequenceHelper.getColorForGFFType( gffType );
+        String GFF_infoText = gffType;
+        GFF_infoText += " Colour: (" + colorForGFFType.getRed() + "," + colorForGFFType.getGreen() + "," + colorForGFFType.getBlue() + ")";
+
+        comboBoxTextList.add( GFF_infoText );
+        gffColourList.add( colorForGFFType );
+      }
+
+      updateGFF_ComboBoxColours( 0 );
+    }
+  }
+  public void resetGFFColours(List<String> comboBoxModel)
+  {
+    gffColourList.clear();
+    comboBoxTextList.clear();
+    
+    originalComboBoxModel = comboBoxModel;
+    
+    VisSRSequenceHelper.resetGFF_Type_Colours();
+    for(String gffType : comboBoxModel)
+    {
+      Color colorForGFFType = VisSRSequenceHelper.getColorForGFFType( gffType );
+      String GFF_infoText = gffType;
+      GFF_infoText += " Colour: (" + colorForGFFType.getRed() + "," + colorForGFFType.getGreen() + "," + colorForGFFType.getBlue() + ")";
+      
+      comboBoxTextList.add( GFF_infoText );
+      gffColourList.add( colorForGFFType );
+    }
+    
+    updateGFF_ComboBoxColours(0);
+  }
+  private void updateGFF_ComboBoxColours(int selectedIndex)
+  {
+    //setup combo box with strings and colours
+    Color[] colorArray = gffColourList.toArray(new Color[gffColourList.size()]);
+    CB_renderer.setColors( colorArray );
+    String[] colourStrings = comboBoxTextList.toArray(new String[comboBoxTextList.size()]);
+    CB_renderer.setStrings( colourStrings );
+    GFF_annotations_LB.setRenderer( CB_renderer );
+    GFF_annotations_LB.setModel(new javax.swing.DefaultComboBoxModel(colourStrings));
+    GFF_annotations_LB.setSelectedIndex( selectedIndex );
+    GFF_annotations_LB.setForeground( gffColourList.get( selectedIndex ) );
+  }
+  private void applyGFFColourChanges()
+  {
+    int GFF_index = 0;
+    for(Color col : gffColourList)
+    {
+      String GFF_to_Mod = comboBoxTextList.get( GFF_index );
+      String stripedText = GFF_to_Mod.substring( 0, GFF_to_Mod.indexOf( "Colour" ) );
+      String replaceAll = stripedText.replaceAll( " ", "");
+      VisSRSequenceHelper.setColourForGFFType(replaceAll, col);
+      GFF_index++;
+    }
+  }
+  private void resetDefaultTierColActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_resetDefaultTierColActionPerformed
+  {//GEN-HEADEREND:event_resetDefaultTierColActionPerformed
+     resetTierColours();
+     
+  }//GEN-LAST:event_resetDefaultTierColActionPerformed
+
+  private void resetDefaultSeqLengthColActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_resetDefaultSeqLengthColActionPerformed
+  {//GEN-HEADEREND:event_resetDefaultSeqLengthColActionPerformed
+    resetSeqColourLengths();  
+  }//GEN-LAST:event_resetDefaultSeqLengthColActionPerformed
+
+  private void resetDefaultGFFColActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_resetDefaultGFFColActionPerformed
+  {//GEN-HEADEREND:event_resetDefaultGFFColActionPerformed
+    resetGFFColours();
+  }//GEN-LAST:event_resetDefaultGFFColActionPerformed
+
+  private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
+  {//GEN-HEADEREND:event_formWindowClosing
+    close();
+    
+  }//GEN-LAST:event_formWindowClosing
+
+  private void close()
+  {
+    int option = JOptionPane.showConfirmDialog( this,
+      "Do you wish to apply the changes you have made?",
+      "VisSR Settings",
+      JOptionPane.YES_NO_OPTION,
+      JOptionPane.QUESTION_MESSAGE );
+
+    if ( option == JOptionPane.YES_OPTION )
+    {
+      applySeqColourChanges();
+      applyTierColourChanges();
+      applyGFFColourChanges();
+      
+    }
+
+  }
+  private void closeBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_closeBtnActionPerformed
+  {//GEN-HEADEREND:event_closeBtnActionPerformed
+    close();
+  }//GEN-LAST:event_closeBtnActionPerformed
+
+  private void GFF_annotations_LBActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_GFF_annotations_LBActionPerformed
+  {//GEN-HEADEREND:event_GFF_annotations_LBActionPerformed
+    modifyGFFColours.setSelected( true );
+    GFF_annotations_LB.setForeground( this.gffColourList.get(GFF_annotations_LB.getSelectedIndex()  ));
+  }//GEN-LAST:event_GFF_annotations_LBActionPerformed
+
+  private void resetAllDefaultsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_resetAllDefaultsActionPerformed
+  {//GEN-HEADEREND:event_resetAllDefaultsActionPerformed
+    this.resetSeqColourLengths();
+    this.resetGFFColours();
+    this.resetTierColours();
+  }//GEN-LAST:event_resetAllDefaultsActionPerformed
+
+  /**
+   * @param args the command line arguments
+   */
+  public static void main( String args[] )
+  {
+    /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+     * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+     */
+    try
+    {
+      for ( javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels() )
+      {
+        if ( "Nimbus".equals( info.getName() ) )
+        {
+          javax.swing.UIManager.setLookAndFeel( info.getClassName() );
+          break;
+        }
+      }
+    }
+    catch ( ClassNotFoundException ex )
+    {
+      java.util.logging.Logger.getLogger( VisSRSettingsControl.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+    }
+    catch ( InstantiationException ex )
+    {
+      java.util.logging.Logger.getLogger( VisSRSettingsControl.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+    }
+    catch ( IllegalAccessException ex )
+    {
+      java.util.logging.Logger.getLogger( VisSRSettingsControl.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+    }
+    catch ( javax.swing.UnsupportedLookAndFeelException ex )
+    {
+      java.util.logging.Logger.getLogger( VisSRSettingsControl.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+    }
+        //</editor-fold>
+
+    /* Create and display the dialog */
+    java.awt.EventQueue.invokeLater( new Runnable()
+    {
+      public void run()
+      {
+        VisSRSettingsControl dialog = new VisSRSettingsControl( new javax.swing.JFrame(), true );
+        dialog.addWindowListener( new java.awt.event.WindowAdapter()
+        {
+          @Override
+          public void windowClosing( java.awt.event.WindowEvent e )
+          {
+            System.exit( 0 );
+          }
+        } );
+        dialog.setVisible( true );
+      }
+    } );
+  }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel GFF_Pnl;
+    private javax.swing.JComboBox GFF_annotations_LB;
+    private javax.swing.JPanel alignedGlyphPnl;
+    private javax.swing.JButton closeBtn;
+    private javax.swing.JPanel colourChooserPnl;
+    private javax.swing.JRadioButton evenTierColourRB;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JRadioButton modifyGFFColours;
+    private javax.swing.JRadioButton oddTierColourRB;
+    private javax.swing.JButton resetAllDefaults;
+    private javax.swing.JButton resetDefaultGFFCol;
+    private javax.swing.JButton resetDefaultSeqLengthCol;
+    private javax.swing.JButton resetDefaultTierCol;
+    private javax.swing.ButtonGroup selectedColourChange_BG;
+    private javax.swing.JRadioButton seqColour15;
+    private javax.swing.JRadioButton seqColour16;
+    private javax.swing.JRadioButton seqColour17;
+    private javax.swing.JRadioButton seqColour18;
+    private javax.swing.JRadioButton seqColour19;
+    private javax.swing.JRadioButton seqColour20;
+    private javax.swing.JRadioButton seqColour21;
+    private javax.swing.JRadioButton seqColour22;
+    private javax.swing.JRadioButton seqColour23;
+    private javax.swing.JRadioButton seqColour24;
+    private javax.swing.JRadioButton seqColour25;
+    private javax.swing.JRadioButton seqColour26;
+    private javax.swing.JRadioButton seqColour27;
+    private javax.swing.JRadioButton seqColour28;
+    private javax.swing.JRadioButton seqColour29;
+    private javax.swing.JRadioButton seqColour30;
+    private javax.swing.JColorChooser sequenceColourChooser;
+    private javax.swing.JPanel tierBackgroundPnl;
+    // End of variables declaration//GEN-END:variables
+}

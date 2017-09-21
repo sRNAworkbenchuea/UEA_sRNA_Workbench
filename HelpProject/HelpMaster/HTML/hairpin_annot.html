@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>Hairpin Folding/Annotation Tool</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Developed by UEA Computational Biology" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body class="doc">
+    <div class="container">
+      <div class="bannerArea">
+
+        <div class="toplogo"><a href="http://srna-workbench.cmp.uea.ac.uk/"><img src="images/transparent.gif" width="365" height="90" border="0" /></a></div>
+      </div>
+      <div class="contentArea">
+        <div class="content">
+          <div class="contentMiddle">
+            <h1>Hairpin Folding and Annotation Tool</h1>
+
+            <p>This tool produces the secondary structure of a long (up to 1kb) RNA
+              sequence and annotates it by highlighting two short sequences as the miRNA and miRNA* sequence
+              if required.</p>
+
+            <p>The tool produces a navigable image showing the position of miRNA candidate sequences on a
+              precursor hairpin (see Figure below).</p>
+
+            <p><img src="../images/ScreenShots/HairpinImage.jpg" alt="hairpin image"/> </p>
+
+            <p> The tool can produce as many images as required when given
+              a long (hairpin) sequence and optional short sequence(s) in that will be
+              highlighted on the hairpin. These should be subsequences of the
+              hairpin sequence. Each loaded hairpin can then be cycled through using the
+              arrow buttons shown below.</p>
+
+            <p><img src="../images/ScreenShots/hairpinannoNavbuttons.png" alt="right image"/> </p>
+			<p>A user can also load FASTA data into the hairpin tool. If the data is formatted in the same style as the output from the <a href="./miRCat.html">miRCat</a> tool, 
+			miRNA and miRNA* sequences will be automatically highlighted. See the <a href="http://srna-workbench.cmp.uea.ac.uk/tools/rnafolding-annotation/">website</a> for further details. </p>
+            <p>A user has the option to <a href="./hairpin_annotSaveSingle.html">save the current image</a> or
+              <a href="./hairpin_annotSaveAll.html">save all of the images loaded into the tool</a>.</p>
+
+            <p>A user can also view the information regarding the state of the tool in the top right corner.</p>
+
+            <p><img src="../images/ScreenShots/hairpinannoinfo.png" alt="hairpin info"/> </p>
+
+            <p>Here you can determine how many images are currently loaded and by hovering over the box
+              a tool tip appears describing the hairpin sequence and the short read positions.</p>
+			  
+			  <p>Colour of each sequence is controlled using the toggle buttons shown below:</p>
+
+			   <p><img src="../images/ScreenShots/hairpinColourChooser.png" alt="hairpin info"/> </p>
+
+			   <p>To change the colour of a specific image in the list, select the sequence number and pick the colour from the chooser on the right.</p>
+
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+        <div style="clear:both;"></div>
+      </div>
+      <div class="footerArea">
+        <div class="copyright">&copy; 2011 UEA Computational Biology Laboratory </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+

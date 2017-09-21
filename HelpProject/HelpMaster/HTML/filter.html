@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>UEA sRNA Workbench</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Designed and developed by UEA Computational Biology Laboratory" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body class="doc">
+    <div class="container">
+      <div class="bannerArea">
+
+        <div class="toplogo"><a href="http://srna-workbench.cmp.uea.ac.uk/"><img src="images/transparent.gif" width="365" height="90" border="0" /></a></div>
+      </div>
+      <div class="contentArea">
+        <div class="content">
+          <div class="contentMiddle">
+            <h1>Filter Tool</h1>
+            <p>This tool filters sRNA sequences according to user-defined criteria in a multi-stage pipeline.
+              The tool accepts unfiltered FastA format files as input and produces a filtered FastA format file as output.  The user must
+			  specify each file to be processed in the first text box and a directory to output the data. The tool will then create new files in the chosen
+			  directory and assign _filter to the original filename. The user can also choose to overwrite files by checking the box.
+              In addition, the tool produces statistics summarising the number of sequences removed at each
+              step in the filter pipeline for each file that has been processed.</p>
+
+            <br/>
+            
+            <div align="center"><img src="../images/ScreenShots/filter1.png" alt="filter 1 image"/></div>
+
+            <p>The filter tool can discard sequences based on these user defined criteria:
+              <ul>
+                <li>Sequence Length</li>
+                User defines minimum and maximum boundaries for valid sequences, capped at 16nt thru 50nt.
+                <li>Sequence Complexity</li>
+                If selected, low-complexity (sequences containing less than 3 distinct nucleotides) sequences are removed.
+                <li>Sequence Abundance</li>
+                User defines minimum and maximum abundance levels for valid sequences.
+                <li>Sequence Validity</li>
+                If selected, sequences not containing known nucleotides are discarded.
+                <li>Kill Known Sequences</li>
+                User may specify a list of sequences, which, if found, should be discarded. The kill-list must be a FastA format file.
+                <li>Discard Known Transfer and Ribosomal RNA</li>
+                This filtering is commonly conducted on sRNA datasets, since reads mapping to tRNA and rRNA might be degradation products.
+                If selected, sequences matching known transfer or ribosomal RNA sequences are discarded.
+                The user may also specify whether or not matches should only be allowed on the sense strand.
+                Known t/rRNAs are stored in a FastA file in $INSTALL PATH/data/t and r RNAs.fa.
+                The file contains t/rRNAs obtained from RFAM, version 10 (Jan-2010) [12, 10], the Genomic tRNA Database [6] and EMBL [16], release 95 (09-Jun-2008).
+                The file can be replaced with any FastA file containing t/rRNAs sequences.
+                <li>Discard Sequences Not In Genome</li>
+                If selected, sequences not aligning to a user specified genome will be discarded.
+                Usually reads that do not map to the genome are considered sequencing errors or minor contamination, and are generally discarded.
+                Another application for genome filtering is the analysis of reads produced from virus-treatment experiments.
+                For example, these sRNA reads can be partitioned into three categories: reads identified in both the host and viral genome; reads unique only to the host genome; and reads unique only to the viral genome.
+                This can be achieved by running the filter tool several times with the different genomes.
+              </ul>
+            </p>
+
+            <p>The user also has the option to produce a log file containing all discarded sequences.
+              Each sequence in the log will be associated with the reason it was discarded.</p>
+
+            <p>After execution the user can see an overview of the job in the results panel shown below.  The results show the
+			number of reads remaining after each filter stage has been completed. </p>
+			
+			<p>When selecting the "make output non-redundant" 
+			check box, the output file uses a non-redundant format. 
+            The format is in FASTA with the following properties:</P>
+            <p>
+            >SEQUENCE(ABUNDANCE) <br/>
+            >SEQUENCE </p>
+            <p>For example, if the sequence: TTCAGAGTTTACAGTCCGACGATCTCGTATGCCGTC appeared
+            50 times within a FASTQ file, after stripping the adapter sequence GATCTCGTATGCCGTC
+            the result would appear just once in the output file as:</p>
+            <p>
+            >TTCAGAGTTTACAGTCCGAC(50)<br/>
+            TTCAGAGTTTACAGTCCGAC
+            </p>
+
+            <br/>
+
+            <div align="center"><img src="../images/ScreenShots/filter2.png" alt="filter 2 image"/></div>
+
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+        <div style="clear:both;"></div>
+      </div>
+      <div class="footerArea">
+        <div class="copyright">&copy; 2011 UEA Computational Biology Laboratory </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+

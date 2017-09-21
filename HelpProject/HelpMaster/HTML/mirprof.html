@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>UEA sRNA Workbench</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Designed and developed by UEA Computational Biology Laboratory" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body class="doc">
+    <div class="container">
+      <div class="bannerArea">
+
+        <div class="toplogo"><a href="http://srna-workbench.cmp.uea.ac.uk/"><img src="images/transparent.gif" width="365" height="90" border="0" /></a></div>
+      </div>
+      <div class="contentArea">
+        <div class="content">
+          <div class="contentMiddle">
+            <h1>miRProf</h1>
+            <p>This tool determines normalised expression levels of sRNAs matching known miRNAs in miRBase. 
+			miRProf can also quickly and easily compare miRNA expression levels across multiple samples.</p>
+
+            <br/>
+            
+            <p>miRProf requires a set of sRNA samples and an optional genome file for input. <b>(note: if no genome file is specified normalisation will be done on total reads rather than genome matching reads)</b>
+			The paths to the files representing the 
+			samples and the genome are entered at the top of the main dialog box. In addition, miRProf 
+			can be configured in a number of ways, which are described in the following paragraphs.</p>
+			
+            <p>miRProf filters sRNA sequences in each sample before expression levels are computed.  The user can specify 
+			criteria such as minimum sRNA size, maximum sRNA size and minimum abundance.  In addition, all low-complexity 
+			sRNAs (sequences, which contain less than 3 distinct nucleotides) and sequences containing non-canonical nucleotides
+			(e.g. 'N' for unknown nucleotide) are discarded.  Finally, any sRNAs not aligning to the user-specified genome are 
+			discarded.  Genome filtering is mandatory in order to provide a frame of reference for comparing sRNAs
+			across multiple samples.</p>
+			
+			<p>Filtered reads from each sample are then aligned to a (sub)set of <a href="http://mirbase.org/">miRBase</a> mature sequences.
+			The user has the option to partion mirBase mature sequence based on whether they originate from plant, animal or virus miRNA
+			precursors.  In addition, the user can optionally choose to include all sets for alignment. miRBase is constantly updated 
+			with new miRNAs reported from the field.  Therefore, the user can select
+			any version of miRBase for their specific experiments.  The data download and management is automatically handled within
+			the tool.  All the user need do is type in the version they which to use in the parameters dialog box.</p>
+			
+			<br/>
+			
+			The sRNA to mature miRNA matching process can be controlled using a few parameters:
+
+			<ul>
+				<li>Overhangs allowed</li>
+				When aligning sRNAs to mature sequences the aligning tool will fail to report a match if the short read 
+			(the sRNA) overhangs the long read (the miRNA), to circumvent this problem miRNAs are padded with "XXX" at the 
+			beginning and end of the sequence. sRNAs which overhang the actual mature sequence will then be treated as having a number
+			of mismatches equal to the number of nucleotides, which overhang the miRNA.	 This behaviour occurs by default, but 
+			the user can switch this off by deselecting the "overhangs allowed" check box.
+				<li>Mismatches allowed</li>
+				The number of allowed mismatches is controlled
+			using the "Mismatches allowed" text box.  The default value here is 0, implying the sRNA must exact match somewhere within 
+			the mature sequence.  The maximum number of mismatches allowed is capped at 3 to prevent huge numbers of meaningless results
+			being recorded.
+				<li>Only keep best match</li>  
+				Even with 1, 2, or 3 mismatches allowed many hits can be returned, these can be minimised by checking the
+			"only keep best match" box, which instructs miRProf to discard all hits to a given miRNA that have less than the best number
+			of mismatches (a smaller number of mismatches is considered "better" than a larger number).
+			</ul>
+			
+			The last part of miRProf configuration involves determining how the sRNAs that match known miRNAs should be grouped.  The
+			user has these options:
+			
+			<ul>
+                <li>Group organisms</li>
+				If checked, miRProf does not consider the organism from which the miRNA was found.  Therefore, users who select
+				this check box will see only a single organism being returned: (all-combined).
+				<li>Group variants</li>
+				If checked, matches to different variants of a single miRNA precursor family are combined into one, such as: arm, 
+				and copy number.
+				<li>Group mature and star</li>
+				If checked, matches to mature and star sequences of the derived from the same miRNA precursor are grouped into one.
+				<li>Group mismatches</li>
+				If checked, matches to the same miRNA are combined into a group regardless of the number of mismatches.
+			</ul>
+			
+			<p>All miRProf configuration parameters can be saved and loaded from file by using the toolbar buttons at the top of
+			parameter browser dialog.  This functionality can help the user maintain consistency between separate runs and
+			can be used as part of an experiment log book by automatically documenting the experimental setup.</p>
+			
+			<br/>
+			
+			<div align="center"><img src="../images/ScreenShots/mirprof-configuration.png" alt="mirprof configuration image"/></div>
+			
+			<p>When the user has configured all the parameters to their satisfaction they can start miRProf by clicking on the
+			"Start" button on the main dialog, or by selecting the "Start" menu item from the run menu.  Once running miRProf can
+			be cancelled at any time by clicking on the "Cancel" button or menu item.  Note: cancelling a run may not be instant as
+			execution must reach a safe position in the code before cleanly stopping the run.</p>
+			
+			<p>After the run has completed the results for all samples is available in the main miRProf dialog as shown in the figure 
+			below.  The configuration of the results table is highly dependent on the grouping options the user has selected.  For
+			example, if the user selected to "group organisms", then the results table will initially only contain one row, called
+			"all combined".  Otherwise the display shows each organism the sRNAs could be mapped to.  By clicking on the organism
+			entry, individual detected miRNAs are revealed.  Again, the number of miRNAs displayed here can vary dramatically
+			based on the grouping options selected by the user.  Each row containing a detected miRNA will contain 4 columns for
+			each sample: raw count (total number of reads in the sRNA dataset matching this miRNA), weighted count (total number of 
+			reads in sRNA dataset matching this miRNA divided by the number of times the matching sRNAs aligned to the genome), 
+			normalised count (weighted count divided by total number of reads in this sample multiplied by 1 million), and finally 
+			the actual sRNA sequences in this sample that matched the miRNA.  Any row within the table can be copied by selecting it
+			and then using "ctrl-c" or by bringing up a context menu and selecting the "Copy to Clipboard" item.</p>
+			
+			<br/>
+			
+			<div align="center"><img src="../images/ScreenShots/mirprof-results.png" alt="mirprof results image"/></div>
+			
+			<p>Now that the results are available to the user, miRProf can export two types of file: a results table in .csv format 
+			and a list of sRNAs matching known miRNAs (in FASTA format). The results table contains a formatted list of reads that 
+			match to known miRNAs. It also contains information about redundant (total) and non-redundant (distinct) sequence counts 
+			in the input set before and after every filtering step.  The csv file can be loaded into any good spreadsheet program. 
+			
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+        <div style="clear:both;"></div>
+      </div>
+      <div class="footerArea">
+        <div class="copyright">&copy; 2011 UEA Computational Biology Laboratory </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+

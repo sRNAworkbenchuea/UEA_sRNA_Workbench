@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>Visualisation of Small RNA (VisSR)</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Designed and developed by UEA Computational Biology Laboratory" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body class="doc">
+      <div class="container">
+        <div class="bannerArea">
+          <div class="toplogo">
+            <a href="http://srna-workbench.cmp.uea.ac.uk/">
+              <img src="images/transparent.gif" width="365" height="90" border="0" />
+            </a>
+          </div>
+        </div>
+        <div class="contentArea">
+          <div class="content">
+            <div class="contentMiddle">
+              <h1>Visualisation of Small RNAs (VisSR)</h1>
+              <p>
+                Sequence visualisation within the UEA sRNA Workbench is performed in the VisSR tool (pronounced visor).
+                The tool may be run on its own or from other tools, e.g. <a href="./miRCat.html">miRCat</a>.
+                To open the tool choose 'VisSR' from the 'Tools' menu in the main Workbench window.
+                Data is loaded into VisSR from the <a href="./vissrFileMenu.html">File</a> menu.<br/>
+                <br/>
+                VisSR showing a gene annotation for <i>Arabidopsis thaliana</i>&nbsp;
+                <img src="../images/ScreenShots/vissr_1.gif" alt="VisSR image"/>
+                <br/>
+                <br/>
+                From top to bottom, the VisSR screen is divided into four sections:
+                <ul>
+                  <li><a href="#navcontrols">Navigation controls</a></li>
+                  <li><a href="#seqoverview">Sequence overview</a></li>
+                  <li><a href="#zoomcontrol">Zoom control</a></li>
+                  <li><a href="#mainview">Main data view</a></li>
+                </ul>
+                <h4><a name="navcontrols">Navigation controls</a> </h4>
+                The sequence identifiers, e.g. chromosome ids, are shown in the drop-down list.
+                Changing the value will load the sequence and recalibrate the display.<br/>
+                <br/>
+                Next to the list is an editable text-field within which base coordinates can be typed.
+                When the two numbers are separated by a '-' the display is moved to the specified coordinates.
+                If the numbers are separated by a '+' then the second number specifies the width.
+                Additionally, a 'kb' or an 'mb' may be included at the end of each number as short-hand for a thousand bases and a million bases respectively.
+                For example, typing '1.5mb-2.5mb' would move the display so that base number 1,500,000 lies on the left-hand side,
+                and base number 2,500,000 on the right.
+                The same result would be achieved by typing '1500kb+1mb'.<br/>
+                <br/>
+                Alternatively a text-based identifier can be typed and a search will be performed.
+                This is useful for finding a specified gene when displaying annotations.
+                For example, typing 'AT1G01010' when displaying chromosome 1 of <i>Arabidopsis&nbsp;thaliana</i> produces the view shown above.<br/>
+                <br/>
+                The '&lt;&lt;', '&lt;', '&gt;', '&gt;&gt;' buttons move the displayed range according to the currently displayed width.
+                The '&lt;&lt;' button moves the display to the left by one whole screenful, while the '&lt;' button moves the display by
+                half a screenful. The other buttons move the displayed range to the right.
+
+                <h4><a name="seqoverview">Sequence overview</a></h4>
+                The sequence overview is a number line which represents the current sequence, e.g. chromosome.
+                The red box indicates the portion of the sequence which is displayed in the main data view below.
+                The red box can be dragged using the mouse along the number line to move the displayed region.
+
+                <h4><a name="zoomcontrol">Zoom control</a></h4>
+                The current zoom level corresponds to the location of the vertical notch on the horizontal line.
+                To zoom out or in click on the notch and drag it to the left or right.
+                As the zoom level is increased the main data view will change accordingly.
+                Zooming is performed relative a fixed zoom point.
+                To set the zoom point, click anywhere in the main data view.
+                The position is indicated by a vertical grey line.
+                The zoom point will remain in view when zooming.
+                Clicking on the horizontal line away from the notch will cause the zoom level to jump.
+
+                <h4><a name="mainview">Main data view</a> </h4>
+                The display is divided into tiers, with a label on the left and the data on the right.
+                The sequence is displayed in the first tier.
+                To see the bases zoom all the way in.
+                The second tier shows the view's position on the governing sequence.
+                Tiers can be added to the view using the items on the <a href="./vissrFileMenu.html">File</a> menu.
+                Loaded data is displayed using coloured graphic items (glyphs).
+                The glyph for a strand aligned sequence displays an arrow at one end to indicate direction.
+                If a label has been assigned to the glyph it will be shown when the zoom level is sufficiently high.
+                Double-clicking on a glyph will cause the display to zoom in on it.
+                A help-tip is displayed when the mouse hovers over a glyph.
+                A <a href="./vissrPopupMenu.html">context</a> menu is displayed when either a tier's label or a glyph is right-clicked.
+              </p>
+            </div>
+            <div style="clear:both;"></div>
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+        <div class="footerArea">
+          <div class="copyright">&copy; 2011 UEA Computational Biology Laboratory </div>
+        </div>
+      </div>
+    </body>
+</html>

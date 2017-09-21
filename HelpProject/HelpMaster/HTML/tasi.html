@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>UEA sRNA Workbench</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Designed and developed by UEA Computational Biology Laboratory" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body class="doc">
+    <div class="container">
+      <div class="bannerArea">
+
+        <div class="toplogo"><a href="http://srna-workbench.cmp.uea.ac.uk/"><img src="images/transparent.gif" width="365" height="90" border="0" /></a></div>
+      </div>
+      <div class="contentArea">
+        <div class="content">
+          <div class="contentMiddle">
+            <h1>ta-si Prediction Tool</h1>
+            
+			<p>The trans-acting RNA prediction tool identifies phased 21nt sRNAs characteristic of ta-siRNA loci, from a supplied
+			sRNA dataset and an associated genome.  
+
+			<p>This tool requires an sRNA dataset and a genome file from a plant species for input (ta-si RNAs have not been found
+			in animals so far to the best of our knowledge).  The paths to the files representing the sample and the genome are 
+			entered at the top of the main dialog box. In addition, the ta-si prediction tool requires the user to specify
+			the p-value cutoff (to control the tool's senstivity), the TAS phasing register, and the minimum sRNA abundance, although these text boxes 
+			are automatically set with default values.</p>
+			
+            <p>When the user has configured all the input parameters to their satisfaction they can start the ta-si prediction tool
+			by clicking on the "Start" button on the main dialog, or by selecting the "Start" menu item from the run menu.  Once 
+			running, the tool can be cancelled at any time by clicking on the "Cancel" button or menu item.  Note: cancelling a 
+			run may not be instant as execution must reach a safe position in the code before cleanly stopping the run.</p>
+			
+			<p>The first step during execution aligns sRNAs to the genome.  sRNAs not matching the genome are discarded.  It 
+			implements the algorithm described by 
+			<a href="http://aao.sinica.edu.tw/download/publication_list/en/96.pdf">Chen et al</a> to calculate the probability of
+			the phasing being significant based on the hypergeometric distribution (see figure below).  Our implementation differs 
+			slightly as we take into account the length of the input sRNA sequences, only using 21nt sRNAs in the phasing analysis.</p>
+
+			<br/>
+			
+            <div align="center"><img src="../images/ScreenShots/tasi-distribution.png" alt="tasi distribution image"/></div>
+			
+			<br/>
+			
+			After the run has completed the results are available in the scrollable table underneath the input boxes (as shown
+			in the screenshot below).  Each predicted TAS gene is displayed as a row in the table.  The columns represent:
+			
+			<ul>
+                <li>The chromosome from which the predicted TAS originated.</li>
+				<li>The start position of the predicted TAS gene in the chromosome.</li>
+				<li>The end position of the predicted TAS gene in the chromosome.</li>
+				<li>The number of distinct sRNAs that align to the region described in the previous columns.</li>
+				<li>The number of distinct phased sRNAs that were detected in the regions described in the previous columns</li>
+				<li>The P-Value which was calculated by the algorithm described by
+				<a href="http://aao.sinica.edu.tw/download/publication_list/en/96.pdf">Chen et al</a></li>
+			</ul>
+			
+			<p>Each predicted TAS gene can be copied to clipboard by raising the context menu for that row in the table and clicking
+			on the "Copy to Clipboard" button.  In addition, the phased sRNAs for each TAS gene can be displayed in a separate popup
+			dialog by clicking the "Show phased sRNAs" in the context menu for that row in the table.</p>
+			
+			<br/>
+			
+			<div align="center"><img src="../images/ScreenShots/tasi-results.png" alt="tasi results image"/></div>
+			
+			<p>All TAS loci can be visualised in VisSR using the "Show in Genome View" menu 
+			item located in the View menu.  Alternatively, each locus can be sent individually to VisSR by bringing up a context
+			menu on a particular locus and selecting the "Show in VisSR" button.  An example of a TAS locus in VisSR is shown below.</p>
+			
+			<br/>
+			
+			<div align="center"><img src="../images/ScreenShots/tasi-vissr.png" alt="tasi vissr image"/></div>
+			
+			<p>Now that the results are available to the user, the tool can export two types of file: a results table detailing all
+			predicted TAS loci in .csv format and a list of phased sRNAs for each TAS loci in txt format.  This csv file can be loaded 
+			into any good spreadsheet program. </p>
+			
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+        <div style="clear:both;"></div>
+      </div>
+      <div class="footerArea">
+        <div class="copyright">&copy; 2011 UEA Computational Biology Laboratory </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+

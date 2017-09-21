@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+<key>CFBundleIconFile</key>
+<string>OSX_icon.icns</string>
+<key>CFBundleGetInfoString</key>
+<string>The UEA small RNA Workbench</string>
+<key>CFBundleDevelopmentRegion</key>
+<string>English</string>
+<key>CFBundleIdentifier</key>
+<string>srnaworkbenchstartup.SRNAWorkbenchStartup</string>
+<key>CFBundleAllowMixedLocalizations</key>
+<string>true</string>
+<key>CFBundleDevelopmentRegion</key>
+<string>English</string>
+<key>CFBundleExecutable</key>
+<string>JavaAppLauncher</string>
+<key>CFBundleIconFile</key>
+<string>GenericApp.icns</string>
+<key>CFBundleIdentifier</key>
+<string>com.oracle.javafx.swing.Test</string>
+<key>CFBundleDisplayName</key>
+<string>srnaworkbenchstartup.SRNAWorkbenchStartup</string>
+<key>CFBundleInfoDictionaryVersion</key>
+<string>6.0</string>
+<key>CFBundleName</key>
+<string>srna-workbenchV3.1</string>
+<key>CFBundlePackageType</key>
+<string>APPL</string>
+<key>CFBundleShortVersionString</key>
+<string>1.0</string>
+<key>CFBundleSignature</key>
+<string>????</string>
+<key>CFBundleVersion</key>
+<string>1</string>
+<key>NSHumanReadableCopyright</key>
+<string></string>
+<key>LSApplicationCategoryType</key>
+<string>public.app-category.developer-tools</string>
+<key>Java</key>
+	<key>JVMVersion</key>
+	<string>1.7+</string>
+	<key>Arguments</key>
+	<string>-splash:srNAWorkbench_1_1_1.gif</string>
+	<key>SplashFile</key>
+    <string>$JAVAROOT/srNAWorkbench_1_1_1.gif</string>
+	<dict>
+	<key>ClassPath</key>
+		<array>
+		<string>$JAVAROOT/sRNAWorkbenchStartup.jar</string>
+		<string>$JAVAROOT/Workbench.jar</string>
+		<string>/Developer/Applications/sRNAWorkbench/Workbench/dist/data/</string>
+		<string>/Developer/Applications/sRNAWorkbench/Workbench/dist/ExeFiles/</string>
+		<string>/Developer/Applications/sRNAWorkbench/Workbench/dist/hs/</string>
+		<string>/Developer/Applications/sRNAWorkbench/Workbench/dist/lib/</string>
+		<string>/Developer/Applications/sRNAWorkbench/Workbench/src/</string>
+		</array>
+	<key>JVMMainClassName</key>
+	<string>srnaworkbenchstartup/SRNAWorkbenchStartup</string>
+<key>JVMArguments</key>
+</dict>
+<array>
+</array>
+</dict>
+</plist>
+

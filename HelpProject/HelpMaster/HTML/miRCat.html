@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>The miRCat Tool</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Designed and developed by UEA Computational Biology Laboratory" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body class="doc">
+    <div class="container">
+      <div class="bannerArea">
+
+        <div class="toplogo"><a href="http://srna-workbench.cmp.uea.ac.uk/"><img src="images/transparent.gif" width="365" height="90" border="0" /></a></div>
+      </div>
+      <div class="contentArea">
+        <div class="content">
+          <div class="contentMiddle">
+            <h1>The miRCat Tool</h1>
+
+            <p>miRNAs are a well-studied class of sRNAs that are generated from a
+              single-stranded RNA (ssRNA) that forms a stable, partially double stranded
+              stem-loop structure (hairpin). miRCat predicts miRNAs from high-
+              throughput sRNA sequencing data without requiring a putative precursor
+              sequence as these will be identified by the program.</p>
+
+            <p>miRCat projects are created by entering the <a href="./miRCatNewProject.html">new project</a> menu which is found under the <a href="./miRCatFileMenu.html">file</a> menu.</p>
+
+            <p>Once the sequences are mapped to the input genome, miRCat will look
+              for genomic regions covered with sRNAs (sRNA loci), containing reads
+              with abundance at least five (this threshold can be adjusted using the
+              Min sRNA Abundance parameter). </p>
+            <br/>
+            These loci must match certain criteria:
+            <ol>
+               <li>Each sRNA in a locus must be no more than 200nt away from its
+                closest neighbour (this threshold can be adjusted using the Loci Separation Distance parameter).</li>
+              <li>At least 80% of sRNAs in a locus must have the same orientation (this
+                threshold can be adjusted using the Min sRNA Orientation orientation parameter).</li>
+            </ol>
+
+
+            <p>Once a list of loci has been produced, it is further analysed in order to find likely miRNA candidates:</p>
+            <ol>
+              <li>The most abundant sRNA read within a locus is chosen as the likely miRNA. (each sRNA is tested for its GC content as a percentage, adjusted with the Min GC parameter)</li>
+              <li>Flanking sequences surrounding this sRNA are extracted from the
+                genome using varying window lengths. (The flanking length can be adjusted with the sRNA Sequence Flank Extension parameter</li>
+              <li>Each sequence window is then folded using RNAfold, producing a secondary
+                structure for the putative miRNA that can then be viewed using the <a href="./hairpin_annot.html">Hairpin Annotation Tool</a></li>
+              <li>miRCat then trims the secondary structure and computes discriminative features useful for classifying miRNAs.
+                The features are:
+                <ul>
+                  <li>
+                    The number of consecutive mismatches between miRNA and miRNA* must be no more than 3 (adjusted with the Max Consecutive Gaps parameter).
+                  </li>
+                  <li>The number of paired nucleotides between the miRNA and the
+                    miRNA* must be at least 17 of the 25 nucleotides centred around the miRNA. (Adjusted with the Min Paired Bases parameter)</li>
+                  <li>The hairpin must be at least 75nt (for plants) or 50nt (for animals) in length. (adjusted with the Min Hairpin Length parameter</li>
+                  <li>The percentage of paired bases in the hairpin must be at least
+                    50% of base-pairs in the hairpin (this threshold can be adjusted
+                    using the Max Unpaired Bases parameter).</li>
+                </ul>
+
+              </li>
+              <li>The hairpin with the lowest adjusted minimum free energy (AMFE) from the
+                sequence windows is then chosen as the precursor miRNA (pre-miRNA) candidate</li>
+              <li>The pre-miRNA candidate is then tested using randfold using a AMFE cutoff.</li>
+            </ol>
+            <p><img src="images/mirCat_mir164_secondary_structure.png" alt="mir164 annotated"/></p>
+            <p><a href="./hairpin_annot.html">Hairpin Annotation Tool</a> output showing miR164 precursor.</p>
+
+            <br/>
+            <h4>Parameters:</h4>
+
+			<p>All the following parameters can be adjusted using the paramter browser window.</p>
+            <ul>
+              <li>Max Genome Hits: The maximum number of genome hits.
+                (1 > genomehits, default genomehits = 16).</li>
+              <li>Loci Seperation Distance: The maximum distance between consecutive hits on the
+                genome. (hit dist, default hit dist = 200).</li>
+              <li>Max Consecutive Gaps: The maximum number of consecutive unpaired bases
+                in miRNA region.
+                (0 > max gaps &lt; 5, default max gaps = 3).</li>
+              <li>Maximum Overlap: The maximum total percentage of miRNAs that lie under the miRNA or miRNA* position on the hairpin.
+                (30 &lt; max overlap length, default = 80).</li>
+              <li>Max Unpaired Bases: The maximum percentage of unpaired bases
+                in hairpin. (1 &lt; max percent unpaired &lt; 100, default max percent unpaired = 50).</li>
+              <li>sRNA Sequence Length - Max: The maximum length of a miRNA. (18 &lt; maxsize &lt; 36,
+                default maxsize = 22).</li>
+			  <li>sRNA Sequence Length - Min: The Minimum sRNA size (Must be > 18 and &lt; 36. Default = 20).</li>
+              <li>Min sRNA Abundance: The minimum sRNA abundance. (1 &lt; min abundance,
+                default min abundance = 1).</li>
+              <li>Minimum Free Energy Threshold: The adjusted minimum free energy of the hairpin. Must be &lt; 0. Default = -25.</li>
+              <li>Min GC: The Minimum percentage of G/C in miRNA (must be > 1 and &lt; 100. Default = 10).</li>
+              <li>Min Hairpin Length: The minimum length of hairpin (nt) (must be > 50. Default = 75).</li>
+              <li>Min Paired Bases: The Minimum number of paired bases in miRNA region (Must be > 10 and &lt; 25. Default = 17).</li>
+              <li>Allowing complex loops: This will allow or remove any hairpins containing complex loops.</li>
+              <li>Orientation percentage: The percentage of sRNAs in locus that must
+                be in the same orientation (1 &lt; percent orientation &lt; 100, default percent orientation = 90).</li>
+              <li>Hairpin Extension: How much each hairpin should extend past the sRNA read to form the window (40 &lt; window length &lt; 400,
+                default window length = 150).</li>
+			   <li>P_Val: The P_Val for the predicted structure as calculated by randfold (default P_Val = 0.5).</li>
+            </ul>
+
+            <p>During the analysis procedure the results are entered into the table as shown below:</p>
+            <br/>
+            <img src="../images/ScreenShots/mircatoutput.png" alt="miRCat results table"/>
+
+            <br/>
+            <br/>
+            The table contains the following information:
+            <ul>
+              <li>Chromosome</li>
+              <li>Start position</li>
+              <li>End position</li>
+              <li>Strand/orientation</li>
+              <li>Abundance (number of times sequenced in high-throughput dataset)</li>
+              <li>Sequence of predicted mature miRNA</li>
+              <li>Representative sequence accession from input dataset</li>
+              <li>Length of predicted mature miRNA</li>
+              <li>Number of matches to genome</li>
+              <li>Length of predicted precursor hairpin sequence</li>
+              <li>G/C % content of hairpin sequence</li>
+              <li>Minimum free energy (MFE) of predicted hairpin sequence</li>
+              <li>Adjusted MFE, AMFE = (MFE / length of hairpin) * 100</li>
+              <li>Shows MFE per 100nt making results comparable</li>
+              <li>miRNA* shows predicted miRNA* sequence(s), if any, along
+                with abundance in input dataset shown in brackets</li>
+              <li>Hairpin Sequence (with miRNA sequence highlighted in blue and miRNA* if present in red)</li>
+              <li>Hairpin Dot-Bracket notation</li>
+              <li>Hairpin start position</li>
+              <li>Hairpin end position</li>
+              <li>miRNA* start position, if present</li>
+              <li>miRNA* end position, if present</li>
+			  <li>miRBase ID, if present</li>
+            </ul>
+
+            <p>
+              A user has the option to interact with the results in real time in several aspects.
+              Using the <a href="miRCatExport.html">Export menu</a> a user can export the results to file.
+              A user can also use the controls shown at the top to output the results as they are generated to file or pipe all results into into either
+              the <a href="./hairpin_annot.html">RNA Folding/Annotation</a> tool
+              or the <a href="./vissr.html">VisSR</a> tool.
+            </p>
+
+            <p><img src="../images/ScreenShots/mircatControls.png" alt="miRCat controls"/></p>
+
+            <p>Additionally a context menu has been included to allow the user to pipe a single result line into two other tools in the sRNA Workbench. </p>
+
+            <p><img src="../images/ScreenShots/miRCatContextMenu.png" alt="miRCat context menu"/></p>
+			
+			<p>This image demonstrates the VisSR output from miRCat, users are presented with the GFF style view in one 
+			tier and the entire miRNA locus in another:</p>
+            <div align="left"><img src="../images/ScreenShots/mircatvissr165.png" alt="mir165"/></div>
+
+            <br/>
+            Both options operate on the currently selected result line.
+            'Render Hairpin' will render the selection in the <a href="./hairpin_annot.html">Hairpin Annotation</a> tool,
+            while 'Show in Genome View' will display the selection in <a href="./vissr.html">VisSR</a>.
+
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+        <div style="clear:both;"></div>
+      </div>
+      <div class="footerArea">
+        <div class="copyright">&copy; 2011 UEA Computational Biology Laboratory </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,943 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package uk.ac.uea.cmp.srnaworkbench.tools.normalise;
+
+import java.awt.AWTEvent;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.event.ItemEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import org.apache.commons.io.FilenameUtils;
+import uk.ac.uea.cmp.srnaworkbench.GUIInterface;
+import uk.ac.uea.cmp.srnaworkbench.data.sequence.FastaMap;
+import uk.ac.uea.cmp.srnaworkbench.history.HistoryFileType;
+import uk.ac.uea.cmp.srnaworkbench.io.SRNAFastaReader;
+import uk.ac.uea.cmp.srnaworkbench.tools.ToolHost;
+import uk.ac.uea.cmp.srnaworkbench.utils.GenerateWaitCursor;
+import static uk.ac.uea.cmp.srnaworkbench.utils.LOGGERS.WorkbenchLogger.LOGGER;
+import uk.ac.uea.cmp.srnaworkbench.utils.StatusTracker;
+import uk.ac.uea.cmp.srnaworkbench.utils.ThreadCompleteListener;
+import uk.ac.uea.cmp.srnaworkbench.utils.matrix.SparseExpressionMatrix;
+import uk.ac.uea.cmp.srnaworkbench.utils.matrix.SparseExpressionMatrixRunner;
+import uk.ac.uea.cmp.srnaworkbench.viewers.AbundanceDistributionViewer;
+import uk.ac.uea.cmp.srnaworkbench.viewers.BoxplotViewer;
+import uk.ac.uea.cmp.srnaworkbench.viewers.MAplotSelector;
+import uk.ac.uea.cmp.srnaworkbench.viewers.Viewer;
+
+/**
+ *
+ * @author w0445959
+ */
+public class NormalisationMainFrame  extends javax.swing.JInternalFrame implements GUIInterface, ToolHost
+{
+  
+  // MISC todos
+  // TODO: fix progress bar for parallel processing of Norm runners
+  private final StatusTracker tracker;
+  private ArrayList<File> myInputFiles;
+  private File myGenomeFile;
+  private File outputDirectory;
+  private ArrayList<String> fileNames = new ArrayList<String>(); 
+  private HashMap<String, FastaMap> all_data = new HashMap<String, FastaMap>();
+  private static boolean GUI_Mode = true;
+  private NormaliseParamsGUI paramsPanel = new NormaliseParamsGUI();
+  private boolean showingParams = false;
+  
+  //private NormalisationType normTypeSelected;
+  private HashMap<NormalisationType, Boolean> selectedTypes = new HashMap<>();
+  private HashMap<NormalisationType, String[]> typesToParams = new HashMap<>();
+  
+  private NormalisationParams params = null;
+  
+  // Normalisation tool can normalise the same data using different methods at once
+  HashMap<NormalisationType, NormalisationRunner> runners  = new HashMap<>();
+  
+  // One expression matrix is used in all normalisation methods
+  SparseExpressionMatrix dataMatrix;
+  
+ 
+ /**
+  * Creates new form NormalisationMainFrame
+  */
+  public NormalisationMainFrame()
+  {
+    this( new ArrayList<File>(), null, null, GUI_Mode);
+  }
+   
+  public NormalisationMainFrame( ArrayList<File> inputFiles, File genomeFile, File outputDir, boolean GUI)
+  {
+    initComponents();
+    
+    GUI_Mode = GUI;
+    //updatePanelEnables();
+    this.tracker = new StatusTracker( this.progBar, this.lblStatus );
+    myInputFiles = inputFiles;
+    myGenomeFile = genomeFile;
+    this.outputDirectory = outputDir;
+    
+    //normTypeSelected = NormalisationType.NONE;
+    
+    typesToParams.put(NormalisationType.TOTAL_COUNT, new String[]
+    {
+      NormaliseParamsGUI.PANEL_NAME_GENERAL
+    });
+    typesToParams.put(NormalisationType.BOOTSTRAP, new String[]
+    {
+        NormaliseParamsGUI.PANEL_NAME_GENERAL
+    });
+    typesToParams.put( NormalisationType.QUANTILE, new String[]
+    {
+      NormaliseParamsGUI.PANEL_NAME_GENERAL,
+      NormaliseParamsGUI.PANEL_NAME_QUANTILE
+    });
+    typesToParams.put( NormalisationType.TRIMMED_MEAN, new String[]
+    {
+      NormaliseParamsGUI.PANEL_NAME_GENERAL,
+      NormaliseParamsGUI.PANEL_NAME_REF_SAMPLE,
+      NormaliseParamsGUI.PANEL_NAME_TRIMMED_MEAN
+    });
+    typesToParams.put( NormalisationType.UPPER_QUARTILE, new String[]
+    {
+      NormaliseParamsGUI.PANEL_NAME_GENERAL,
+      NormaliseParamsGUI.PANEL_NAME_ABUNDANCE_DIST
+    });
+    
+    // Add a listener to the input document so that the reference sample
+    // combo box can be updated
+    fspInput.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate( DocumentEvent e )
+      {
+        fspInputDocumentChanged();
+      }
+
+      @Override
+      public void removeUpdate( DocumentEvent e )
+      {
+        fspInputDocumentChanged();
+      }
+
+      @Override
+      public void changedUpdate( DocumentEvent e )
+      {
+         //System.out.println("listening");
+      }
+    });
+  }
+
+  /**
+   * This method is called from within the constructor to initialize the form.
+   * WARNING: Do NOT modify this code. The content of this method is always
+   * regenerated by the Form Editor.
+   */
+  @SuppressWarnings("unchecked")
+  // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+  private void initComponents()
+  {
+
+    scalingMethodsPanel = new javax.swing.JPanel();
+    perTotalCheck = new javax.swing.JCheckBox();
+    upperQuartileCheck = new javax.swing.JCheckBox();
+    trimmedMeanCheck = new javax.swing.JCheckBox();
+    rankBasedMethodsPanel = new javax.swing.JPanel();
+    quantileCheck = new javax.swing.JCheckBox();
+    cmdStart = new javax.swing.JButton();
+    cmdCancel = new javax.swing.JButton();
+    progBar = new javax.swing.JProgressBar();
+    lblStatus = new javax.swing.JLabel();
+    fileInputPanel = new javax.swing.JPanel();
+    fspInput = new uk.ac.uea.cmp.srnaworkbench.swing.FileSelectorPanel();
+    fspGenome = new uk.ac.uea.cmp.srnaworkbench.swing.FileSelectorPanel();
+    fspOutDir = new uk.ac.uea.cmp.srnaworkbench.swing.FileSelectorPanel();
+    resultsPanel = new javax.swing.JTabbedPane();
+    filterResultsPanel = new uk.ac.uea.cmp.srnaworkbench.tools.filter.FilterResultsPanel();
+    normaliseResultsTable = new uk.ac.uea.cmp.srnaworkbench.tools.normalise.NormaliseJTableResultsPanel();
+    showBoxplotButton = new javax.swing.JButton();
+    showMAplotsButton = new javax.swing.JButton();
+    statisticalMethodsPanel = new javax.swing.JPanel();
+    bootstrapCheck = new javax.swing.JCheckBox();
+
+    setBackground(new java.awt.Color(120, 120, 120));
+    setClosable(true);
+    setIconifiable(true);
+    setMaximizable(true);
+    setResizable(true);
+    setTitle(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.title")); // NOI18N
+
+    scalingMethodsPanel.setBackground(new java.awt.Color(120, 120, 120));
+    scalingMethodsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.scalingMethodsPanel.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Sans Unicode", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
+
+    perTotalCheck.setBackground(new java.awt.Color(120, 120, 120));
+    perTotalCheck.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+    perTotalCheck.setForeground(new java.awt.Color(255, 255, 255));
+    perTotalCheck.setText(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.perTotalCheck.text")); // NOI18N
+    perTotalCheck.addItemListener(new java.awt.event.ItemListener()
+    {
+      public void itemStateChanged(java.awt.event.ItemEvent evt)
+      {
+        perTotalCheckItemStateChanged(evt);
+      }
+    });
+
+    upperQuartileCheck.setBackground(new java.awt.Color(120, 120, 120));
+    upperQuartileCheck.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+    upperQuartileCheck.setForeground(new java.awt.Color(255, 255, 255));
+    upperQuartileCheck.setText(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.upperQuartileCheck.text")); // NOI18N
+    upperQuartileCheck.addItemListener(new java.awt.event.ItemListener()
+    {
+      public void itemStateChanged(java.awt.event.ItemEvent evt)
+      {
+        upperQuartileCheckItemStateChanged(evt);
+      }
+    });
+
+    trimmedMeanCheck.setBackground(new java.awt.Color(120, 120, 120));
+    trimmedMeanCheck.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+    trimmedMeanCheck.setForeground(new java.awt.Color(255, 255, 255));
+    trimmedMeanCheck.setText(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.trimmedMeanCheck.text")); // NOI18N
+    trimmedMeanCheck.addItemListener(new java.awt.event.ItemListener()
+    {
+      public void itemStateChanged(java.awt.event.ItemEvent evt)
+      {
+        trimmedMeanCheckItemStateChanged(evt);
+      }
+    });
+
+    javax.swing.GroupLayout scalingMethodsPanelLayout = new javax.swing.GroupLayout(scalingMethodsPanel);
+    scalingMethodsPanel.setLayout(scalingMethodsPanelLayout);
+    scalingMethodsPanelLayout.setHorizontalGroup(
+      scalingMethodsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(scalingMethodsPanelLayout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(perTotalCheck)
+        .addGap(18, 18, 18)
+        .addComponent(upperQuartileCheck)
+        .addGap(18, 18, 18)
+        .addComponent(trimmedMeanCheck)
+        .addContainerGap(420, Short.MAX_VALUE))
+    );
+    scalingMethodsPanelLayout.setVerticalGroup(
+      scalingMethodsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(scalingMethodsPanelLayout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(scalingMethodsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(perTotalCheck)
+          .addComponent(upperQuartileCheck)
+          .addComponent(trimmedMeanCheck))
+        .addContainerGap(9, Short.MAX_VALUE))
+    );
+
+    rankBasedMethodsPanel.setBackground(new java.awt.Color(120, 120, 120));
+    rankBasedMethodsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.rankBasedMethodsPanel.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Sans Unicode", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
+
+    quantileCheck.setBackground(new java.awt.Color(120, 120, 120));
+    quantileCheck.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+    quantileCheck.setForeground(new java.awt.Color(255, 255, 255));
+    quantileCheck.setLabel(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.quantileCheck.label")); // NOI18N
+    quantileCheck.addItemListener(new java.awt.event.ItemListener()
+    {
+      public void itemStateChanged(java.awt.event.ItemEvent evt)
+      {
+        quantileCheckItemStateChanged(evt);
+      }
+    });
+
+    javax.swing.GroupLayout rankBasedMethodsPanelLayout = new javax.swing.GroupLayout(rankBasedMethodsPanel);
+    rankBasedMethodsPanel.setLayout(rankBasedMethodsPanelLayout);
+    rankBasedMethodsPanelLayout.setHorizontalGroup(
+      rankBasedMethodsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(rankBasedMethodsPanelLayout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(quantileCheck)
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+    );
+    rankBasedMethodsPanelLayout.setVerticalGroup(
+      rankBasedMethodsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(rankBasedMethodsPanelLayout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(quantileCheck)
+        .addContainerGap(11, Short.MAX_VALUE))
+    );
+
+    cmdStart.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+    cmdStart.setText(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.cmdStart.text")); // NOI18N
+    cmdStart.setToolTipText(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.cmdStart.toolTipText")); // NOI18N
+    cmdStart.setEnabled(false);
+    cmdStart.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        cmdStartActionPerformed(evt);
+      }
+    });
+
+    cmdCancel.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+    cmdCancel.setText(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.cmdCancel.text")); // NOI18N
+    cmdCancel.setToolTipText(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.cmdCancel.toolTipText")); // NOI18N
+    cmdCancel.setEnabled(false);
+    cmdCancel.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        cmdCancelActionPerformed(evt);
+      }
+    });
+
+    lblStatus.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+    lblStatus.setForeground(new java.awt.Color(255, 255, 255));
+    lblStatus.setText(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.lblStatus.text")); // NOI18N
+
+    fileInputPanel.setBackground(new java.awt.Color(120, 120, 120));
+    fileInputPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.fileInputPanel.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Sans Unicode", 0, 11), java.awt.Color.white)); // NOI18N
+    fileInputPanel.setName("File Input"); // NOI18N
+
+    fspInput.setFileLineAmount(16);
+    fspInput.setHistoryType(uk.ac.uea.cmp.srnaworkbench.history.HistoryFileType.SRNA);
+    fspInput.setLabel(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.fspInput.label")); // NOI18N
+    fspInput.setSelector(uk.ac.uea.cmp.srnaworkbench.swing.FileSelector.MULTI_LOAD);
+    fspInput.setToolName(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.fspInput.toolName")); // NOI18N
+
+    fspGenome.setFileLineAmount(1);
+    fspGenome.setHistorySingleMode(true);
+    fspGenome.setHistoryType(uk.ac.uea.cmp.srnaworkbench.history.HistoryFileType.GENOME);
+    fspGenome.setLabel(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.fspGenome.label")); // NOI18N
+    fspGenome.setSelector(uk.ac.uea.cmp.srnaworkbench.swing.FileSelector.LOAD);
+    fspGenome.setToolName(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.fspGenome.toolName")); // NOI18N
+
+    fspOutDir.setFileLineAmount(1);
+    fspOutDir.setHistorySingleMode(true);
+    fspOutDir.setHistoryType(uk.ac.uea.cmp.srnaworkbench.history.HistoryFileType.SRNA);
+    fspOutDir.setLabel(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.fspOutDir.label")); // NOI18N
+    fspOutDir.setSelector(uk.ac.uea.cmp.srnaworkbench.swing.FileSelector.DIRECTORY);
+    fspOutDir.setToolName(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.fspOutDir.toolName")); // NOI18N
+
+    javax.swing.GroupLayout fileInputPanelLayout = new javax.swing.GroupLayout(fileInputPanel);
+    fileInputPanel.setLayout(fileInputPanelLayout);
+    fileInputPanelLayout.setHorizontalGroup(
+      fileInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fileInputPanelLayout.createSequentialGroup()
+        .addContainerGap(20, Short.MAX_VALUE)
+        .addGroup(fileInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+          .addComponent(fspOutDir, javax.swing.GroupLayout.PREFERRED_SIZE, 936, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(fspGenome, javax.swing.GroupLayout.PREFERRED_SIZE, 905, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addGap(31, 31, 31))
+      .addGroup(fileInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(fileInputPanelLayout.createSequentialGroup()
+          .addGap(31, 31, 31)
+          .addComponent(fspInput, javax.swing.GroupLayout.DEFAULT_SIZE, 924, Short.MAX_VALUE)
+          .addGap(32, 32, 32)))
+    );
+    fileInputPanelLayout.setVerticalGroup(
+      fileInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fileInputPanelLayout.createSequentialGroup()
+        .addContainerGap(146, Short.MAX_VALUE)
+        .addComponent(fspGenome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(18, 18, 18)
+        .addComponent(fspOutDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(32, 32, 32))
+      .addGroup(fileInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(fileInputPanelLayout.createSequentialGroup()
+          .addGap(7, 7, 7)
+          .addComponent(fspInput, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addContainerGap(75, Short.MAX_VALUE)))
+    );
+
+    resultsPanel.setBackground(new java.awt.Color(120, 120, 120));
+    resultsPanel.setAutoscrolls(true);
+    resultsPanel.addTab(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.filterResultsPanel.TabConstraints.tabTitle"), filterResultsPanel); // NOI18N
+    filterResultsPanel.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.filterResultsPanel.AccessibleContext.accessibleName")); // NOI18N
+
+    resultsPanel.addTab(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.normaliseResultsTable.TabConstraints.tabTitle"), normaliseResultsTable); // NOI18N
+
+    showBoxplotButton.setText(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.showBoxplotButton.text")); // NOI18N
+    showBoxplotButton.setEnabled(false);
+    showBoxplotButton.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        showBoxplotButtonActionPerformed(evt);
+      }
+    });
+
+    showMAplotsButton.setText(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.showMAplotsButton.text")); // NOI18N
+    showMAplotsButton.setEnabled(false);
+    showMAplotsButton.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        showMAplotsButtonActionPerformed(evt);
+      }
+    });
+
+    statisticalMethodsPanel.setBackground(new java.awt.Color(120, 120, 120));
+    statisticalMethodsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.statisticalMethodsPanel.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Sans Unicode", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
+
+    bootstrapCheck.setBackground(new java.awt.Color(120, 120, 120));
+    bootstrapCheck.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 11)); // NOI18N
+    bootstrapCheck.setForeground(new java.awt.Color(255, 255, 255));
+    bootstrapCheck.setText(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.bootstrapCheck.text")); // NOI18N
+    bootstrapCheck.addItemListener(new java.awt.event.ItemListener()
+    {
+      public void itemStateChanged(java.awt.event.ItemEvent evt)
+      {
+        bootstrapCheckItemStateChanged(evt);
+      }
+    });
+
+    javax.swing.GroupLayout statisticalMethodsPanelLayout = new javax.swing.GroupLayout(statisticalMethodsPanel);
+    statisticalMethodsPanel.setLayout(statisticalMethodsPanelLayout);
+    statisticalMethodsPanelLayout.setHorizontalGroup(
+      statisticalMethodsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(statisticalMethodsPanelLayout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(bootstrapCheck)
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+    );
+    statisticalMethodsPanelLayout.setVerticalGroup(
+      statisticalMethodsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(statisticalMethodsPanelLayout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(bootstrapCheck)
+        .addContainerGap(11, Short.MAX_VALUE))
+    );
+
+    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+    getContentPane().setLayout(layout);
+    layout.setHorizontalGroup(
+      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(layout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(lblStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 999, Short.MAX_VALUE)
+          .addGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+              .addComponent(fileInputPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(scalingMethodsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(progBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 989, Short.MAX_VALUE)
+              .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(cmdStart, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cmdCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
+              .addComponent(rankBasedMethodsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(statisticalMethodsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addContainerGap())
+          .addComponent(resultsPanel)
+          .addGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+              .addComponent(showBoxplotButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(showMAplotsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGap(0, 0, Short.MAX_VALUE))))
+    );
+    layout.setVerticalGroup(
+      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(layout.createSequentialGroup()
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(fileInputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(scalingMethodsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(rankBasedMethodsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(statisticalMethodsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(60, 60, 60)
+        .addComponent(resultsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(18, 18, 18)
+        .addComponent(showBoxplotButton)
+        .addGap(14, 14, 14)
+        .addComponent(showMAplotsButton)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(lblStatus)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(progBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(cmdCancel)
+          .addComponent(cmdStart))
+        .addContainerGap())
+    );
+
+    fileInputPanel.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.fileInputPanel.AccessibleContext.accessibleName")); // NOI18N
+    resultsPanel.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(NormalisationMainFrame.class, "NormalisationMainFrame.resultsPanel.AccessibleContext.accessibleName")); // NOI18N
+
+    pack();
+  }// </editor-fold>//GEN-END:initComponents
+
+  private void cmdStartActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_cmdStartActionPerformed
+  {//GEN-HEADEREND:event_cmdStartActionPerformed
+    runProcedure();
+  }//GEN-LAST:event_cmdStartActionPerformed
+
+  private void cmdCancelActionPerformed( java.awt.event.ActionEvent evt )//GEN-FIRST:event_cmdCancelActionPerformed
+  {//GEN-HEADEREND:event_cmdCancelActionPerformed
+    cancel();
+  }//GEN-LAST:event_cmdCancelActionPerformed
+
+  private void setButtonsEnabled(boolean enabled)
+  {
+    this.cmdStart.setEnabled( enabled );
+    this.cmdCancel.setEnabled( enabled );
+  }
+  
+  // TODO: do something with this method
+  private boolean checkInput()
+  {
+    if(!GUI_Mode)//TO BE DONE
+    {
+      return false;
+    }
+    else if( (this.fspInput.getFiles().isEmpty()) ) 
+    {
+      JOptionPane.showMessageDialog( this,
+              "No input files selected",
+              "File Input Error",
+              JOptionPane.ERROR_MESSAGE );
+      return false;
+     
+    }
+    else
+    {
+      return true;
+    }
+  }
+  private void perTotalCheckItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event_perTotalCheckItemStateChanged
+  {//GEN-HEADEREND:event_perTotalCheckItemStateChanged
+    this.normCheckStateChanged(NormalisationType.TOTAL_COUNT, evt );
+  }//GEN-LAST:event_perTotalCheckItemStateChanged
+
+  private void upperQuartileCheckItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event_upperQuartileCheckItemStateChanged
+  {//GEN-HEADEREND:event_upperQuartileCheckItemStateChanged
+    this.normCheckStateChanged(NormalisationType.UPPER_QUARTILE, evt);
+  }//GEN-LAST:event_upperQuartileCheckItemStateChanged
+
+  private void trimmedMeanCheckItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event_trimmedMeanCheckItemStateChanged
+  {//GEN-HEADEREND:event_trimmedMeanCheckItemStateChanged
+    this.normCheckStateChanged(NormalisationType.TRIMMED_MEAN, evt);
+  }//GEN-LAST:event_trimmedMeanCheckItemStateChanged
+
+  private void quantileCheckItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event_quantileCheckItemStateChanged
+  {//GEN-HEADEREND:event_quantileCheckItemStateChanged
+    this.normCheckStateChanged( NormalisationType.QUANTILE, evt);
+  }//GEN-LAST:event_quantileCheckItemStateChanged
+
+    private void showBoxplotButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_showBoxplotButtonActionPerformed
+    {//GEN-HEADEREND:event_showBoxplotButtonActionPerformed
+      //boxplotFromFasta();
+      boxplotFromMatrix();
+    }//GEN-LAST:event_showBoxplotButtonActionPerformed
+
+  private void showMAplotsButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_showMAplotsButtonActionPerformed
+  {//GEN-HEADEREND:event_showMAplotsButtonActionPerformed
+    maPlotsFromMatrix();
+  }//GEN-LAST:event_showMAplotsButtonActionPerformed
+
+  private void bootstrapCheckItemStateChanged(java.awt.event.ItemEvent evt)//GEN-FIRST:event_bootstrapCheckItemStateChanged
+  {//GEN-HEADEREND:event_bootstrapCheckItemStateChanged
+    this.normCheckStateChanged( NormalisationType.BOOTSTRAP, evt);
+  }//GEN-LAST:event_bootstrapCheckItemStateChanged
+
+  private void maPlotsFromMatrix()
+  {
+    MAplotSelector maChart = new MAplotSelector();
+    Viewer.addViewer( maChart );
+    maChart.setData( dataMatrix, getRunningNormalisationTypes() );
+    maChart.initialise();
+    
+  }
+  
+  private void boxplotFromMatrix()
+  {
+    BoxplotViewer boxplot = new BoxplotViewer();
+    Viewer.addViewer( boxplot );
+    boxplot.inputDataset( dataMatrix, getRunningNormalisationTypes() );
+    // start the boxplot
+    boxplot.initialiseBoxplot();
+  }
+  
+  private void boxplotFromFasta()
+  {
+    BoxplotViewer boxplot = new BoxplotViewer(); //new BoxplotViewer();
+    Viewer.addViewer( boxplot );
+           // Ad raw data
+        HashMap<String, FastaMap> inputData = new HashMap<>();
+        for( File rawFile : this.myInputFiles )
+        {
+          try
+          {
+            SRNAFastaReader fastain = new SRNAFastaReader( rawFile );
+            FastaMap thisFastaMap = new FastaMap( fastain.processDoubles() );
+            inputData.put(FilenameUtils.getBaseName(rawFile.getName()), thisFastaMap);
+          }
+          catch ( IOException ex )
+          {
+            // TODO: Handle IOException properly
+            LOGGER.log(Level.SEVERE, ex.getMessage() );
+          }
+        }
+        boxplot.inputDataset( inputData, NormalisationType.NONE.toString() );
+        
+        // Loop over all processed normalisation runs
+        for(Entry<NormalisationType, NormalisationRunner> e : this.runners.entrySet())
+        {
+          // For each process, load data into a map, keyed by filename
+          HashMap<String, FastaMap> outputData = new HashMap<>();
+          
+          NormalisationType thisType = e.getKey();
+          NormalisationRunner thisRunner = e.getValue();
+       
+          // Reading in fasta files
+          // get output file names from the current runner
+          ArrayList<String> outputFileNames = thisRunner.getOutputFileNames();
+          for(String thisFileName : outputFileNames)
+          {
+            try
+            {
+              SRNAFastaReader fastain = new SRNAFastaReader(new File(thisFileName));
+              FastaMap thisFastaMap = new FastaMap(fastain.processDoubles());
+              
+              // Derive plain sample name (without extra naming added from processing)
+              // FIXME: Not a robust way of deriving the input sample name. Probably need to use a Sample object for this
+              String thisSampleName = FilenameUtils.getBaseName( thisFileName );
+              String [] samplenameBits = thisSampleName.split( "_");
+              outputData.put( samplenameBits[0], thisFastaMap);
+            }
+            catch ( IOException ex )
+            {
+              // TODO: Handle IOException properly
+               LOGGER.log(Level.SEVERE, ex.getMessage() );
+            }
+          }
+          
+          // Add this series for this normalisation type to the boxplot
+          boxplot.inputDataset( outputData, thisType.toString() );          
+        }
+        boxplot.initialiseBoxplot();
+  }
+  
+  /**
+   * Return a List
+   */
+  private ArrayList<NormalisationType> getRunningNormalisationTypes()
+  {
+    ArrayList<NormalisationType> normTypes = new ArrayList<>( this.runners.keySet() );
+    normTypes.add( NormalisationType.NONE );
+    return(normTypes);
+  }
+  
+  private void normCheckStateChanged(NormalisationType type, java.awt.event.ItemEvent evt)
+  {
+      boolean selected = evt.getStateChange() == ItemEvent.SELECTED;
+      this.updateNormalisationTypesSelected( type, selected );    
+  }
+  /**
+   * Calls to this method are made when the input text area's document changes
+   * in any way.
+   * 
+   * Currently used to update the Reference Sample combobox (if visible)
+   */
+  private void fspInputDocumentChanged()
+  {
+      ArrayList<File> inputFiles = this.fspInput.getFiles();
+      this.paramsPanel.setReferenceSampleSelection( inputFiles );
+  }
+ 
+  public void processFiles()
+  {
+    myInputFiles = fspInput.getFiles();
+    this.myGenomeFile = this.fspGenome.getFile();
+    this.outputDirectory = this.fspOutDir.getFile();
+
+    for ( File currentFile : myInputFiles )
+    {
+
+      try
+      {
+        SRNAFastaReader newReader = new SRNAFastaReader( currentFile );
+        fileNames.add( currentFile.getName() );
+        all_data.put( currentFile.getName(), new FastaMap(newReader.process()) );
+      }
+      catch ( IOException ex )
+      {
+         LOGGER.log(Level.SEVERE, ex.getMessage() );
+      }
+    }
+  }
+  
+  @Override
+  public void runProcedure()
+  {
+    // FIXME: Nothing will happen if GUI_MODE is false???
+    // This method prepares the input and builds the expression matrix
+    // Completion of the built expression matrix is then caught by update()
+    // to continue the normalisation procedure.
+    if ( GUI_Mode && checkInput() )
+    {
+      processFiles();
+      if ( this.paramsPanel.createParams() )
+      {
+        if ( upperQuartileCheck.isSelected() )
+        {
+          this.lblStatus.setText( "Status: generating abundance distribution viewer" );
+          setupUpperQuartileNormalisation();
+        }
+        
+        for (File f : this.myInputFiles)
+        {
+          filterResultsPanel.addOutputTab( f.getName() );
+          filterResultsPanel.setResultsWaiting( f.getName(), true);
+        }
+        params = this.paramsPanel.getParams();
+        
+              // Reformat file list into the nested sample structure that SparseExpressionMatrix wants.
+        ArrayList<ArrayList<File>> nested_inputFileList = new ArrayList<>();
+        nested_inputFileList.add( new ArrayList<>(this.myInputFiles));
+        
+        // Pre-build the sparse expression matrix so it only has to be built once
+        dataMatrix = new SparseExpressionMatrix(this.tracker, this.filterResultsPanel, 
+            nested_inputFileList, this.myGenomeFile, params.getMinLength(), params.getMaxLength());
+        SparseExpressionMatrixRunner matrixRunner = new SparseExpressionMatrixRunner(this);
+        try
+        {
+          matrixRunner.buildSparseExpressionMatrix( dataMatrix );
+        }
+        catch ( Exception ex )
+        {
+          this.showErrorDialog(ex.getMessage() );
+        }
+      }
+    }
+        
+        // Now waits for the expression matrix to be built. Procedure is carried on in
+        // runNormalisationProcedure once the update method is triggered by succesful
+        // matrix completion
+  }
+      
+  /**
+   * Called from method update() once the expression matrix
+   * has been built.
+   */
+  private void runNormalisationProcedure(){
+        // TODO: Run each normalisation in a seperate thread perhaps?
+        for(Entry<NormalisationType, Boolean> e : this.selectedTypes.entrySet())
+        {
+          NormalisationType thisType = e.getKey();
+          boolean isSelected = e.getValue();
+          
+          // If this norm type was selected, run a process for it
+          if(isSelected)
+          {
+            
+            NormalisationRunner thisRunner = new NormalisationRunner(this, false);
+            thisRunner.reset(); 
+            /*thisRunner.runNormalisation( e.getKey(), this.myInputFiles, 
+              this.myGenomeFile, this.outputDirectory, 
+              this.filterResultsPanel, this.params, this.tracker);*/
+            this.runners.put( thisType, thisRunner );
+            thisRunner.runNormalisation( thisType, dataMatrix, outputDirectory, params, tracker );
+          }
+        }
+    }
+  
+  /*  private void setNormalisationTypeSelected(NormalisationType type)
+   * {
+   * this.normTypeSelected = type;
+   * }*/
+  
+  private void updateNormalisationTypesSelected(NormalisationType type, boolean selected)
+  {
+    ArrayList<String> selectedPanels = new ArrayList<>();
+    this.selectedTypes.put( type, selected );
+    boolean enableButtons = false;
+    for (Entry<NormalisationType, Boolean> e : this.selectedTypes.entrySet())
+    {
+      if(e.getValue())
+      {
+        String[] thisNormPanels = this.typesToParams.get( e.getKey() );
+        selectedPanels.addAll( Arrays.asList( thisNormPanels ) );
+        enableButtons = true;
+      }
+    }
+    setButtonsEnabled(enableButtons);
+    this.paramsPanel.setParamPanelVisible( selectedPanels.toArray( new String[selectedPanels.size()] ) );
+  }
+
+  @Override
+  public JPanel getParamsPanel()
+  {
+    return this.paramsPanel;
+  }
+
+  @Override
+  public void setShowingParams( boolean newState )
+  {
+    showingParams = newState;
+  }
+
+  @Override
+  public boolean getShowingParams()
+  {
+    return showingParams;
+  }
+
+
+  
+  public void setupUpperQuartileNormalisation()
+  {
+    
+    AbundanceDistributionViewer myAbundDist = AbundanceDistributionViewer.generateAbundanceDistribution();
+    myAbundDist.inputData(all_data, "Upper Quartile Normalisation");
+    myAbundDist.initiliseAbundanceFrequencyPlot(paramsPanel.getLogBase(), paramsPanel.getMinAbund());
+    
+  }
+
+  public void cancel()
+  {
+    // Iterate through all started runners and cancel them
+    for (NormalisationRunner r : this.runners.values())
+    {
+      r.cancel();
+    }
+  }
+  // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JCheckBox bootstrapCheck;
+  private javax.swing.JButton cmdCancel;
+  private javax.swing.JButton cmdStart;
+  private javax.swing.JPanel fileInputPanel;
+  private uk.ac.uea.cmp.srnaworkbench.tools.filter.FilterResultsPanel filterResultsPanel;
+  private uk.ac.uea.cmp.srnaworkbench.swing.FileSelectorPanel fspGenome;
+  private uk.ac.uea.cmp.srnaworkbench.swing.FileSelectorPanel fspInput;
+  private uk.ac.uea.cmp.srnaworkbench.swing.FileSelectorPanel fspOutDir;
+  private javax.swing.JLabel lblStatus;
+  private uk.ac.uea.cmp.srnaworkbench.tools.normalise.NormaliseJTableResultsPanel normaliseResultsTable;
+  private javax.swing.JCheckBox perTotalCheck;
+  private javax.swing.JProgressBar progBar;
+  private javax.swing.JCheckBox quantileCheck;
+  private javax.swing.JCheckBox quantileCheck1;
+  private javax.swing.JCheckBox quantileCheck2;
+  private javax.swing.JCheckBox quantileCheck3;
+  private javax.swing.JPanel rankBasedMethodsPanel;
+  private javax.swing.JPanel rankBasedMethodsPanel1;
+  private javax.swing.JPanel rankBasedMethodsPanel2;
+  private javax.swing.JPanel rankBasedMethodsPanel3;
+  private javax.swing.JTabbedPane resultsPanel;
+  private javax.swing.JPanel scalingMethodsPanel;
+  private javax.swing.JButton showBoxplotButton;
+  private javax.swing.JButton showMAplotsButton;
+  private javax.swing.JPanel statisticalMethodsPanel;
+  private javax.swing.JCheckBox trimmedMeanCheck;
+  private javax.swing.JCheckBox upperQuartileCheck;
+  // End of variables declaration//GEN-END:variables
+
+  @Override
+  public void shutdown()
+  {
+    this.setVisible( false );
+    cancel();
+    this.dispose();
+  }
+
+  // ***** ToolHost methods ***** //
+  @Override
+  public void update()
+  {
+    // First check that expression matrix building is finished
+    if(dataMatrix.isCompleted()) 
+    {
+      if(this.runners.isEmpty())
+      {
+        // No runners created? NormalisationProcedure has not yet been run.
+        runNormalisationProcedure();
+      }
+      else
+      {
+        // Runners exist. Update must have been called because one of them has
+        // finished. Do something with the results:
+        normalisationUpdate();
+      }
+    }
+    else {
+      //throw new IllegalOperationException("Update to NormalisationMainFrame happened before expression matrix was built");
+    }
+  }
+  
+  private void normalisationUpdate()
+  {
+    //FIXME: UI thread appears to stall whilst updating filter tables??
+    boolean allComplete = true;
+    for(Entry<NormalisationType, NormalisationRunner> e : this.runners.entrySet())
+    {
+      NormalisationType thisType = e.getKey();
+      NormalisationRunner thisRunner = e.getValue();
+      if(thisRunner.isComplete())
+      {
+        if(!thisRunner.isResultShown())
+        {
+          this.normaliseResultsTable.addNormalisationResult( thisType, 0, 0 );
+          thisRunner.setResultShown( true );
+        }
+      }
+      else
+      {
+        allComplete = false;
+      }
+      
+    }
+    
+    if(allComplete)
+    {
+      this.showBoxplotButton.setEnabled(true);
+      this.showMAplotsButton.setEnabled(true);
+    }
+    /*    try
+     * {
+     * // When process has finished, write the results to fasta
+     * this.normRunner.writeToFasta( outputDirectory );
+     * }
+     * catch ( IOException ex )
+     * {
+     * this.tracker.setFinished( false );
+     * this.showErrorDialog( ex.getMessage() );
+     * }*/
+  }
+
+  @Override
+  public void setRunningStatus( boolean running )
+  {
+    //if ( this.go_control != null )
+    //{
+      if ( !running )
+      {
+        this.setCursor( Cursor.getDefaultCursor() );
+      }
+      else
+      {
+        new Thread( new GenerateWaitCursor( this ) ).start();
+      }
+
+      //this.go_control.setRunning( running );
+
+      //this.mnuRunReset.setEnabled( !running );
+  }
+
+  @Override
+  public void showErrorDialog( String message )
+  {
+    JOptionPane.showMessageDialog( this,  message, "Normilisation error", JOptionPane.ERROR_MESSAGE);
+  }
+
+
+}

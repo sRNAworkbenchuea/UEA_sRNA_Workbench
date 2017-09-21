@@ -1,0 +1,17 @@
+extend=100.0
+min_energy=-25.0
+min_paired=17
+max_gaps=3
+max_genome_hits=16
+min_length=20
+max_length=22
+min_gc=20
+max_unpaired=50
+max_overlap_percentage=80
+min_locus_size=1
+orientation=80
+min_hairpin_len=60
+complex_loops=true
+pval=0.05
+min_abundance=1
+cluster_sentinel=200

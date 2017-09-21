@@ -1,0 +1,37 @@
+<launch4jConfig>
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>sRNAWorkbenchStartup.jar</jar>
+  <outfile>C:\Users\w0445959\LocalDisk\SRNA_WORKBENCH_LEGACY\srna-workbenchV3.01-Copy\UEA_sRNAWorkbench.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>false</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest></manifest>
+  <icon>C:\Users\w0445959\LocalDisk\PostDoc\NetBeansProjects\sRNAWorkbench\src\uk\ac\uea\cmp\srnaworkbench\images\ApplicationIcons\WindowsIcon\workbench_transparent.ico</icon>
+  <classPath>
+    <mainClass>srnaworkbenchstartup.SRNAWorkbenchStartup</mainClass>
+    <cp>.\data</cp>
+    <cp>.\ExeFiles</cp>
+    <cp>.\hs</cp>
+    <cp>.\lib</cp>
+    <cp>.\Workbench.jar</cp>
+  </classPath>
+  <jre>
+    <path></path>
+    <minVersion>1.6.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+  </jre>
+  <messages>
+    <startupErr>An error occurred while starting the application.</startupErr>
+    <bundledJreErr>This application was configured to use a bundled Java Runtime Environment but the runtime is missing or corrupted.</bundledJreErr>
+    <jreVersionErr>This application requires a Java Runtime Environment</jreVersionErr>
+    <launcherErr>The registry refers to a nonexistent Java Runtime Environment installation or the runtime is corrupted.</launcherErr>
+    <instanceAlreadyExistsMsg>An application instance is already running.</instanceAlreadyExistsMsg>
+  </messages>
+</launch4jConfig>

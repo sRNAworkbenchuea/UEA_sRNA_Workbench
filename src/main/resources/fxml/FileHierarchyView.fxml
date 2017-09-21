@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.web.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="mainAnchorPane" prefHeight="740.0" prefWidth="1000.0" styleClass="pane" stylesheets="@../styles/Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <WebView fx:id="webView" layoutX="-6.0" prefHeight="740.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <effect>
+            <DropShadow />
+         </effect>
+      </WebView>
+    <AnchorPane fx:id="hierarchyEditor" layoutY="60.0" minHeight="0.0" minWidth="0.0" opacity="0.0" prefHeight="680.0" prefWidth="1000.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="350.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+         <children>
+            <ToolBar layoutY="1.0" minHeight="-Infinity" prefHeight="29.0" prefWidth="953.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <items>
+                  <Button fx:id="addNodeButton" mnemonicParsing="false" onAction="#handleAddNodeButton" prefHeight="36.0" prefWidth="135.0" stylesheets="@../styles/Styles.css" text="Add Node">
+                     <effect>
+                        <DropShadow />
+                     </effect></Button>
+                  <Button fx:id="removeNodeButton" mnemonicParsing="false" onAction="#handleRemoveNodeButton" prefHeight="36.0" prefWidth="135.0" text="Remove">
+                     <effect>
+                        <DropShadow />
+                     </effect></Button>
+                  <Button fx:id="hideButton" mnemonicParsing="false" onAction="#handleHideButtonAction" prefHeight="36.0" prefWidth="135.0" text="View Network" textAlignment="CENTER">
+                     <effect>
+                        <DropShadow />
+                     </effect></Button>
+               </items>
+            </ToolBar>
+            <TreeTableView fx:id="hierarchyTable" layoutY="54.0" prefHeight="626.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="54.0">
+              <columns>
+                <TreeTableColumn fx:id="levelColumn" prefWidth="115.0" text="Level" />
+                  <TreeTableColumn fx:id="descriptionColumn" minWidth="0.0" prefWidth="702.0" text="Description" />
+              </columns>
+            </TreeTableView>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

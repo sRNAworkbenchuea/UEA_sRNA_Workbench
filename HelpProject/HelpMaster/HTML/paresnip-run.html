@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>PAREsnip</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Designed and developed by UEA Computational Biology Laboratory" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body class="doc">
+      <div class="container">
+        <div class="bannerArea">
+          <div class="toplogo">
+            <a href="http://srna-workbench.cmp.uea.ac.uk/">
+              <img src="images/transparent.gif" width="365" height="90" border="0" />
+            </a>
+          </div>
+        </div>
+        <div class="contentArea">
+          <div class="content">
+            <div class="contentMiddle">
+              <h1>Run PAREsnip</h1>
+
+              Once the input files have been chosen the user can run PAREsnip.
+              To change the default parameters, they can be updated in the tool's parameter browser.
+              To show and hide the browser select the appropriate option from the Tool menu of the main Workbench window.<br/>
+              <br/>
+
+              <h3>The parameter browser and its settings:</h3>
+
+              <table>
+                <tr>
+                  <td><img src="../images/ScreenShots/paresnip-parameters.jpg"></img></td>
+                  <td>
+                    <b>Load/Save Parameters</b><br/>
+                    The parameters can be loaded from or saved to a text file.<br/>
+                    <br/>
+
+                    <b>Default Throughput Settings</b><br/>
+                    Set the parameters to the low/high throughput defaults.<br/>
+                    <br/>
+
+                    <b>Small RNA Reporting</b><br/>
+                    Targets will not be sought for any sRNA with an abundance less than the specified minimum.<br/>
+                    Whether to treat subsequences as secondary hits (example below).
+                    Whether to record secondary hits and output them to a file using the 'Save' or 'Save as' menu items.<br/>
+                    <br/>
+
+                    <b>Category</b><br/><br/>
+                    Whether to use the raw or weighted degradation fragment abundance when calculating the categories.
+                    Weighted fragment abundance is the raw fragment abundance divided by the number of times the fragment aligned to the transcriptome.
+                    A category will be included as potential sRNA cleavage sites when checked.<br/>
+                    <br/>
+
+                    <b>Filter</b><br/>
+                    <ul>
+                      <li>When checked, any sRNA which has a full length match to t/rRNA will be discarded from the search.</li>
+                      <li>When checked, low complexity candidate sRNAs that are extracted from transcript cleavage sites are discarded.</li>
+                      <li>When checked, low complexity sequences within the sRNAome are discarded.</li>
+                      <li>Min. and Max. lengths for the degradation fragment can be set.<br/></li>
+                      <li>Min. and Max. lengths for the sRNA can be set.<br/></li>
+                    </ul>
+
+                    <b>Alignment</b><br/>
+                    <ul>
+                      <li>Whether to allow a single nucleotide gap in a sRNA/target duplex.</li>
+                      <li>Whether a sRNA/target duplex may contain a mismatch at position 11 (5' sRNA).</li>
+                      <li>Whether a sRNA/target duplex may contain more than 2 adjacent mismatches after position 12 (3' sRNA).</li>
+                      <li>The maximum number of mismatches permitted within an sRNA/target duplex (G-U pairs = 0.5 mismatches).</li>
+                    </ul>
+
+                    <b>P-Value</b><br/>
+                    When 'Calculate P-Values' is selected a p-value will be calculated for each reported interaction.
+                    The user can set the number of dinucleotide shuffles to be used in the calculation together with a threshold value, above which
+                    the calculation will not continue.
+                    If 'Do not include results > cut off' is selected then the interactions with p-values greater than the threshold will not be reported.<br/>
+                    <br/>
+
+                    <b>Multithreading</b><br/>
+                    The number of CPUs is displayed and the number of threads to use for processing may be changed.
+                    More threads reduce the time taken to complete an analysis.
+                  </td>
+                </tr>
+              </table>
+
+              <br/>
+
+              <h4>'Subsequences are secondary hits' example</h4>
+              One sRNA sequence which hits a transcript cleavage site may also have several sRNA subsequences.
+              A subsequence has the same nucleotide composition as its longer parent sequence, but has one or more fewer nucleotides (3' end).
+              For example:<br/>
+              <br/>
+              <table>
+                <tr> <td>Parent sequence:</td> <td>AGCTAGCTAGCTAGCTAGCTAGCT</td> </tr>
+                <tr> <td>Subsequence 1:</td>   <td>AGCTAGCTAGCTAGCTAGCTAGC</td> </tr>
+                <tr> <td>Subsequence 2:</td>   <td>AGCTAGCTAGCTAGCTAGCTAG</td> </tr>
+                <tr> <td>Subsequence 3:</td>   <td>AGCTAGCTAGCTAGCTAGCTA</td> </tr>
+              </table>
+              <br/>
+              As subsequence 1, 2 and 3 can target the same cleavage site as the parent sequence, we 	call the subsequences secondary hits.
+              It is not always required to independently report secondary hits as this unnecessarily inflates the number of results.
+              Ticking this 'Subsequences are secondary hits' check-box ensures subsequences of hits are recorded as secondary hits,
+              but not reported within the main output.<br/>
+              <br/>
+
+              <h3>Starting the analysis</h3>
+              Once the parameters have been set the analysis can be started by selecting either
+              the 'Start' menu item on the 'Run' menu or the 'Start' button on the form.
+              Feedback is provided in the user-interface as the analysis progresses.<br/>
+              <br/>
+              Clicking the 'Cancel' button at any time will request the analysis to stop.
+              There may be a brief pause before the calculation terminates.
+            </div>
+            <div style="clear:both;"></div>
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+        <div class="footerArea">
+          <div class="copyright">&copy; 2011 UEA Computational Biology Laboratory </div>
+        </div>
+      </div>
+    </body>
+</html>

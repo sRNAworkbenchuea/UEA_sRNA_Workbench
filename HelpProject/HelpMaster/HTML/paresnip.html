@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>PAREsnip</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Designed and developed by UEA Computational Biology Laboratory" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body class="doc">
+      <div class="container">
+        <div class="bannerArea">
+          <div class="toplogo">
+            <a href="http://srna-workbench.cmp.uea.ac.uk/">
+              <img src="images/transparent.gif" width="365" height="90" border="0" />
+            </a>
+          </div>
+        </div>
+        <div class="contentArea">
+          <div class="content">
+            <div class="contentMiddle">
+              <h1>PAREsnip</h1>
+              <p>
+                PAREsnip is a fast and user-friendly software tool that allows users to search for potential targets of
+                all sRNAs obtained from a high-throughput sequencing experiment.
+              </p>
+              <p>
+                The tool takes as input a set of transcript degradation fragments (degradome), sRNA sequences and a set of transcripts.
+                The output comprises all potential sRNA/target duplexes evidenced through the degradome.
+                By searching for targets of a complete "sRNAome" the tool can facilitate large scale identification and
+                validation of sRNA targets, allowing the user to build a network of regulatory interactions between sRNAs and their target genes.
+              </p>
+
+              <br/>
+              <h3>Starting PAREsnip</h3>
+              Choose PAREsnip from the Tools menu in the Workbench.
+              To start the tool from the command line, navigate to the
+              Workbench installation directory and issue the command
+              <pre>java -jar Workbench.jar -tool paresnip</pre>
+              The syntax for providing inputs to the tool will be displayed.<br/>
+
+
+              <br/>
+              <h3>PAREsnip window</h3>
+
+              The PAREsnip application after performing an analysis.<br/>
+              <br/>
+              <img  src="../images/ScreenShots/paresnip-form-withdata.jpg"></img><br/>
+              <br/>
+              Additional information and statistics for each of the input data sets is provided in the information area (top left box).
+              This information includes the number of sequences and sequence length distributions.<br/>
+              <br/>
+              In the top-right box, shorter informational and instructional messages are provided to help guide a user through the analysis.
+              The estimated time remaining to complete processing is also shown.<br/>
+              <br/>
+              Small RNA/target interactions are shown in the 'Output' table.
+              The table can be sorted by clicking on a column header.
+              The column order may be changed using drag and drop.
+              The search box at the bottom-left can be used to search the table - partial strings are matched and case is ignored.<br/>
+              <br/>
+
+              <h3>PAREsnip menus</h3>
+
+              <h4>File menu</h4>
+              <ul>
+                <li>Select <a href="./paresnip-fileopen.html">Open...</a> to choose the input files.</li>
+                <li>Select <a href="./paresnip-filesave.html">Save...</a> or <a href="./paresnip-filesave.html">Save as...</a> to save results.</li>
+                <li>Select <a href="./paresnip-filereset.html">Reset</a> to reinitialise PAREsnip.</li>
+                <li>'Close' will close the window</li>
+              </ul>
+
+              <h4>Run menu</h4>
+              <ul>
+                <li>Select <a href="./paresnip-run.html">Start</a> to begin processing</li>
+                <li>Select 'Cancel' to stop execution.</li>
+              </ul>
+
+              <h4>View menu</h4>
+              <ul>
+                <li>
+                  Select <a href="paresnip-view.html">View T-plots in VisSR</a> to visualise the results in <a href="vissr.html">VisSR</a>.<br/>
+                  A T-plot for each interaction can be displayed.
+                </li>
+              </ul>
+
+            </div>
+            <div style="clear:both;"></div>
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+        <div class="footerArea">
+          <div class="copyright">&copy; 2011 UEA Computational Biology Laboratory </div>
+        </div>
+      </div>
+    </body>
+</html>

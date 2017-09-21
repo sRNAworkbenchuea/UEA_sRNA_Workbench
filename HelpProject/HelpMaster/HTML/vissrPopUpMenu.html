@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>UEA sRNA Workbench</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Designed and developed by UEA Computational Biology Laboratory" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body class="doc">
+    <body>
+      <div class="container">
+        <div class="bannerArea">
+
+          <div class="toplogo"><a href="http://srna-workbench.cmp.uea.ac.uk/"><img src="images/transparent.gif" width="365" height="90" border="0" /></a></div>
+        </div>
+        <div class="contentArea">
+          <div class="content">
+            <div class="contentMiddle">
+              <p>
+                <h1>Context Menu</h1>
+                Right-clicking the tier label or a glyph displays a context menu.
+
+                <h4><a name="labelpopup">Tier label context menu</a></h4>
+
+                The context menu allows the tier to be moved, removed or have some of its displayed properties changed.
+                The 'Sequence' and 'Coordinates' tiers cannot be moved or removed.
+                Right-clicking on the 'Genes' label produced the following image.
+                <br/>
+                <br/>
+                <div align="left">
+                  <img src="../images/ScreenShots/vissr_label_popup.jpg" alt="VisSR label popup image"/>
+                </div>
+                <br/>
+                The label of a tier can be changed using 'Rename tier...'.
+                To change the background colour of one or all of the labels choose 'Set label colour...' or 'Use colour for all labels'.
+                The glyph colour is changed using 'Set glyph colour...'.
+                <b>Note:</b> This option has no effect on glyphs generated from Patman data.
+
+                <h4><a name="glyphpopup">Glyph context menu</a></h4>
+
+                Right-clicking a glyph shows a context menu with several options:<br/>
+                <br/>
+                <div align="left">
+                  <img src="../images/ScreenShots/vissr_glyph_popup.jpg" alt="VisSR glyph popup image"/>
+                </div>
+                <br/>
+                Clicking 'Copy...' gathers information about the item represented by the glyph and places it on the system clipboard.
+                For a GFF annotation the information consists of the sequence details, the annotation in GFF format and the sequence bases in FASTA format.
+                The clipboard contents can be pasted into a text-editor using the appropriate command, e.g. Ctrl+V on Windows.<br/>
+                <br/>
+                The 'Search...' option is enabled for GFF annotations which have the 'ID' or 'NAME' attributes specified.
+                Clicking 'Search...' permits the user to perform an internet search using the identifier.<br/>
+                <br/>
+                Clicking 'Next feature in track' and 'Previous feature in track' move the view directly to the next or previous glyph in the tier.<br/>
+                <br/>
+              </p>
+            </div>
+            <div style="clear:both;"></div>
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+        <div class="footerArea">
+          <div class="copyright">&copy; 2011 UEA Computational Biology Laboratory </div>
+        </div>
+      </div>
+    </body>
+</html>
+
+

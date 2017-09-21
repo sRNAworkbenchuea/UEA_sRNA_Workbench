@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:oxm="http://www.springframework.org/schema/oxm"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+                            http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+    <context:component-scan base-package="uk.ac.uea.cmp.srnaworkbench" />
+    
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <!--
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+        <property name="url" value="jdbc:oracle:thin:@oracle.devcake.co.uk:1521:INTL"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+-->
+<!--
+    <bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+ 
+        <property name="driverClass">
+            <value>${jdbc.driver.className}</value>
+        </property>
+        <property name="jdbcUrl">
+            <value>${jdbc.url}</value>
+        </property>
+        <property name="user">
+            <value>${jdbc.username}</value>
+        </property>
+        <property name="password">
+            <value>${jdbc.password}</value>
+        </property>
+    </bean>
+    -->
+<!--
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+    <property name="url" value="jdbc:hsqldb:file:test"/>
+    <property name="username" value="sa"/>
+    <property name="password" value=""/>
+    </bean>
+-->
+<!--
+    <bean id="mysqlDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://dbhost-prospring-psql/prospring"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+-->
+
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="org.h2.Driver"/>
+        
+        
+        <property name="url" value="jdbc:h2:./srna_workbench;MULTI_THREADED=1"/>
+        <!--<property name="url" value="jdbc:h2:mem:testdb;MULTI_THREADED=1"/>-->
+
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+    
+    <bean id="dataSourceRFAM" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="org.h2.Driver"/>
+        
+        
+        <property name="url" value="jdbc:h2:./srna_workbench;MULTI_THREADED=1"/>
+        <!--<property name="url" value="jdbc:h2:mem:testdb;MULTI_THREADED=1"/>-->
+
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+
+    
+    <!--
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+        <property name="url" value="jdbc:derby:myEmbeddedDB;create=true"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+        <property name="initialSize" value="2"/>
+        <property name="maxActive" value="5"/>
+    </bean>
+    -->
+
+    <!-- Hibernate Session Factory  -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+
+        <!-- Hibernate configuration -->
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+                <!--<prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>-->
+                <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+                <!-- Disable the second-level cache -->
+   
+                <!--<prop key="cache.provider_class">org.hibernate.cache.NoCacheProvider</prop>
+                <prop key="hibernate.cache.use_query_cache">false</prop> 
+                <prop key="hibernate.cache.use_second_level_cache">false</prop>-->
+       
+                
+                <!-- Enable Hibernate's automatic session context management -->
+                
+                <prop key="current_session_context_class">thread</prop>
+                
+                <!-- JDBC connection pool (use the built-in) -->
+                
+                <prop key="connection.pool_size">1</prop>
+                
+                
+                
+                <prop key="hibernate.jdbc.batch_size">50</prop>
+                <prop key="hibernate.order_inserts">true</prop>
+                <prop key="hibernate.order_updates">true</prop>  
+                <prop key="hibernate.connection.autocommit">false</prop>
+                <!--<prop key="show_sql">true</prop>-->
+                <prop key="hibernate.generate_statistics">true</prop>
+                <!--    
+                <prop key="derby.storage.pageSize">32768</prop>
+                <prop key="hibernate.connection.autocommit">false</prop> 
+                
+                -->
+            </props>
+        </property>
+        
+        
+
+        <!-- The packages that contain our Hibernate model classes -->
+        <property name="packagesToScan">
+            <list>
+                <value>uk.ac.uea.cmp.srnaworkbench.database.entities</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Hibernate transaction management -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+</beans>
