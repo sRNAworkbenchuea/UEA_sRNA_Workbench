@@ -709,6 +709,8 @@ private void cmdStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     File output_dir = this.fspOutput.getFile();
 
     PatmanParams pp = createParamsFromGUI();
+    pp.setMaxReportedHits(Integer.MAX_VALUE);
+    
     
 //    LOGGER.log( Level.INFO,  + "Starting job: Short Reads: {0}; Long Reads: {1}; Out: {2}; Params: {3}", 
 //      new Object[]{short_reads.getPath(), long_reads.getPath(), output.getPath(), pp.toString()} );

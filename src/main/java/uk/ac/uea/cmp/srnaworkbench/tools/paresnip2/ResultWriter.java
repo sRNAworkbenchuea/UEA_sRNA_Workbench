@@ -1,7 +1,11 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package uk.ac.uea.cmp.srnaworkbench.tools.paresnip2;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -10,56 +14,46 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Josh
+ * @author rew13hpu
  */
 public class ResultWriter implements Runnable {
 
-    private static File resultsFile = null;
-    private List<Alignment> list;
-    private static boolean setUp = false;
     private static BufferedWriter writer;
+    private static boolean isSetUp;
+    private List<AlignmentPath> list;
 
-    public ResultWriter(List<Alignment> l) {
-        if (!setUp) {
-            throw new Error("Writer not set up");
+    public static void init(String file) {
+        if (!isSetUp) {
+            try {
+                writer = new BufferedWriter(new FileWriter(file));
+            } catch (IOException ex) {
+                Logger.getLogger(ResultWriter.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                isSetUp = true;
+            }
+
         }
-        this.list = l;
+    }
+
+    public ResultWriter(List<AlignmentPath> l) {
+        list = l;
+    }
+
+    private static synchronized void writeMethod(List<AlignmentPath> l) {
+        try {
+            for (AlignmentPath ap : l) {
+            writer.write(ap.toString());
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ResultWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     public void run() {
-        for (Alignment alignment : list) {
-            write(alignment);
-        }
-    }
 
-    private void write(Alignment alignment) {
-   
-        
-        
-    }
-    
-    public static void initialise(String fName) {
-        try {
-            resultsFile = new File(fName);
-            writer = new BufferedWriter(new FileWriter(resultsFile));
-            setUp = true;
-        } catch (IOException ex) {
-            Logger.getLogger(ResultWriter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+        writeMethod(list);
 
-    public static void reset() {
-        close();
     }
-
-    public static void close() {
-        try {
-            writer.close();
-        } catch (IOException ex) {
-            Logger.getLogger(ResultWriter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
 
 }

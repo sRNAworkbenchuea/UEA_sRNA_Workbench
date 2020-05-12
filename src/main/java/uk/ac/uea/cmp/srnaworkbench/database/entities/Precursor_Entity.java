@@ -28,17 +28,25 @@ import uk.ac.uea.cmp.srnaworkbench.utils.AppUtils;
 public class Precursor_Entity implements Serializable, Comparable<Precursor_Entity> {
 
       //  public static final String RNAevalPath = ViennaRNAPath + "Progs/RNAeval";
+    private static final int precursorLength = 400;
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     // structure is written from 5' to 3' on approporiate strand
-    @Column(name = "RNA_Structure")
+    
+    @Column(name = "Precursor_Score")
+    private double score;
+    
+    @Column(name = "RNA_Structure", length = precursorLength)
     private String structure;
 
     @Column(name = "MFE")
     private double mfe;
+
+    @Column(name = "aMFE")
+    private double aMFE;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Aligned_Sequences_Entity alignment;
@@ -47,7 +55,17 @@ public class Precursor_Entity implements Serializable, Comparable<Precursor_Enti
         this.alignment = Aligned_Sequences_Entity.NO_ALIGNMENT;
     }
 
-    public Precursor_Entity(String sequence, String structure, String chrID, int sIndex, int eIndex, String strand, double mfe) {
+    public Precursor_Entity(double score, String sequence, String structure, String chrID, int sIndex, int eIndex, String strand, double mfe, double aMFE) {
+
+        this.alignment = new Aligned_Sequences_Entity(Aligned_Sequences_Entity.DEFAULT_REFERENCE_STRING, chrID, sequence, sIndex, eIndex, strand, 0);
+
+        this.structure = structure;
+        this.mfe = mfe;
+        this.aMFE = aMFE;
+        this.score = score;
+    }
+    
+    public Precursor_Entity( String sequence, String structure, String chrID, int sIndex, int eIndex, String strand, double mfe) {
 
         this.alignment = new Aligned_Sequences_Entity(Aligned_Sequences_Entity.DEFAULT_REFERENCE_STRING, chrID, sequence, sIndex, eIndex, strand, 0);
 
@@ -61,6 +79,16 @@ public class Precursor_Entity implements Serializable, Comparable<Precursor_Enti
 
         this.structure = structure;
         this.mfe = mfe;
+    }
+
+    public Precursor_Entity(double score, String structure, double mfe, double aMFE, Aligned_Sequences_Entity ase) {
+
+        this.alignment = ase;
+
+        this.structure = structure;
+        this.mfe = mfe;
+        this.aMFE = aMFE;
+        this.score = score;
     }
 
     public Aligned_Sequences_Entity getAlignment() {
@@ -79,12 +107,20 @@ public class Precursor_Entity implements Serializable, Comparable<Precursor_Enti
         return this.mfe;
     }
 
+    public double getaMFE() {
+        return this.aMFE;
+    }
+
     public String getStructure() {
         return this.structure;
     }
 
     public void setStructure(String s) {
         this.structure = s;
+    }
+    
+    public double getScore() {
+        return this.score;
     }
     
     public int getStart(){
@@ -202,6 +238,14 @@ public class Precursor_Entity implements Serializable, Comparable<Precursor_Enti
 
     public void setMFE(double mfe) {
         this.mfe = mfe;
+    }
+
+    public void setAMFE(double amfe) {
+        this.aMFE = amfe;
+    }
+    
+    public void setScore(double score) {
+        this.score = score;
     }
 
     @Override

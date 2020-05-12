@@ -5,8 +5,10 @@
  */
 package uk.ac.uea.cmp.srnaworkbench.tools.paresnip;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
@@ -19,13 +21,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.geometry.Rectangle2D;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonWriter;
 import org.apache.commons.io.IOUtils;
 import static org.apache.commons.io.IOUtils.DIR_SEPARATOR;
 
@@ -48,11 +44,14 @@ import uk.ac.uea.cmp.srnaworkbench.workflow.DataContainerList;
 import uk.ac.uea.cmp.srnaworkbench.workflow.WorkflowManager.CompatibilityKey;
 import uk.ac.uea.cmp.srnaworkbench.workflow.WorkflowModule;
 import uk.ac.uea.cmp.srnaworkbench.exceptions.WFModuleFailedException;
-import uk.ac.uea.cmp.srnaworkbench.tools.mirpare.MiRPAREModule;
+import uk.ac.uea.cmp.srnaworkbench.tools.parefirst.PAREfirstModule;
+import uk.ac.uea.cmp.srnaworkbench.tools.paresnip2.fileinput.Paresnip2InputFiles;
+import uk.ac.uea.cmp.srnaworkbench.utils.AppUtils;
 import uk.ac.uea.cmp.srnaworkbench.utils.HQLQuery;
 import uk.ac.uea.cmp.srnaworkbench.utils.HQLQueryComplex;
 import uk.ac.uea.cmp.srnaworkbench.utils.HQLQuerySimple;
 import static uk.ac.uea.cmp.srnaworkbench.utils.LOGGERS.WorkbenchLogger.LOGGER;
+import uk.ac.uea.cmp.srnaworkbench.workflow.WorkflowManager;
 
 /**
  *
@@ -66,7 +65,7 @@ public class PAREsnipModule extends WorkflowModule {
     private final DataContainerList<File> in_degradome;
     private final DataContainerList<GenomeManager> in_genome;
     private final DataContainerList<HQLQuerySimple> in_srnaQuery;
-    private final DataContainerList<Path> in_transcripts;
+    private  DataContainerList<Path> in_transcripts;
     // outputs data containers
     private final DataContainerList<HQLQuerySimple> out_interactionQuery;
     // PAREsnip parameters
@@ -77,31 +76,38 @@ public class PAREsnipModule extends WorkflowModule {
     private PAREsnipController paresnipController;
     // flag to determine iwhether we actually need to run PAREsnip or just use provided output from another PAREsnip run
     public boolean runPAREsnip;
+    public boolean isPAREsnip2;
 
     /*
      * Constructor
      * @param id: unique ID for the module (must only contain alpha-numeric characters)
      * @param title: descriptive title for display purposes
      */
-    public PAREsnipModule(String id, String title, Rectangle2D visualBounds) throws InitialisationException {
+    public PAREsnipModule(String id, String title, Rectangle2D visualBounds, boolean isPAREfirst) throws InitialisationException {
         super(id, title);
         this.complete = false;
         this.runPAREsnip = true;
+        this.isPAREsnip2 = false;
         this.in_degradome = new DataContainerList<>("degradome", CompatibilityKey.DEGRADOME_FILE, 1, 1);
         this.in_genome = new DataContainerList<>("genome", CompatibilityKey.GENOME, 1, 1);
         this.in_srnaQuery = new DataContainerList<>("srnaQuery", CompatibilityKey.sRNA_QUERY, 1, 1);
         this.in_transcripts = new DataContainerList<>("transcripts", CompatibilityKey.TRANSCRIPT_FILE, 1, 1);
+        
         this.out_interactionQuery = new DataContainerList<>("interactionQuery", CompatibilityKey.INTERACTION_QUERY, 1, 1);
         // create default parameters for PAREsnip
         this.parameters = new ParesnipParams();
         // set-up FXML resources
-        setFXMLResource(IOUtils.DIR_SEPARATOR + "fxml" + IOUtils.DIR_SEPARATOR + PARESNIP_FXML);
+        if(isPAREfirst){
+            setFXMLResource( "/fxml/" + PARESNIP_FXML);
+        }else{
+            setFXMLResource(IOUtils.DIR_SEPARATOR + "fxml" + IOUtils.DIR_SEPARATOR + PARESNIP_FXML);
+        }
         this.controller = paresnipController = new PAREsnipController(this);
         try {
             this.out_interactionQuery.add(new DataContainer<>(CompatibilityKey.INTERACTION_QUERY, new HQLQuerySimple(Interaction_Entity.class)));
             addInputDataContainerList(this.in_degradome);
             addInputDataContainerList(this.in_genome);
-            addInputDataContainerList(this.in_srnaQuery);
+            addInputDataContainerList(this.in_srnaQuery);                
             addInputDataContainerList(this.in_transcripts);
             addOutputDataContainerList(this.out_interactionQuery);
         } catch (MaximumCapacityException | CompatibilityException | InitialisationException | DuplicateIDException ex) {
@@ -116,6 +122,9 @@ public class PAREsnipModule extends WorkflowModule {
         return this.parameters;
     }
 
+//    public void setPAREsnip2(){
+//        this.isPAREsnip2 = true;
+//    }
     /*
      * returns the completion status of the module
      */
@@ -161,7 +170,7 @@ public class PAREsnipModule extends WorkflowModule {
                         interaction.setsRNA(unique_sequence);
                         interaction_service.saveOrUpdate(interaction);
                     } catch (Exception ex) {
-                        this.paresnipController.write2Log("WARNING:" + ex);
+                        log("WARNING:" + ex);
                     }
                 }
             }
@@ -171,6 +180,75 @@ public class PAREsnipModule extends WorkflowModule {
         in.close();
     }
 
+    private void parsePAREsnip2GUIFile(File inFile, Set<String> seqs) throws FileNotFoundException {
+        // access the interaction service
+        InteractionServiceImpl interaction_service = (InteractionServiceImpl) DatabaseWorkflowModule.getInstance().getContext().getBean("InteractionService");
+        // open the PAREsnip output file
+        Scanner in = new Scanner(inFile);
+        
+        // create a new interaction for each record
+        Interaction_Entity interaction = new Interaction_Entity();
+        // header
+        String str = in.nextLine(); 
+        
+        // the size of fields after the Duplex field in PAREsnip2 results, 
+        int p_value_index = 4;
+        // if MFE filter was disabled (MFE filter provides 3 fields)
+        if (!str.contains("MFE")) {
+                p_value_index -= 3;
+        }
+        // if p-value filter was disabled
+        if (!str.contains("p-value")) {
+                p_value_index -= 1;
+        }
+        // line counter is used to determine the separation between records in PAREsnip output
+        int lineCounter = 0;
+        while (in.hasNextLine()) {
+            String line = in.nextLine();
+            int lineOffset = lineCounter % 3;
+            if (lineOffset == 0) {
+                str = line + System.getProperty("line.separator");
+                interaction = new Interaction_Entity();
+            } else {
+                str += line + System.getProperty("line.separator");
+                if (lineOffset == 2) {
+                    String[] components1 = str.split("[\"]");
+                    // contains Category, cleavage pos, ... Short read abundance
+                    String[] components2 = components1[4].split(",");
+                    // contains Alignment score, p-value, MFE
+                    String[] components3 = components1[6].split(",");
+                    
+                    interaction.setTranscript(components1[3].trim());
+                    interaction.setCategory(Integer.parseInt(components2[1].trim()));
+                    interaction.setCleaveagePos(Integer.parseInt(components2[2].trim()));
+                    // if MFE and p-value filters are disabled, indexes will be different
+                    if(components3.length > 1) // if MFE or P-value filters are applied
+                        interaction.setPVal(Double.parseDouble(components3[p_value_index]));
+                    else
+                        interaction.setPVal(0.0);
+                    interaction.setFragmentAbundance(Integer.parseInt(components2[3].trim()));
+                    interaction.setWeightedFragmentAbundance(Double.parseDouble(components2[4].trim()));
+                    interaction.setNormalisedWeightedFragmentAbundance(Double.parseDouble(components2[5].trim()));
+                    interaction.setDuplex(components1[5]);
+                    interaction.setAlignmentScore(Double.parseDouble(components1[6].split(",")[1]));
+                    interaction.setShortReadID(components1[1].replace(">", ""));
+                    interaction.setPredictor(getID());
+                    // extract srna from duplex and check is valid based on input set
+                    try {
+                        Unique_Sequences_Entity unique_sequence = findTarget_sRNA(interaction, seqs);
+                        interaction.setsRNA(unique_sequence);
+                        interaction_service.saveOrUpdate(interaction);
+                    } catch (Exception ex) {
+                        log("WARNING:" + ex);
+                    }
+                }
+            }
+            lineCounter++;
+        }
+
+        in.close();
+    }
+    
     private void parsePAREsnipCommandLineFile(File inFile, Set<String> seqs) throws FileNotFoundException, HQLQuery.HQLFormatException, HQLQuery.HQLQueryLockedException, Exception {
         // access the interaction service
         InteractionServiceImpl interaction_service = (InteractionServiceImpl) DatabaseWorkflowModule.getInstance().getContext().getBean("InteractionService");
@@ -205,7 +283,7 @@ public class PAREsnipModule extends WorkflowModule {
                     interaction.setsRNA(unique_sequence);
                     interaction_service.saveOrUpdate(interaction);
                 } catch (Exception ex) {
-                    this.paresnipController.write2Log("WARNING:" + ex);
+                    log("WARNING:" + ex);
                 }
 
                 interaction = new Interaction_Entity();
@@ -270,7 +348,9 @@ public class PAREsnipModule extends WorkflowModule {
         in.close();
         if (headerLine.startsWith("Select,Gene,Category,")) {
             parsePAREsnipGUIFile(inFile, seqs);
-        } else {
+        } else if (headerLine.startsWith("Record ID,Short Read ID,")){ // for PAREsnip2 output
+            parsePAREsnip2GUIFile(inFile, seqs);
+        }else {
             parsePAREsnipCommandLineFile(inFile, seqs);
         }
         // produce module interaction output query
@@ -279,7 +359,7 @@ public class PAREsnipModule extends WorkflowModule {
         // lock the query so that other modules cannot modify this
         outputInteractionQuery.lock();
         // create t-plots
-        MiRPAREModule.createTPlots(false, this.getID());
+        PAREfirstModule.createTPlots(false, this.getID());
     }
 
     /*public void createTPlots() throws FileNotFoundException {
@@ -344,9 +424,15 @@ public class PAREsnipModule extends WorkflowModule {
         this.paresnipController.updateUI();
     }
 
+    public void log(String s){
+        if (!AppUtils.INSTANCE.isCommandLine()&& paresnipController != null) {
+            this.paresnipController.write2Log(s);
+        }
+    }
+    
     @Override
     protected void process() throws WFModuleFailedException, HQLQuery.HQLQueryLockedException, Exception {
-        this.paresnipController.write2Log("INFORMATION: PAREsnip module started.");
+        log("INFORMATION: PAREsnip module started.");
         // setup output file
         File outFile;
         Set<String> seqs = new HashSet<>();
@@ -369,27 +455,30 @@ public class PAREsnipModule extends WorkflowModule {
         // get the unique uniqueSequence service and return all unique sequences from query
         UniqueSequencesServiceImpl uniqueSequenceService = (UniqueSequencesServiceImpl) DatabaseWorkflowModule.getInstance().getContext().getBean("UniqueSequencesService");
         List<Unique_Sequences_Entity> uniqueSequences = uniqueSequenceService.executeSQL(uniqueInputSequencesQuery.eval());
-
-        File inputSequencesFile = new File(Tools.miRPARE_DATA_Path + DIR_SEPARATOR + getID() + "_input_sequences.fa");
-        PrintWriter writer = new PrintWriter(inputSequencesFile);
+        //File inputSequencesFile = new File(Tools.PAREfirst_DATA_Path + DIR_SEPARATOR + getID() + "_input_sequences.fa");
+        
+        //PrintWriter writer = new PrintWriter(inputSequencesFile);
         for (Unique_Sequences_Entity uniqueSequence : uniqueSequences) {
-            writer.println(">" + uniqueSequence.getRNA_Sequence());
-            writer.println(uniqueSequence.getRNA_Sequence());
+            //writer.println(">" + uniqueSequence.getRNA_Sequence());
+            //writer.println(uniqueSequence.getRNA_Sequence());
             seqs.add(uniqueSequence.getRNA_Sequence());
         }
-        writer.close();
+        //writer.close();
 
+        
+        //System.out.println(paresnip2output.getAbsolutePath());
         if (this.runPAREsnip) {
-            outFile = new File(Tools.miRPARE_DATA_Path + DIR_SEPARATOR + getID() + "_output.tmp");
+                        
+            outFile = new File(Tools.PAREfirst_DATA_Path + DIR_SEPARATOR + getID() + "_output.tmp");
             // setup parameter file
-            File paramsFile = new File(Tools.miRPARE_DATA_Path + DIR_SEPARATOR + getID() + "_params.cfg");
+            File paramsFile = new File(Tools.PAREfirst_DATA_Path + DIR_SEPARATOR + getID() + "_params.cfg");
             try {
-                this.paresnipController.write2Log("INFORMATION: Saving PAREsnip parameters.");
+                log("INFORMATION: Saving PAREsnip parameters.");
                 // save the current parameter set to file
                 this.parameters.save(paramsFile);
-                this.paresnipController.write2Log("INFORMATION: Retrieving unique sRNA sequences.");
+                log("INFORMATION: Retrieving unique sRNA sequences.");
 
-                this.paresnipController.write2Log(
+                log(
                         "INFORMATION: Writing unique sRNA sequences to file for PAREsnip algorithm.");
                 // write these unique sequences to file
 
@@ -403,15 +492,13 @@ public class PAREsnipModule extends WorkflowModule {
 
                 writer.close();*/
 
-                this.paresnipController.write2Log(
-                        "INFORMATION: Creating unique sequence file in non-redundant format.");
+                log("INFORMATION: Creating unique sequence file in non-redundant format.");
                 // format the input file to be in redundant format for Workbench
-                File inputSequencesFileFormatted = new File(Tools.miRPARE_DATA_Path + DIR_SEPARATOR + getID() + "_input_sequences_formatted.fa");
+                File inputSequencesFileFormatted = new File(Tools.PAREfirst_DATA_Path + DIR_SEPARATOR + getID() + "_input_sequences_formatted.fa");
 
-                parseFA(inputSequencesFile, inputSequencesFileFormatted);
+                //parseFA(inputSequencesFile, inputSequencesFileFormatted);
 
-                this.paresnipController.write2Log(
-                        "INFORMATION: Executing PAREsnip core algorithm.");
+                log("INFORMATION: Executing PAREsnip core algorithm.");
                 // run the tool
                 Map<String, String> args = new HashMap();
 
@@ -438,18 +525,34 @@ public class PAREsnipModule extends WorkflowModule {
                 LOGGER.log(Level.SEVERE, null, ex);
             }
         } else {
-            this.paresnipController.write2Log("INFORMATION: PAREsnip output file provided: skipping algorithm.");
+            // when entring here it means that PAREfirst is running 
+            File paresnip2output = new File("");
+            log("INFORMATION: PAREsnip2 output file provided: skipping algorithm.");
             outFile = new File(this.in_degradome.getContainer(0).getData().getAbsolutePath());
+            if(this.isPAREsnip2){
+                Paresnip2InputFiles input = Paresnip2InputFiles.getInstance();
+                for (File sRNAFile : input.getsRNA_samples().values()) {
+                    for (File degFile : input.getDegradome_samples().values()) {
+                        paresnip2output = new File(input.getOutputDirectory().getAbsolutePath()
+                                + File.separator + sRNAFile.getName().split("\\.")[0] + "_"
+                                + degFile.getName().split("\\.")[0] + ".csv");
+                    }
+                }
+                if(paresnip2output.exists())
+                    outFile = paresnip2output;
+            }
         }
         // parse the results
-        this.paresnipController.write2Log("INFORMATION: Parsing the PAREsnip results.");
+        log("INFORMATION: Parsing the PAREsnip results.");
 
         parsePAREsnipFile(outFile, seqs);
         // set the module status to complete
         this.complete = true;
-        // update any graphical user interface
-        paresnipController.updateUI();
-        this.paresnipController.write2Log("INFORMATION: PAREsnip module complete.");
+        if (!AppUtils.INSTANCE.isCommandLine()&& paresnipController != null) {
+            // update any graphical user interface
+            paresnipController.updateUI();
+        }
+        log("INFORMATION: PAREsnip module complete.");
 
     }
 

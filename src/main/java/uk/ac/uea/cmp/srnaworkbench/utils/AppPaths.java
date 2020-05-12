@@ -46,7 +46,7 @@ public enum AppPaths
     }
     
     // The JAR name will be present when running from outside of the IDE, remove 
-    // it if necessary.
+    // it if necessary. This needs to be changed when building ServerWorkBench
     String tempDirSuffixTrimmed = toolsClassFilePath.replace( "Workbench.jar", "" );
 
     // The /build/classes/ directory will be present at the end of the path if 

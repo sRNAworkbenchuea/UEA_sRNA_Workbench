@@ -452,6 +452,8 @@ public class DatabaseWorkflowModule extends WorkflowModule {
 
     public boolean checkReadyToBuild()
     {
+        
+        
 
         // I can't see any harm in resetting the input files on each check
             Map<String, List<Path>> samples = FileHierarchyViewController.retrieveDataPaths();
@@ -1881,6 +1883,7 @@ public class DatabaseWorkflowModule extends WorkflowModule {
         testSamples.put(defName3, sample3);
         testSamples.put(defName4, sample4);
 
+        annotationFile = Paths.get( "/scratch/Salma/Data/miRBase/ath.gff3");
         DatabaseWorkflowModule.getInstance().insertRawData(testSamples, testGenomeFile, null);
         if(annotationFile != null)
             DatabaseWorkflowModule.getInstance().addGFFAnnotationFile(annotationFile);

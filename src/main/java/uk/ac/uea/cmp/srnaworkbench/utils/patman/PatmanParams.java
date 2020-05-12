@@ -19,7 +19,7 @@ public final class PatmanParams extends ToolParameters
      */
     public enum Definition
     {
-        MAXIMUM_MISMATCHES          ("max_mismatches",        Integer.valueOf(0),    Integer.valueOf(0),    Integer.valueOf(3)),
+        MAXIMUM_MISMATCHES          ("max_mismatches",        Integer.valueOf(0),    Integer.valueOf(0),    Integer.valueOf(5)),
         MAXIMUM_GAPS                ("max_gaps",              Integer.valueOf(0),    Integer.valueOf(0),    Integer.valueOf(3)),
         POSITIVE_STRAND_ONLY        ("positive_strand_only",    Boolean.FALSE),
         NEGATIVE_STRAND_ONLY        ("negative_strand_only",    Boolean.FALSE),
@@ -30,6 +30,7 @@ public final class PatmanParams extends ToolParameters
         MAXIMUM_SRNA_LENGTH         ("max_length",            Integer.valueOf(35),   Integer.valueOf(17),   Integer.valueOf(50)),
         MINIMUM_SRNA_ABUNDANCE      ("min_abundance",         Integer.valueOf(1),    Integer.valueOf(1),    Integer.MAX_VALUE),
         POST_PROCESS                ("post_process",          Boolean.FALSE),
+        MAXIMUM_REPORTED_HITS      ("max_reported_hits",         Integer.valueOf(200),    Integer.valueOf(1),    Integer.MAX_VALUE),
         MINIMUM_WEIGHTED_ABUNDANCE  ("min_weighted_abd",      Double.valueOf(0.0),   Double.valueOf(0.0),   Double.MAX_VALUE);
                         
         private ParameterDefinition definition;
@@ -97,6 +98,7 @@ public final class PatmanParams extends ToolParameters
     public boolean  getMakeNR()                 {return getParameterValue(Boolean.class, Definition.MAKE_NR.getName());}
     public int      getMinSRNALength()          {return getParameterValue(Integer.class, Definition.MINIMUM_SRNA_LENGTH.getName());}
     public int      getMaxSRNALength()          {return getParameterValue(Integer.class, Definition.MAXIMUM_SRNA_LENGTH.getName());}
+    public int      getMaxReportedHits()          {return getParameterValue(Integer.class, Definition.MAXIMUM_REPORTED_HITS.getName());}
     public int      getMinSRNAAbundance()       {return getParameterValue(Integer.class, Definition.MINIMUM_SRNA_ABUNDANCE.getName());}
     
     public boolean  getPostProcess()            {return getParameterValue(Boolean.class, Definition.POST_PROCESS.getName());}
@@ -105,6 +107,8 @@ public final class PatmanParams extends ToolParameters
 
     // **** Setters ****
     public void setMaxMismatches(int max_mismatches)                    {setParam(Definition.MAXIMUM_MISMATCHES, max_mismatches);}
+    public void setMaxReportedHits(int max_hits)                        {setParam(Definition.MAXIMUM_REPORTED_HITS, max_hits);}
+
     public void setMaxGaps(int max_gaps)                                {setParam(Definition.MAXIMUM_GAPS, max_gaps);}
     public void setPositiveStrandOnly(boolean pos_only)                 {setParam(Definition.POSITIVE_STRAND_ONLY, pos_only);}
     public void setNegativeStrandOnly(boolean neg_only)                 {setParam(Definition.NEGATIVE_STRAND_ONLY, neg_only);}
@@ -143,6 +147,7 @@ public final class PatmanParams extends ToolParameters
     {
         private int     max_mismatches          = Definition.MAXIMUM_MISMATCHES.getDefault(Integer.class);
         private int     max_gaps                = Definition.MAXIMUM_GAPS.getDefault(Integer.class);
+        private int     max_hits                = Definition.MAXIMUM_REPORTED_HITS.getDefault(Integer.class);
         private boolean positive_only           = Definition.POSITIVE_STRAND_ONLY.getDefault(Boolean.class);
         private boolean negative_only           = Definition.NEGATIVE_STRAND_ONLY.getDefault(Boolean.class);
         private int     chunk_size              = Definition.CHUNK_SIZE.getDefault(Integer.class);
@@ -159,6 +164,7 @@ public final class PatmanParams extends ToolParameters
         
         // **** Getters ****
         public int      getMaxMismatches()          {return max_mismatches;}
+        public int      getMaxReportedHits()        {return max_hits;}
         public int      getMaxGaps()                {return max_gaps;}
         public boolean  getPositiveStrandOnly()     {return positive_only;}
         public boolean  getNegativeStrandOnly()     {return negative_only;}
@@ -176,7 +182,8 @@ public final class PatmanParams extends ToolParameters
         
         // **** Setters ****
         public Builder setMaxMismatches(int max_mismatches)                {this.max_mismatches = max_mismatches;               return this;}        
-        public Builder setMaxGaps(int max_gaps)                            {this.max_gaps = max_gaps;                           return this;}        
+        public Builder setMaxGaps(int max_gaps)                            {this.max_gaps = max_gaps;                           return this;} 
+        public Builder setMaxReportedHits(int max_hits)                    {this.max_hits = max_hits;                           return this;} 
         public Builder setPositiveStrandOnly(boolean pos_only)             {this.positive_only = pos_only;                      return this;}
         public Builder setNegativeStrandOnly(boolean neg_only)             {this.negative_only = neg_only;                      return this;}
         public Builder setChunkSize(int chunk_size)                        {this.chunk_size = chunk_size;                       return this;}

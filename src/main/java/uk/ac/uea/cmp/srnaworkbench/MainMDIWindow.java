@@ -149,8 +149,7 @@ public class MainMDIWindow extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents()
-    {
+    private void initComponents() {
 
         scrollPane = new javax.swing.JScrollPane();
         paramScrollPane = new javax.swing.JScrollPane();
@@ -220,10 +219,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
         fileMenu.setText("File");
 
         fileHierView.setText("View File Hierarchy");
-        fileHierView.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        fileHierView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fileHierViewActionPerformed(evt);
             }
         });
@@ -232,10 +229,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
 
         exitMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/SharedImages/shut-down.png"))); // NOI18N
         exitMenuItem.setText("Exit");
-        exitMenuItem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exitMenuItemActionPerformed(evt);
             }
         });
@@ -246,11 +241,9 @@ public class MainMDIWindow extends javax.swing.JFrame {
         toolBrowseMenu.setText("Tools");
 
         returnToWorkflowMnu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/SharedImages/tree.png"))); // NOI18N
-        returnToWorkflowMnu.setText("Return to Version 4");
-        returnToWorkflowMnu.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        returnToWorkflowMnu.setText("Return to Workflow Menu");
+        returnToWorkflowMnu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 returnToWorkflowMnuActionPerformed(evt);
             }
         });
@@ -262,10 +255,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
         loadAR.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 14)); // NOI18N
         loadAR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/GUI_Icons/scissors.jpg"))); // NOI18N
         loadAR.setText("<html><b>Adapter Removal</b><br><font size = \"2\">Prepare and trim RAW sequence data");
-        loadAR.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        loadAR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadARActionPerformed(evt);
             }
         });
@@ -275,10 +266,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
         loadAR_Low_Mem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/GUI_Icons/scissors.jpg"))); // NOI18N
         loadAR_Low_Mem.setText("<html><b>Adapter Removal LM (beta)</b><br><font size = \"2\">Prepare and trim RAW sequence data");
         loadAR_Low_Mem.setToolTipText("Remove adapters from raw sequence data using the new low memory modules (beta)");
-        loadAR_Low_Mem.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        loadAR_Low_Mem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadAR_Low_MemActionPerformed(evt);
             }
         });
@@ -287,10 +276,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
         loadFilter.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 14)); // NOI18N
         loadFilter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/GUI_Icons/filter-256.png"))); // NOI18N
         loadFilter.setText("<html><b>Filter</b><br><font size = \"2\">Filter unwanted sequences from your data");
-        loadFilter.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        loadFilter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadFilterActionPerformed(evt);
             }
         });
@@ -299,10 +286,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
         loadSeqAlign.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 14)); // NOI18N
         loadSeqAlign.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/GUI_Icons/dna.gif"))); // NOI18N
         loadSeqAlign.setText("<html><b>Sequence Alignment</b><br><font size = \"2\">Align sRNAs to a reference sequence");
-        loadSeqAlign.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        loadSeqAlign.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadSeqAlignActionPerformed(evt);
             }
         });
@@ -316,10 +301,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
         loadMirCat.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 14)); // NOI18N
         loadMirCat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/GUI_Icons/mirCAT_Icon.jpg"))); // NOI18N
         loadMirCat.setText("<html><b>miRCat</b><br><font size = \"2\">Novel micro RNA Prediction");
-        loadMirCat.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        loadMirCat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadMirCatActionPerformed(evt);
             }
         });
@@ -328,10 +311,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
         loadMirprof.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 14)); // NOI18N
         loadMirprof.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/GUI_Icons/mirprof_logo_small.png"))); // NOI18N
         loadMirprof.setText("<html><b>miRProf</b><br><font size = \"2\">Known micro RNA Expression Profiling");
-        loadMirprof.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        loadMirprof.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadMirprofActionPerformed(evt);
             }
         });
@@ -340,10 +321,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
         loadParesnip.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 14)); // NOI18N
         loadParesnip.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/GUI_Icons/PAREsnipLOGO.png"))); // NOI18N
         loadParesnip.setText("<html><b>PAREsnip</b><br><font size = \"2\">Degradome assisted sRNA target prediction");
-        loadParesnip.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        loadParesnip.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadParesnipActionPerformed(evt);
             }
         });
@@ -352,10 +331,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
         loadSiLoCo.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 14)); // NOI18N
         loadSiLoCo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/GUI_Icons/balance_big.jpg"))); // NOI18N
         loadSiLoCo.setText("<html><b>SiLoCo</b><br><font size = \"2\">Wide scale Small Interfering RNA Locus Prediction");
-        loadSiLoCo.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        loadSiLoCo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadSiLoCoActionPerformed(evt);
             }
         });
@@ -364,10 +341,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
         loadTasi.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 14)); // NOI18N
         loadTasi.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/GUI_Icons/tasi.png"))); // NOI18N
         loadTasi.setText("<html><b>TA-SI Prediction</b><br><font size = \"2\">TA-SI RNA Locus Prediction");
-        loadTasi.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        loadTasi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadTasiActionPerformed(evt);
             }
         });
@@ -375,10 +350,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
 
         loadCoLIDE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/GUI_Icons/CoLIDESmall.png"))); // NOI18N
         loadCoLIDE.setText("<html><b>CoLide</b><br><font size = \"2\">Expression Pattern Driven Locus Prediction");
-        loadCoLIDE.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        loadCoLIDE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadCoLIDEActionPerformed(evt);
             }
         });
@@ -392,10 +365,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
         loadHairpinAnnotation.setFont(new java.awt.Font("Lucida Sans Unicode", 0, 14)); // NOI18N
         loadHairpinAnnotation.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/GUI_Icons/newHAIRPIN.jpg"))); // NOI18N
         loadHairpinAnnotation.setText("<html><b>RNA Folding/Annotation</b><br><font size = \"2\">Highlight sRNAs on a folded RNA sequence ");
-        loadHairpinAnnotation.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        loadHairpinAnnotation.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadHairpinAnnotationActionPerformed(evt);
             }
         });
@@ -405,10 +376,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
         loadSeqViz.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/GUI_Icons/DNA.jpg"))); // NOI18N
         loadSeqViz.setMnemonic('g');
         loadSeqViz.setText("<html><b>VisSR</b><br><font size = \"2\">Visualisation of small RNAs as they appear on the Genome");
-        loadSeqViz.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        loadSeqViz.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadSeqVizActionPerformed(evt);
             }
         });
@@ -419,10 +388,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
 
         showParams.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/SharedImages/configuration.png"))); // NOI18N
         showParams.setText("Show Parameter Browser");
-        showParams.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        showParams.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showParamsActionPerformed(evt);
             }
         });
@@ -430,10 +397,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
 
         hideParams.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/SharedImages/configurationClose.png"))); // NOI18N
         hideParams.setText("Hide Parameter Browser");
-        hideParams.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        hideParams.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hideParamsActionPerformed(evt);
             }
         });
@@ -441,10 +406,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
         toolBrowseMenu.add(jSeparator3);
 
         fileHierView1.setText("View File Hierarchy");
-        fileHierView1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        fileHierView1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fileHierViewActionPerformed(evt);
             }
         });
@@ -459,10 +422,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
 
         loadHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/SharedImages/lookup.png"))); // NOI18N
         loadHelp.setText("Contents");
-        loadHelp.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        loadHelp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadHelpActionPerformed(evt);
             }
         });
@@ -470,10 +431,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
 
         aboutMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/GUI_Icons/workbenchSmall.jpg"))); // NOI18N
         aboutMenu.setText("About");
-        aboutMenu.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        aboutMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 aboutMenuActionPerformed(evt);
             }
         });
@@ -481,10 +440,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
 
         mirbaseUpdateMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/GUI_Icons/mirbase-logo-blue-web.png"))); // NOI18N
         mirbaseUpdateMenu.setText("Update miRBase");
-        mirbaseUpdateMenu.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        mirbaseUpdateMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mirbaseUpdateMenuActionPerformed(evt);
             }
         });
@@ -492,10 +449,8 @@ public class MainMDIWindow extends javax.swing.JFrame {
 
         changeUserDirMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/SharedImages/star.png"))); // NOI18N
         changeUserDirMenu.setText("Change User Directory");
-        changeUserDirMenu.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
+        changeUserDirMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 changeUserDirMenuActionPerformed(evt);
             }
         });

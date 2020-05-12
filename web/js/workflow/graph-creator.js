@@ -218,10 +218,22 @@ function createMiRPAREWorkflow()
            //createPreconfiguredFlow("/Users/ujy06jau/Workbench/web/json/miRPARE-check.json");
       createPreconfiguredFlow(filepath);
 }
+function createPAREfirstWorkflow()
+{
+   var filepath = app.createPAREfirstWorkflow();
+      createPreconfiguredFlow(filepath);
+}
 
 function createMiRPAREWorkflowCommandLine()
 {
    var filepath = app.createMiRPAREWorkflowCommandLine();
+           //createPreconfiguredFlow("/Users/ujy06jau/Workbench/web/json/miRPARE-check.json");
+      createPreconfiguredFlow(filepath);
+}
+
+function createPAREfirstWorkflowCommandLine()
+{
+   var filepath = app.createPAREfirstWorkflowCommandLine();
            //createPreconfiguredFlow("/Users/ujy06jau/Workbench/web/json/miRPARE-check.json");
       createPreconfiguredFlow(filepath);
 }
@@ -266,6 +278,18 @@ function createQCFlow()
     //alert("filepath2: " + result);// true
     createPreconfiguredFlow(filepath);
 }
+
+function create_FM_FiRePat_Flow()
+{
+    var filepath = app.createFM_FiRePatWorkflow();
+    //var filepath = '../json/QualityCheck.json';
+    //var result1 = filepath.constructor === String;
+    //alert("filepath: " + result1);
+    //var result = filepath2.constructor === String;
+    //alert("filepath2: " + result);// true
+    createPreconfiguredFlow(filepath);
+}
+
 function create_FM_DEG_Flow()
 {
     var filepath = app.createFM_DegWorkflow();
@@ -320,7 +344,12 @@ function createPreconfiguredFlow(path)
         setWaitingNodeGFX("FileManager");
 
         setWaitingNodeGFX("Database");
+
+        setWaitingNodeGFX("DataInput");
+        setWaitingNodeGFX("TargetRules");
         
+        setWaitingNodeGFX("PAREsnip2Settings");
+        setWaitingNodeGFX("miRCat2");
     });
 }
 

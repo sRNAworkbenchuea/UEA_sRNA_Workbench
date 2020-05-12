@@ -423,10 +423,16 @@ public class HTMLWizardViewController implements Initializable, ControlledScreen
     {
         switch (WorkflowManager.getInstance().getName())
         {
-            case "mirpare":
+            case "parefirst":
                 configureGenericData();
-                String path = PreconfiguredWorkflows.configureMiRPAREWorkflow(null, null, visualBounds);
+//                String path = PreconfiguredWorkflows.configureMiRPAREWorkflow(null, null, visualBounds);  // using miRCat and PAREsnip
+                String path = PreconfiguredWorkflows.configurePAREfirstWorkflow(visualBounds);   // using miRCat2 and PAREsnip2
                 WorkflowSceneController.getEngine().executeScript("createPreconfiguredFlow('" + path + "');");
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("PAREfirst Output Directory");
+                alert.setHeaderText("PAREfirst output directory Message");
+                alert.setContentText("PAREfirst output directory is set to: " + new File(Tools.PAREfirst_DATA_Path).getAbsolutePath());
+                alert.showAndWait();
                 break;
             case "mircat":
                 configureGenericData();
@@ -525,14 +531,7 @@ public class HTMLWizardViewController implements Initializable, ControlledScreen
         public void addSample(String id)
 
         {
-
-            
-            
-            
-
-       
             inputs.add_sample(id);  
-
         }
         
         // return whether the loaded workflow requires a transcriptome
@@ -712,6 +711,11 @@ public class HTMLWizardViewController implements Initializable, ControlledScreen
         public void setDegDataType(String id, int location, int dataType)
         {
             inputs.set_degradome_type(id, location, dataType);
+            if(dataType == 1){
+                WorkflowManager.getInstance().transcriptomeOptional = true;
+            }else if(dataType == 0){
+                WorkflowManager.getInstance().transcriptomeOptional = false;
+            }
         }
 
         public int getNumberRepsForSample(String id)

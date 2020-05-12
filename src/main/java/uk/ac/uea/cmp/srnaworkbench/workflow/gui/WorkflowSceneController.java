@@ -10,6 +10,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
@@ -36,6 +37,7 @@ import uk.ac.uea.cmp.srnaworkbench.FX.JavascriptBridge;
 import uk.ac.uea.cmp.srnaworkbench.FX.ScreensController;
 import uk.ac.uea.cmp.srnaworkbench.MainMDIWindow;
 import uk.ac.uea.cmp.srnaworkbench.database.WF.DatabaseWorkflowModule;
+import uk.ac.uea.cmp.srnaworkbench.tools.paresnip2.fileinput.Paresnip2DataInputWorkflowModule;
 import uk.ac.uea.cmp.srnaworkbench.utils.AppUtils;
 import static uk.ac.uea.cmp.srnaworkbench.utils.LOGGERS.WorkbenchLogger.LOGGER;
 import static uk.ac.uea.cmp.srnaworkbench.utils.Tools.WEB_SCRIPTS_DIR;
@@ -57,37 +59,35 @@ public class WorkflowSceneController implements Initializable, ControlledScreen 
 
     @FXML
     private WebView workflowWebView;
-    
+
     @FXML
     private AnchorPane mainWorkflowAnchor;
-    
+
     @FXML
     private ScrollPane mainScrollPane;
-    
+
     @FXML
     private StackPane mainStackPane;
 
     private static WebEngine workflowWebEngine;
-    
+
     private Rectangle2D visualBounds;
-    
+
     private MainMDIWindow mainWindow;
-    
+
     final SwingNode swingNode;
     private WFJavascriptReceiver myJSBridge = null;
-    
-    public WorkflowSceneController()
-    {
+
+    public WorkflowSceneController() {
         swingNode = new SwingNode();
         //mainWindow = new MainMDIWindow();
         createAndSetSwingContent();
     }
 
-    public static WebEngine getEngine()
-    {
+    public static WebEngine getEngine() {
         return WorkflowSceneController.workflowWebEngine;
     }
-    
+
     @Override
     public void setStageAndSetupListeners(Scene scene) {
         this.scene = scene;
@@ -96,14 +96,13 @@ public class WorkflowSceneController implements Initializable, ControlledScreen 
     public void addParentFrame(WorkflowViewer parent) {
         this.parentFrame = parent;
     }
-    
-    private void createAndSetSwingContent()
-    {
+
+    private void createAndSetSwingContent() {
         //System.out.println("fire");
         mainWindow = new MainMDIWindow(this);
-        
-        SwingUtilities.invokeLater(() ->
-        {
+
+        SwingUtilities.invokeLater(()
+                -> {
             //System.out.println("Starting Main MDI window");
 //                mainWindow = new MainMDIWindow();
 //                // mainWindow.setVisible( true );
@@ -116,30 +115,29 @@ public class WorkflowSceneController implements Initializable, ControlledScreen 
 
         //System.out.println("complete");
     }
-    
-    public void setWindowToV3()
-    {
-        Platform.runLater(() ->
-        {
+
+    public void setWindowToV3() {
+        Platform.runLater(()
+                -> {
             mainStackPane.getChildren().add(swingNode);
         });
     }
-    public void setWindowToV4()
-    {
-        Platform.runLater(() ->
-        {
+
+    public void setWindowToV4() {
+        Platform.runLater(()
+                -> {
             mainStackPane.getChildren().remove(1);
         });
-        
+
     }
-    
-    public void setSizeValues(Rectangle2D visualBounds)
-    {
+
+    public void setSizeValues(Rectangle2D visualBounds) {
         this.visualBounds = visualBounds;
     }
 
     /**
      * Initializes the controller class.
+     *
      * @param url
      * @param rb
      */
@@ -151,7 +149,6 @@ public class WorkflowSceneController implements Initializable, ControlledScreen 
         workflowWebEngine = workflowWebView.getEngine();
 
         refreshWorkflowView();
-        
 
         workflowWebEngine.getLoadWorker().stateProperty().addListener((ObservableValue<? extends State> ov, State oldState, State newState) -> {
             myJSBridge = new WFJavascriptReceiver(this.myController);
@@ -164,14 +161,13 @@ public class WorkflowSceneController implements Initializable, ControlledScreen 
 //        frameSize = this.parentFrame.getFrameSize();
         mainWorkflowAnchor.setPrefSize(visualBounds.getWidth(), visualBounds.getHeight());
         mainScrollPane.setPrefSize(visualBounds.getWidth(), visualBounds.getHeight());
-        
-        
+
         workflowWebEngine.setOnAlert((WebEvent<String> arg0) -> {
             System.out.println("workflow Event: " + arg0);
         });
-        
-        workflowWebEngine.setOnError((WebErrorEvent event) ->
-        {
+
+        workflowWebEngine.setOnError((WebErrorEvent event)
+                -> {
             System.out.println("error in worflow scene: " + event.getMessage());
         });
 
@@ -180,7 +176,7 @@ public class WorkflowSceneController implements Initializable, ControlledScreen 
     public void loadQC() {
         workflowWebEngine.executeScript(" createPreconfiguredFlow(' " + "../json/Workflows/QualityCheck.json" + " ') ");
         System.out.println("executed QC script");
-    
+
     }
 
     private void refreshWorkflowView() {
@@ -199,126 +195,113 @@ public class WorkflowSceneController implements Initializable, ControlledScreen 
         myController = screenParent;
     }
 
-    public void destroy()
-    {
-        if(mainWindow != null)
+    public void destroy() {
+        if (mainWindow != null) {
             mainWindow.dispose();
+        }
     }
 
     /*
     * static methods for setting node to busy (GUI)
-    */
-    public static void setBusyNode(String id)
-    {
-        if (!AppUtils.INSTANCE.isCommandLine())
-        {
-            Platform.runLater(() ->
-            {
-                if ((workflowWebEngine != null) && !DatabaseWorkflowModule.getInstance().isDebugMode())
-                {
+     */
+    public static void setBusyNode(String id) {
+        if (!AppUtils.INSTANCE.isCommandLine()) {
+            Platform.runLater(()
+                    -> {
+                if ((workflowWebEngine != null) && !DatabaseWorkflowModule.getInstance().isDebugMode()) {
                     workflowWebEngine.executeScript("setWorkflowNodeGFXtoBusy( '" + id + "')");
                 }
             });
         }
     }
 
-    public static void setCompleteNode(String id)
-    {
-        if (!AppUtils.INSTANCE.isCommandLine())
-        {
-            Platform.runLater(() ->
-            {
-                if ((workflowWebEngine != null) && !DatabaseWorkflowModule.getInstance().isDebugMode())
-                {
+    public static void setCompleteNode(String id) {
+        if (!AppUtils.INSTANCE.isCommandLine()) {
+            Platform.runLater(()
+                    -> {
+                if ((workflowWebEngine != null) && !DatabaseWorkflowModule.getInstance().isDebugMode()) {
                     workflowWebEngine.executeScript("setWorkflowNodeGFXtoComplete( '" + id + "')");
                 }
             });
         }
     }
-    
-    public static void setReadyNode(String id)
-    {
-        if (!AppUtils.INSTANCE.isCommandLine())
-        {
-            Platform.runLater(() ->
-            {
-                if ((workflowWebEngine != null) && !DatabaseWorkflowModule.getInstance().isDebugMode())
-                {
+
+    public static void setReadyNode(String id) throws InterruptedException {
+        // a hack to allow time for Database module to be ready (node turn into blue instead of yellow in miRPARE Workflow)
+        if(id.equalsIgnoreCase("Database"))
+            TimeUnit.SECONDS.sleep(1);
+        if (!AppUtils.INSTANCE.isCommandLine()) {
+            Platform.runLater(()
+                    -> {
+                if ((workflowWebEngine != null) && !DatabaseWorkflowModule.getInstance().isDebugMode()) {
                     workflowWebEngine.executeScript("setWorkflowNodeGFXtoReady( '" + id + "')");
                 }
             });
         }
     }
-    
-    public static void setWaitingNode(String id)
-    {
-        if (!AppUtils.INSTANCE.isCommandLine())
-        {
-            Platform.runLater(() ->
-            {
-                if ((workflowWebEngine != null) && !DatabaseWorkflowModule.getInstance().isDebugMode())
-                {
+
+    public static void setWaitingNode(String id) {
+        if (!AppUtils.INSTANCE.isCommandLine()) {
+            Platform.runLater(()
+                    -> {
+                if ((workflowWebEngine != null) && !DatabaseWorkflowModule.getInstance().isDebugMode()) {
                     workflowWebEngine.executeScript("setWorkflowNodeGFXtoWaitingInput( '" + id + "')");
                 }
             });
         }
     }
 
-     public static void addToConsole(String message)
-    {
-        if (!AppUtils.INSTANCE.isCommandLine())
-        {
-            Platform.runLater(() ->
-            {
-                if ((workflowWebEngine != null) && !DatabaseWorkflowModule.getInstance().isDebugMode())
-                {
+    public static void addToConsole(String message) {
+        if (!AppUtils.INSTANCE.isCommandLine()) {
+            Platform.runLater(()
+                    -> {
+                if ((workflowWebEngine != null) && !DatabaseWorkflowModule.getInstance().isDebugMode()) {
                     workflowWebEngine.executeScript("addToConsoleText( '" + message + "')");
                 }
             });
         }
     }
 
-    
     @Override
-    public JFXStatusTracker getStatusTracker()
-    {
+    public JFXStatusTracker getStatusTracker() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void workflowStartedListener() {
-  //      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    public void stopWorkflow()
-    {
-         workflowWebEngine.executeScript("setBusy( '" + false + "')");
+        //      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public void stopWorkflow() {
+        workflowWebEngine.executeScript("setBusy( '" + false + "')");
+    }
 
     /**
      * Class for recieving input from the main workflow window
      */
     public class WFJavascriptReceiver extends JavascriptBridge {
 
-        public WFJavascriptReceiver(ScreensController controller)
-        {
+        public WFJavascriptReceiver(ScreensController controller) {
             super(controller);
         }
-        public void startWorkflow() throws Exception
-        {
-            
-            if (DatabaseWorkflowModule.getInstance().checkReadyToBuild())
-            {
+
+        public void startWorkflow() throws Exception {
+
+            //Check if it contains my start point (Data Input for PAREsnip 2 then run through validation)
+            if (DatabaseWorkflowModule.getInstance().checkReadyToBuild() || (!WorkflowManager.getInstance().isUsingDB() && !WorkflowManager.getInstance().isUsingFileManager())) {
                 WorkflowManager.getInstance().start();
                 //disable interface components
                 workflowWebEngine.executeScript("setBusy( '" + true + "')");
-            }
-            else
-            {
-             String alertContent = WorkflowManager.getInstance().containsID("FileManager") ? 
-                     "Files have not been setup correctly. Please refer to the File Manager module " :
-                     "Files have not been setup correctly. Please refer to the Database module ";
+            } else {
+
+                String alertContent = WorkflowManager.getInstance().containsID("FileManager")
+                        ? "Files have not been setup correctly. Please refer to the File Manager module "
+                        : "Files have not been setup correctly. Please refer to the Database module ";
+
+                if (WorkflowManager.getInstance().containsID("DataInput")) {
+                    alertContent = "Files have not been setup correctly. Please refer to Data Input Node";
+                }
+
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Workbench Configuration Error");
                 alert.setContentText(alertContent);
@@ -328,95 +311,77 @@ public class WorkflowSceneController implements Initializable, ControlledScreen 
                 );
             }
         }
-        public String createMiRCatWorkflow() throws Exception
-        {
-            String fp = PreconfiguredWorkflows.runCommandLineWorkflowMiRCat("mircat", new File("/Users/ujy06jau/Workbench/target/release/data/web/json/mirpare_parameters.json"), visualBounds);
-            JavascriptBridge.resetFirstLoad();
-            return fp;
-        }
 
-        public String createMiRPAREWorkflow() throws Exception
-        {
-            String fp = PreconfiguredWorkflows.createDefaultMiRPAREWorkflow(visualBounds);
+        public String createPAREfirstWorkflow() throws Exception {
+            String fp = PreconfiguredWorkflows.createDefaultPAREfirstWorkflow(visualBounds);
             JavascriptBridge.resetFirstLoad();
 
             return fp;
         }
-
-        public String createMiRPAREWorkflowCommandLine() throws Exception
-        {
-            String fp = PreconfiguredWorkflows.runCommandLineWorkflowMiRPARE("mirpare", new File("/Users/ujy06jau/Workbench/target/release/data/web/json/mirpare_parameters.json"), visualBounds);
+        
+        public String createPAREfirstWorkflowCommandLine() throws Exception {
+            String fp = PreconfiguredWorkflows.runCommandLineWorkflowPAREfirst("parefirst", new File("parefirst_json.json"));
             JavascriptBridge.resetFirstLoad();
 
             return fp;
         }
 
-        public String createPAREsnipWorkflow() throws Exception
-        {
-            String fp = PreconfiguredWorkflows.runCommandLineWorkflowPAREsnip("paresnip", new File("/Users/ujy06jau/Workbench/target/release/data/web/json/mirpare_parameters.json"), visualBounds);
-            JavascriptBridge.resetFirstLoad();
-            return fp;
-        }
-
-        public String createQCWorkflow() throws Exception
-        {
+        public String createQCWorkflow() throws Exception {
             String fp = PreconfiguredWorkflows.createQCWorkflow(visualBounds);
             JavascriptBridge.resetFirstLoad();
             return fp;
-        } 
-        
-        public String createMiRCat2Workflow() throws Exception
-        {
+        }
+
+        public String createMiRCat2Workflow() throws Exception {
             String fp = PreconfiguredWorkflows.createMiRCat2Workflow(visualBounds);
             JavascriptBridge.resetFirstLoad();
             return fp;
         }
 
-        public String createQC_DEWorkflow() throws Exception
-        {
+        public String createQC_DEWorkflow() throws Exception {
             String fp = PreconfiguredWorkflows.createQC_DE_Workflow(visualBounds);
             JavascriptBridge.resetFirstLoad();
             return fp;
         }
 
-        public String createNORM_DEWorkflow() throws Exception
-        {
+        public String createNORM_DEWorkflow() throws Exception {
             String fp = PreconfiguredWorkflows.createNorm_DE_Workflow(visualBounds);
             JavascriptBridge.resetFirstLoad();
             return fp;
         }
 
-        public String createQC_DE_NO_QC_Workflow() throws Exception
-        {
+        public String createQC_DE_NO_QC_Workflow() throws Exception {
             String fp = PreconfiguredWorkflows.createQC_DE_NO_QC_Workflow(visualBounds);
             JavascriptBridge.resetFirstLoad();
             return fp;
         }
 
-        public String createFM_FilterWorkflow() throws Exception
-        {
+        public String createFM_FilterWorkflow() throws Exception {
             String fp = PreconfiguredWorkflows.createFM_FilterWorkflow(visualBounds);
             JavascriptBridge.resetFirstLoad();
             return fp;
         }
-        
-        public String createFM_DegWorkflow() throws Exception
-        {
-            String fp = PreconfiguredWorkflows.createDegradome2Workflow(visualBounds);
+
+        public String createFM_DegWorkflow() throws Exception {
+            String fp = PreconfiguredWorkflows.createPAREsnip2Workflow(visualBounds);
             JavascriptBridge.resetFirstLoad();
             return fp;
         }
-        
-        public void showVersion3()
-        {
+
+        public String createFM_FiRePatWorkflow() throws Exception {
+            String fp = PreconfiguredWorkflows.createFiRePatWorkflow(visualBounds);
+            JavascriptBridge.resetFirstLoad();
+            return fp;
+        }
+
+        public void showVersion3() {
             setWindowToV3();
         }
-        
+
 //        public void debug()
 //        {
 //            workflowWebView.getEngine().executeScript("if (!document.getElementById('FirebugLite')){E = document['createElement' + 'NS'] && document.documentElement.namespaceURI;E = E ? document['createElement' + 'NS'](E, 'script') : document['createElement']('script');E['setAttribute']('id', 'FirebugLite');E['setAttribute']('src', 'https://getfirebug.com/' + 'firebug-lite.js' + '#startOpened');E['setAttribute']('FirebugLite', '4');(document['getElementsByTagName']('head')[0] || document['getElementsByTagName']('body')[0]).appendChild(E);E = new Image;E['setAttribute']('src', 'https://getfirebug.com/' + '#startOpened');}"); 
 //        }
-        
     }
 
 }

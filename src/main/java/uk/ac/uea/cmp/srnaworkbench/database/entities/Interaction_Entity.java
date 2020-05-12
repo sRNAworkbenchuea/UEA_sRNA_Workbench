@@ -321,6 +321,10 @@ public class Interaction_Entity implements Serializable {
         String[] duplexComponents = this.duplex.split(System.getProperty("line.separator"));
         int sRNA_sIndex = duplexComponents[0].indexOf(enclosing5Str) + enclosing5Str.length();
         int sRNA_eIndex = duplexComponents[0].indexOf(enclosing3Str) - 1;
+        if(sRNA_eIndex < 0){
+            enclosing3Str = "'3";
+            sRNA_eIndex = duplexComponents[0].indexOf(enclosing3Str) - 1;
+        }
         String tmp_sRNA = duplexComponents[0].substring(sRNA_sIndex, sRNA_eIndex + 1).trim();
         return tmp_sRNA.replaceAll("[-]", "");
     }

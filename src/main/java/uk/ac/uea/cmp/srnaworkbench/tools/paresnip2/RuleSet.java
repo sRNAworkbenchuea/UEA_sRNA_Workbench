@@ -5,137 +5,507 @@
  */
 package uk.ac.uea.cmp.srnaworkbench.tools.paresnip2;
 
-import java.io.Serializable;
-
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import javafx.scene.Cursor;
+import uk.ac.uea.cmp.srnaworkbench.tools.paresnip2.fileinput.Paresnip2Configuration;
 
 /**
- * BUILDS A COLLECTION OF PATHS AND THE SCORE
+ * User defined rule set
  *
  * @author rew13hpu
  */
-public class RuleSet implements Serializable {
+public final class RuleSet {
 
-    static double MAX_SCORE;
-    static int MAX_ADJACENT_MM;
-    static int MAX_GAPS;
-    static int MAX_GU_WOBBLES;
-    static int MAX_ADJACENT_MM_SEED_REGION;
-    static boolean ALLOW_MM_10;
-    static boolean ALLOW_MM_11;
-    static double SCORE_MM_10;
-    static double SCORE_MM_11;
-    static boolean ALLOW_GAP_10_11;
-    static double SCORE_GU_WOBBLE;
-    static double SCORE_MM;
-    static double SEED_REGION_MULTIPLIER;
-    static double SCORE_GAP;
-    static int MAX_TOTAL;
-    boolean[] NO_MM_ALLOWED;
-    boolean[] MM_ALLOWED;
-    private static final long serialVersionUID = 169;
+    public static RuleSet rules;
 
-    public static int getMAX_ADJACENT_MM_SEED_REGION() {
-        return MAX_ADJACENT_MM_SEED_REGION;
+    double maxScore;
+    int maxAdjacentMM;
+    int coreRegionStart;
+    int coreRegionEnd;
+    int maxMM;
+    int maxGaps;
+    int maxGUWobbles;
+    int maxAdjacentMMCoreRegion;
+    int maxMMCoreRegion;
+    int maxGUCoreRegion;
+    double wobbleScore;
+    boolean allowMM10;
+    boolean allowMM11;
+    double scoreMM10;
+    double scoreMM11;
+    boolean GUCountAsMM;
+    boolean GapCountAsMM;
+    boolean allowGap10_11;
+    double scoreGUWobble;
+    double scoreMM;
+    double coreRegionMultiplier;
+    double scoreGap;
+    boolean[] noMMAllowed;
+    boolean[] mmAllowed;
+
+    public int getMaxMMCoreRegion() {
+        return maxMMCoreRegion;
     }
 
-    
-    
-    public static double getSCORE_GU_WOBBLE() {
-        return SCORE_GU_WOBBLE;
+    public int getMaxAdjacentMMCoreRegion() {
+        return maxAdjacentMMCoreRegion;
     }
 
-    public static double getSCORE_MM() {
-        return SCORE_MM;
+    public double getGUWobbleScore() {
+        return scoreGUWobble;
     }
 
-    public static double getSEED_REGION_MULTIPLIER() {
-        return SEED_REGION_MULTIPLIER;
+    public double getMMScore() {
+        return scoreMM;
     }
 
-    public static double getMAX_SCORE() {
-        return MAX_SCORE;
+    public double getScoreMM10() {
+        return scoreMM10;
     }
 
-    public static int getMAX_ADJACENT_MM() {
-        return MAX_ADJACENT_MM;
+    public double getScoreMM11() {
+        return scoreMM11;
     }
 
-    public static int getMAX_GAPS() {
-        return MAX_GAPS;
+    public int getCoreRegionStart() {
+        return coreRegionStart;
     }
 
-    public static int getMAX_GU_WOBBLES() {
-        return MAX_GU_WOBBLES;
+    public int getCoreRegionEnd() {
+        return coreRegionEnd;
     }
 
-    public static boolean isALLOW_MM_10() {
-        return ALLOW_MM_10;
+    public int getMaxMM() {
+        return maxMM;
     }
 
-    public static boolean isALLOW_MM_11() {
-        return ALLOW_MM_11;
+    public double getCoreRegionMultiplier() {
+        return coreRegionMultiplier;
     }
 
-    public static boolean isALLOW_GAP_10_11() {
-        return ALLOW_GAP_10_11;
+    public double getMaxScore() {
+        return maxScore;
     }
 
-    public static double getSCORE_GAP() {
-        return SCORE_GAP;
-    }
-    
-    public RuleSet tableRules()
-    {
-        
-        
-        
-        return null;
+    public int getMaxAdjacentMM() {
+        return maxAdjacentMM;
     }
 
-    
-    
-    public RuleSet() {
-        RuleSet.MAX_SCORE = 4.5;
-        RuleSet.MAX_ADJACENT_MM = 2;
-        RuleSet.MAX_ADJACENT_MM_SEED_REGION = 1;
-        RuleSet.MAX_GAPS = 1;
-        RuleSet.MAX_GU_WOBBLES = 3;
-        RuleSet.ALLOW_GAP_10_11 = true;
-        RuleSet.ALLOW_MM_10 = true;
-        RuleSet.ALLOW_MM_11 = true;
-        RuleSet.SCORE_GAP = 1;
-        RuleSet.SCORE_GU_WOBBLE = 0.5;
-        RuleSet.SCORE_MM = 1;
-        RuleSet.SCORE_MM_10 = 2.5;
-        RuleSet.SCORE_MM_11 = 2.5;
-        RuleSet.SEED_REGION_MULTIPLIER = 1;
-        RuleSet.MAX_TOTAL = 7;
+    public int getMaxGaps() {
+        return maxGaps;
+    }
+
+    public int getMaxGUWobbles() {
+        return maxGUWobbles;
+    }
+
+    public boolean isAllowedMM10() {
+        return allowMM10;
+    }
+
+    public boolean isAllowedMM11() {
+        return allowMM11;
+    }
+
+    public boolean isAllowedGap10_11() {
+        return allowGap10_11;
+    }
+
+    public double getGapScore() {
+        return scoreGap;
+    }
+
+    public boolean setAllowedMM(int position) {
+        mmAllowed[position] = !mmAllowed[position];
+        return mmAllowed[position];
+
+    }
+
+    public boolean setNotAllowedMM(int position) {
+        noMMAllowed[position] = !noMMAllowed[position];
+        return noMMAllowed[position];
+
+    }
+
+    public boolean allowedMM(int position) {
+
+        if (position < mmAllowed.length && position >= 0) {
+            return mmAllowed[position];
+        }
+
+        return true;
+    }
+
+    public boolean notAllowedMM(int position) {
+        if (position < noMMAllowed.length && position >= 0) {
+            return noMMAllowed[position];
+        }
+        return false;
+    }
+
+    public boolean isGUCountAsMM() {
+        return GUCountAsMM;
+    }
+
+    public boolean isGapCountAsMM() {
+        return GapCountAsMM;
+    }
+
+    public void setMaxScore(double MAX_SCORE) {
+        this.maxScore = MAX_SCORE;
+    }
+
+    public void setMaxAdjacentMM(int MAX_ADJACENT_MM) {
+        this.maxAdjacentMM = MAX_ADJACENT_MM;
+    }
+
+    public void setCoreRegionStart(int CORE_REGION_START) {
+        this.coreRegionStart = CORE_REGION_START;
+    }
+
+    public void setCoreRegionEnd(int CORE_REGION_END) {
+        this.coreRegionEnd = CORE_REGION_END;
+    }
+
+    public void setMaxMM(int MAX_MM) {
+        this.maxMM = MAX_MM;
+    }
+
+    public void setMaxGaps(int MAX_GAPS) {
+        this.maxGaps = MAX_GAPS;
+    }
+
+    public void setMaxGUWobbles(int MAX_GU_WOBBLES) {
+        this.maxGUWobbles = MAX_GU_WOBBLES;
+    }
+
+    public void setMaxAdjacentMMCoreRegion(int MAX_ADJACENT_MM_CORE_REGION) {
+        this.maxAdjacentMMCoreRegion = MAX_ADJACENT_MM_CORE_REGION;
+    }
+
+    public void setMaxMMCoreRegion(int MAX_MM_CORE_REGION) {
+        this.maxMMCoreRegion = MAX_MM_CORE_REGION;
+    }
+
+    public void setGUScore(double GU_MM_SCORE) {
+        this.wobbleScore = GU_MM_SCORE;
+    }
+
+    public void setAllowMM10(boolean ALLOW_MM_10) {
+        this.allowMM10 = ALLOW_MM_10;
+    }
+
+    public void setAllowMM11(boolean ALLOW_MM_11) {
+        this.allowMM11 = ALLOW_MM_11;
+    }
+
+    public void setScoreMM10(double SCORE_MM_10) {
+        this.scoreMM10 = SCORE_MM_10;
+    }
+
+    public void setScoreMM11(double SCORE_MM_11) {
+        this.scoreMM11 = SCORE_MM_11;
+    }
+
+    public void setGUCountAsMM(boolean GUCountAsMM) {
+        this.GUCountAsMM = GUCountAsMM;
+    }
+
+    public void setGapCountAsMM(boolean GapCountAsMM) {
+        this.GapCountAsMM = GapCountAsMM;
+    }
+
+    public void setAllowGap10_11(boolean ALLOW_GAP_10_11) {
+        this.allowGap10_11 = ALLOW_GAP_10_11;
+    }
+
+    public void setScoreGUWobble(double SCORE_GU_WOBBLE) {
+        this.scoreGUWobble = SCORE_GU_WOBBLE;
+    }
+
+    public void setScoreMM(double SCORE_MM) {
+        this.scoreMM = SCORE_MM;
+    }
+
+    public void setCoreRegionMultiplier(double CORE_REGION_MULTIPLIER) {
+        this.coreRegionMultiplier = CORE_REGION_MULTIPLIER;
+    }
+
+    public void setGapScore(double SCORE_GAP) {
+        this.scoreGap = SCORE_GAP;
+    }
+
+    public static RuleSet getRuleSet() {
+        if (rules != null) {
+            return rules;
+        } else {
+            rules = new RuleSet();
+        }
+
+        return rules;
+    }
+
+    public static void reset() {
+        rules = null;
+    }
+
+    public void loadRules(File rulesFile) throws IOException, NumberFormatException {
+
+        BufferedReader reader = new BufferedReader(new FileReader(rulesFile));
+
+        try {
+            this.setAllowMM10(Boolean.parseBoolean(reader.readLine().split("=")[1].trim()));
+            this.setScoreMM10(Double.parseDouble(reader.readLine().split("=")[1].trim()));
+            this.setAllowMM11(Boolean.parseBoolean(reader.readLine().split("=")[1].trim()));
+            this.setScoreMM11(Double.parseDouble(reader.readLine().split("=")[1].trim()));
+            this.setGapCountAsMM(Boolean.parseBoolean(reader.readLine().split("=")[1].trim()));
+            this.setGUCountAsMM(Boolean.parseBoolean(reader.readLine().split("=")[1].trim()));
+            this.setCoreRegionStart(Integer.parseInt(reader.readLine().split("=")[1].trim()));
+            this.setCoreRegionEnd(Integer.parseInt(reader.readLine().split("=")[1].trim()));
+            this.setCoreRegionMultiplier(Double.parseDouble(reader.readLine().split("=")[1].trim()));
+            this.setMaxAdjacentMMCoreRegion(Integer.parseInt(reader.readLine().split("=")[1].trim()));
+            this.setMaxMMCoreRegion(Integer.parseInt(reader.readLine().split("=")[1].trim()));
+            this.setScoreMM(Double.parseDouble(reader.readLine().split("=")[1].trim()));
+            this.setGapScore(Double.parseDouble(reader.readLine().split("=")[1].trim()));
+            this.setScoreGUWobble(Double.parseDouble(reader.readLine().split("=")[1].trim()));
+            this.setMaxScore(Double.parseDouble(reader.readLine().split("=")[1].trim()));
+            this.setMaxMM(Integer.parseInt(reader.readLine().split("=")[1].trim()));
+            this.setMaxGUWobbles(Integer.parseInt(reader.readLine().split("=")[1].trim()));
+            this.setMaxGaps(Integer.parseInt(reader.readLine().split("=")[1].trim()));
+            this.setMaxAdjacentMM(Integer.parseInt(reader.readLine().split("=")[1].trim()));
+
+            //set permissible and mismatches      
+            this.noMMAllowed = new boolean[Paresnip2Configuration.getInstance().getMaxSmallRNALenth()];
+            this.mmAllowed = new boolean[Paresnip2Configuration.getInstance().getMaxSmallRNALenth()];
+            String splits[] = reader.readLine().split("=");
+            if (splits.length > 1) {
+                splits = splits[1].split(",");
+
+                for (String s : splits) {
+                    int pos = Integer.parseInt(s.trim());
+                    //set it to the array index
+                    pos = pos - 1;
+
+                    rules.mmAllowed[pos] = true;
+                }
+            }
+
+            //set non-permissible and mismatches      
+            splits = reader.readLine().split("=");
+            if (splits.length > 1) {
+                splits = splits[1].split(",");
+
+                for (String s : splits) {
+                    int pos = Integer.parseInt(s.trim());
+                    //set it to the array index
+                    pos = pos - 1;
+
+                    rules.noMMAllowed[pos] = true;
+                }
+            }
+        } catch (IOException | NumberFormatException ex) {
+            throw new IOException("There was an error reading the targeting rules file. Please generate a new one or use the default file provided.");
+        }
+
+    }
+
+    private RuleSet() {
+
         //BUILD THIS TABLE WITH THE USERS NOT PERMITTED MM
-        NO_MM_ALLOWED = new boolean[Engine.MAX_SRNA_SIZE];
+        Paresnip2Configuration config = Paresnip2Configuration.getInstance();
+        noMMAllowed = new boolean[config.getMaxSmallRNALenth()];
+
         //BUILD THIS TABLE WITH THE USERS PERMITTED MM
-        MM_ALLOWED = new boolean[Engine.MAX_SRNA_SIZE];
-        MM_ALLOWED[0] = true;
-        
+        mmAllowed = new boolean[config.getMaxSmallRNALenth()];
+        setDefaultAllen();
+    }
+
+    public void setParameterSearchRules() {
+        maxScore = 6;
+        maxAdjacentMM = 3;
+        maxAdjacentMMCoreRegion = 2;
+        maxGaps = 1;
+        //MAX_TOTAL_MM = 4.5;
+        maxGUWobbles = 5;
+        allowGap10_11 = false;
+        allowMM10 = true;
+        allowMM11 = true;
+        scoreGap = 1;
+        scoreGUWobble = 0.5;
+        scoreMM = 1;
+        scoreMM10 = 1;
+        scoreMM11 = 1;
+        coreRegionMultiplier = 2;
+        maxMMCoreRegion = 3;
+        maxMM = 6;
+        GUCountAsMM = false;
+        GapCountAsMM = true;
+        wobbleScore = 0.5;
+        coreRegionStart = 2;
+        coreRegionEnd = 13;
+    }
+
+    public boolean isSetUp() {
+
+        //check that the rules are sucessfully set up
+        return true;
 
     }
 
-    public RuleSet(double MAX_SCORE, int MAX_ADJACENT_MM, int MAX_GAPS, int MAX_GU_WOBBLES, boolean ALLOW_MM_10, boolean ALLOW_MM_11, boolean ALLOW_GAP_10_11, double SCORE_GU_WOBBLE, double SCORE_MM, double SEED_REGION_MULTIPLIER, double SCORE_GAP) {
-        RuleSet.MAX_SCORE = MAX_SCORE;
-        RuleSet.MAX_ADJACENT_MM = MAX_ADJACENT_MM;
-        RuleSet.MAX_GAPS = MAX_GAPS;
-        RuleSet.MAX_GU_WOBBLES = MAX_GU_WOBBLES;
-        RuleSet.ALLOW_MM_10 = ALLOW_MM_10;
-        RuleSet.ALLOW_MM_11 = ALLOW_MM_11;
-        RuleSet.ALLOW_GAP_10_11 = ALLOW_GAP_10_11;
-        RuleSet.SCORE_GU_WOBBLE = SCORE_GU_WOBBLE;
-        RuleSet.SCORE_MM = SCORE_MM;
-        RuleSet.SEED_REGION_MULTIPLIER = SEED_REGION_MULTIPLIER;
-        RuleSet.SCORE_GAP = SCORE_GAP;
-        //BUILD THIS TABLE WITH THE USERS NOT PERMITTED MM
-        NO_MM_ALLOWED = new boolean[Engine.MAX_SRNA_SIZE];
-        //BUILD THIS TABLE WITH THE USERS PERMITTED MM
-        MM_ALLOWED = new boolean[Engine.MAX_SRNA_SIZE];
+    public String getPermissibleMM() {
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < 24; i++) {
+
+            if (mmAllowed[i]) {
+                sb.append((i + 1)).append(",");
+            }
+
+        }
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 1);
+        }
+        return sb.toString();
 
     }
 
+    public String getNonPermissibleMM() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 24; i++) {
+            if (noMMAllowed[i]) {
+                sb.append((i + 1)).append(",");
+            }
+
+        }
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 1);
+        }
+        return sb.toString();
+
+    }
+
+    public void setDefaultCarrington() {
+        maxScore = 4;
+        maxAdjacentMM = 2;
+        maxAdjacentMMCoreRegion = 1;
+        maxGaps = 1;
+        //MAX_TOTAL_MM = 4.5;
+        maxGUWobbles = 4;
+        allowGap10_11 = false;
+        allowMM10 = true;
+        allowMM11 = true;
+        scoreGap = 1;
+        scoreGUWobble = 0.5;
+        scoreMM = 1;
+        scoreMM10 = 1;
+        scoreMM11 = 1;
+        coreRegionMultiplier = 2;
+        maxMMCoreRegion = 2;
+        maxMM = 4;
+        GUCountAsMM = false;
+        GapCountAsMM = true;
+        wobbleScore = 0.5;
+        coreRegionStart = 2;
+        coreRegionEnd = 13;
+    }
+
+    public void setDefaultAllen() {
+        maxScore = 4;
+        maxAdjacentMM = 2;
+        maxAdjacentMMCoreRegion = 1;
+        maxGaps = 1;
+        //MAX_TOTAL_MM = 4.5;
+        maxGUWobbles = 4;
+        allowGap10_11 = false;
+        allowMM10 = false;
+        allowMM11 = false;
+        scoreGap = 1;
+        scoreGUWobble = 0.5;
+        scoreMM = 1;
+        scoreMM10 = 1;
+        scoreMM11 = 1;
+        coreRegionMultiplier = 2;
+        maxMMCoreRegion = 2;
+        maxMM = 4;
+        GUCountAsMM = false;
+        GapCountAsMM = true;
+        wobbleScore = 0.5;
+        coreRegionStart = 2;
+        coreRegionEnd = 13;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("allow_mismatch_position_10=").append(rules.isAllowedMM10());
+        sb.append(System.lineSeparator());
+        sb.append("mismatch_position_10_penalty=").append(rules.getScoreMM10());
+        sb.append(System.lineSeparator());
+        sb.append("allow_mismatch_position_11=").append(rules.isAllowedMM11());
+        sb.append(System.lineSeparator());
+        sb.append("mismatch_position_11_penalty=").append(rules.getScoreMM11());
+        sb.append(System.lineSeparator());
+        sb.append("gaps_count_as_mismatch=").append(rules.isGapCountAsMM());
+        sb.append(System.lineSeparator());
+        sb.append("gu_count_as_mismatch=").append(rules.isGUCountAsMM());
+        sb.append(System.lineSeparator());
+        sb.append("core_region_start=").append(rules.getCoreRegionStart());
+        sb.append(System.lineSeparator());
+        sb.append("core_region_end=").append(rules.getCoreRegionEnd());
+        sb.append(System.lineSeparator());
+        sb.append("core_region_multiplier=").append(rules.getCoreRegionMultiplier());
+        sb.append(System.lineSeparator());
+        sb.append("max_adjacent_mismatches_core_region=").append(rules.getMaxAdjacentMMCoreRegion());
+        sb.append(System.lineSeparator());
+        sb.append("max_mismatches_core_region=").append(rules.getMaxMMCoreRegion());
+        sb.append(System.lineSeparator());
+        sb.append("mismatch_score=").append(rules.getMMScore());
+        sb.append(System.lineSeparator());
+        sb.append("gap_score=").append(rules.getGapScore());
+        sb.append(System.lineSeparator());
+        sb.append("gu_score=").append(rules.getGUWobbleScore());
+        sb.append(System.lineSeparator());
+        sb.append("max_score=").append(rules.getMaxScore());
+        sb.append(System.lineSeparator());
+        sb.append("max_mismatches=").append(rules.getMaxMM());
+        sb.append(System.lineSeparator());
+        sb.append("max_gu_pairs=").append(rules.getMaxGUWobbles());
+        sb.append(System.lineSeparator());
+        sb.append("max_gaps=").append(rules.getMaxGaps());
+        sb.append(System.lineSeparator());
+        sb.append("max_adjacent_mismatches=").append(rules.getMaxAdjacentMM());
+        sb.append(System.lineSeparator());
+        sb.append("permissible_mismatch_positions=").append(rules.getPermissibleMM());
+        sb.append(System.lineSeparator());
+        sb.append("non_permissible_mismatch_positions=").append(rules.getNonPermissibleMM());
+
+        return sb.toString();
+    }
+
+    public void resetMMArrays(int maxSmallRNALength) {
+
+        boolean newMMAllowed[] = new boolean[maxSmallRNALength];
+        boolean newMMNotAllowed[] = new boolean[maxSmallRNALength];
+
+        for (int i = 0; i < maxSmallRNALength; i++) {
+            if (i < mmAllowed.length) {
+                newMMAllowed[i] = mmAllowed[i];
+            }
+        }
+
+        mmAllowed = newMMAllowed;
+
+        for (int i = 0; i < maxSmallRNALength; i++) {
+            if (i < noMMAllowed.length) {
+                newMMNotAllowed[i] = noMMAllowed[i];
+            }
+        }
+
+        noMMAllowed = newMMNotAllowed;
+    }
 }

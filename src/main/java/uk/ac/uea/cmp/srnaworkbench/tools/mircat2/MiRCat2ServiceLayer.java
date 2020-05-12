@@ -77,40 +77,30 @@ public class MiRCat2ServiceLayer {
          alignedSeqImpl.saveOrUpdate(Aligned_Sequences_Entity.NO_ALIGNMENT);
          
          ArrayList<String> chrs =  new ArrayList(genomeManager.getChromosomes().keySet());
-         //Collections.sort(chrs);
+         Collections.sort(chrs);
          
-         AttributesExtracter ae = null;
-         
+         AttributesExtracter ae;
          for(String s: chrs){
-            
             Chromosome chrom = genomeManager.getChromosomes().get(s);
             String chromId = chrom.getOriginalHeader();               
-           // System.out.println(chromId);
+            System.out.println(chromId);
             
            // Patman p = this.getAlignmentsForChromozome(chromId, session);
-
             RemoveNoiseManager rnm = new RemoveNoiseManager(session, chromId, chrom.getLength());
             Patman removeNoise = rnm.removeNoise();
-            
 //            session.flush();
 //            session.close();
 
             if (removeNoise == null) {
                 continue;
             }
-                    
             clearRedundant(removeNoise);
- 
             if (!removeNoise.isEmpty()) {
                 ae = new AttributesExtracter(removeNoise, myExeMan, session);
                 ae.processSequences(genomeManager, chromId);
                 ae.printResultsToFiles(outPatman, outCSV, controller);
-
              }  
-            
         }
-  
-//         
 //        System.out.println("miRCAt2 finished processing");
          session.flush();
          session.close();

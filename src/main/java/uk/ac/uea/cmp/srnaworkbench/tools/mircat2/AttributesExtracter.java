@@ -97,26 +97,20 @@ public final class AttributesExtracter {
     public void processSequences(GenomeManager genSeq, String chrom) throws IOException {
         int i;
         this.genMan = genSeq;
-        LFoldPrecursorServiceImpl precursorServ = (LFoldPrecursorServiceImpl) DatabaseWorkflowModule.getInstance().getContext().getBean("LFoldPrecursorService");
-        PredictionServiceImpl predictionServ = (PredictionServiceImpl) DatabaseWorkflowModule.getInstance().getContext().getBean("PredictionService");
+        //LFoldPrecursorServiceImpl precursorServ = (LFoldPrecursorServiceImpl) DatabaseWorkflowModule.getInstance().getContext().getBean("LFoldPrecursorService");
+        //PredictionServiceImpl predictionServ = (PredictionServiceImpl) DatabaseWorkflowModule.getInstance().getContext().getBean("PredictionService");
 
         outerloop:
         for (i = 0; i < sRNAs.size(); i++) {
             Aligned_Sequences_Entity s = sRNAs.get(i);
-            
-            
             //4	TAAGTGCTTCTCTTTGGGCTAG(9)	28005657	28005678	+	0
             //preprocess to get seqs 
             int removed = readPatmanForSequence(s, i);
-            
             if(removed == 1){
                 i--;
                 continue;
-            }
-            
+            }       
             prepareSequences(s);
-            
-            
             
             boolean wasStar = false;
             Aligned_Sequences_Entity before = null;
@@ -173,15 +167,12 @@ public final class AttributesExtracter {
                     miRStar.put(s, Aligned_Sequences_Entity.NO_ALIGNMENT);
                 
                 //Prediction_Entity pe = new Prediction_Entity("miRCat2", LFold.get(s).get(0), s, miRStar.get(s));
-                
-                
                // predictionServ.saveOrUpdate(pe, session);
-          //      predictionServ.saveOrUpdate(pe);
+                // predictionServ.saveOrUpdate(pe);
                // predictionServ.saveOrUpdate(pe);
                 
             }
             
-
         }
 
     }
@@ -434,16 +425,16 @@ public final class AttributesExtracter {
 
             str.append(s.getRna_seq()).append(",");
             str.append(s.getAb()).append(",");
-            str.append(s.getStart1()).append(",");
-            str.append(s.getEnd1());
+            str.append(s.getStart()).append(",");
+            str.append(s.getEnd());
 
         } else if (miRStarIndex.containsKey(s)) {
 
             Aligned_Sequences_Entity star = miRStar.get(s);
             str.append(star.getRna_seq()).append(",");
             str.append(star.getAb()).append(",");
-            str.append(star.getStart1()).append(",");
-            str.append(star.getEnd1());
+            str.append(star.getStart()).append(",");
+            str.append(star.getEnd());
 
         } else {
 
@@ -462,7 +453,7 @@ public final class AttributesExtracter {
 
             //Hp sequence, Hp start, Hp end, fold, mfe, amfe 
             str.append(seq).append(",");
-            str.append(b).append(",");
+            str.append(b + 1).append(",");
             str.append(b + lf.getFold().length()).append(",");
             str.append(lf.getFold()).append(",");
             str.append(roundDecimals(lf.getMfe(),2)).append(",");
@@ -560,62 +551,62 @@ public final class AttributesExtracter {
     }
 
     private int readPatmanForSequence(Aligned_Sequences_Entity seq, int index) {
-        int toRem = 0;
+        int toRemove = 0;
         
         if(seq.getLength() < MiRCat2Params.minLen || seq.getLength() > MiRCat2Params.maxLen){
               sRNAs.remove(index);
               removeSRNA(seq);
-              toRem = 1;
+              toRemove = 1;
         }
         else
             addToSequences(seq);
         
-        return toRem;
+        return toRemove;
     }
     
-    private void readPatmanForSequences(Patman allSeqs) {
+//    private void readPatmanForSequences(Patman allSeqs) {
+//
+//        int index = 0;
+//        int indexSeqs = 0;
+//
+//        for (int i = index; i < sRNAs.size(); i++) {
+//            Aligned_Sequences_Entity temp2 = sRNAs.get(i);
+//            if(temp2.getLength() < MiRCat2Params.minLen || temp2.getLength() > MiRCat2Params.maxLen){
+//                  sRNAs.remove(i);
+//                  removeSRNA(temp2);
+//                  i--;
+//                  continue;
+//            }
+//            indexSeqs = addToSequences(temp2, allSeqs, indexSeqs);
+//        }
+//    }
 
-        int index = 0;
-        int indexSeqs = 0;
-
-        for (int i = index; i < sRNAs.size(); i++) {
-            Aligned_Sequences_Entity temp2 = sRNAs.get(i);
-            if(temp2.getLength() < MiRCat2Params.minLen || temp2.getLength() > MiRCat2Params.maxLen){
-                  sRNAs.remove(i);
-                  removeSRNA(temp2);
-                  i--;
-                  continue;
-            }
-            indexSeqs = addToSequences(temp2, allSeqs, indexSeqs);
-        }
-    }
-
-    private int addToSequences(Aligned_Sequences_Entity s, Patman seqs, int index) {
-        int limB = s.getStart1() - MiRCat2Params.foldDist;
-        int limE = s.getEnd1() + MiRCat2Params.foldDist;
-
-        Patman selected = new Patman();
-
-        int k = index;
-        boolean isSet = false;
-        for (int i = index; i < seqs.size(); i++) {
-
-            if (seqs.get(i).getStart1() >= limB && seqs.get(i).getEnd1() <= limE) {
-                if (!isSet) {
-                    isSet = true;
-                    k = i;
-                }
-                selected.add(seqs.get(i));
-            }
-            if (seqs.get(i).getStart1() > limE) {
-                break;
-            }
-        }
-
-        sequences.put(s, selected);
-
-        return k;
-    }
+//    private int addToSequences(Aligned_Sequences_Entity s, Patman seqs, int index) {
+//        int limB = s.getStart1() - MiRCat2Params.foldDist;
+//        int limE = s.getEnd1() + MiRCat2Params.foldDist;
+//
+//        Patman selected = new Patman();
+//
+//        int k = index;
+//        boolean isSet = false;
+//        for (int i = index; i < seqs.size(); i++) {
+//
+//            if (seqs.get(i).getStart1() >= limB && seqs.get(i).getEnd1() <= limE) {
+//                if (!isSet) {
+//                    isSet = true;
+//                    k = i;
+//                }
+//                selected.add(seqs.get(i));
+//            }
+//            if (seqs.get(i).getStart1() > limE) {
+//                break;
+//            }
+//        }
+//
+//        sequences.put(s, selected);
+//
+//        return k;
+//    }
     
      private void addToSequences(Aligned_Sequences_Entity s) {
         int limB = s.getStart1() - MiRCat2Params.foldDist;
@@ -631,9 +622,7 @@ public final class AttributesExtracter {
                     .list();
 
         Patman selected = new Patman(findAll);
-
         sequences.put(s, selected);
-
     }
 
     private void addGenomeSeq(Aligned_Sequences_Entity s, String chrom) throws IOException {
@@ -658,17 +647,17 @@ public final class AttributesExtracter {
         }
     }
 
-    private void flipAllsRNAs(Aligned_Sequences_Entity s, int b, int e) {
-        for (Aligned_Sequences_Entity ss : sequences.get(s)) {
-            //ss.setBegEndRel(b, e);
-        }
-        
-        for (Patman p : clusters.get(s)) {
-            p.flipBegEndRel(b, e);
-        }
-        
-        flipClustersIndexes(s);
-    }
+//    private void flipAllsRNAs(Aligned_Sequences_Entity s, int b, int e) {
+//        for (Aligned_Sequences_Entity ss : sequences.get(s)) {
+//            //ss.setBegEndRel(b, e);
+//        }
+//        
+//        for (Patman p : clusters.get(s)) {
+//            p.flipBegEndRel(b, e);
+//        }
+//        
+//        flipClustersIndexes(s);
+//    }
 
     private void resetAll(Aligned_Sequences_Entity s) {
         for (Aligned_Sequences_Entity ss : sequences.get(s)) {

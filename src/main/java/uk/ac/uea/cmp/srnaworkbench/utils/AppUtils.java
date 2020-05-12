@@ -219,6 +219,12 @@ public enum AppUtils
   private boolean _isRunningInIDE = false;
   private boolean _isRunningInIDESet = false;
   
+  public void setRunningIDE(boolean b)
+  {
+      _isRunningInIDESet = true;
+      _isRunningInIDE = b;
+  }
+  
   public boolean isRunningInIDE()
   {
     if ( !_isRunningInIDESet )

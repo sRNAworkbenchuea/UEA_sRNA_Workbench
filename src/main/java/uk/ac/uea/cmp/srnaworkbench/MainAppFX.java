@@ -75,9 +75,8 @@ import uk.ac.uea.cmp.srnaworkbench.workflow.gui.WorkflowViewer;
 public class MainAppFX extends Application {
 
     private static WorkflowSceneController workflowSceneController;
-    
-    public static void shutdown()
-    {
+
+    public static void shutdown() {
         workflowSceneController.destroy();
         Platform.exit();
 
@@ -140,7 +139,6 @@ public class MainAppFX extends Application {
 //            System.out.println("being pre conf workflow");
 //            WorkflowManager.getInstance().start();
             //System.gc();
-
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -162,7 +160,7 @@ public class MainAppFX extends Application {
             alert.setContentText("The database file may currently be in use. Please make sure nothing is currently using the database file and restart the software");
 
             Label label = new Label("The exception stacktrace was:");
-            
+
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             ex.printStackTrace(pw);
@@ -180,38 +178,38 @@ public class MainAppFX extends Application {
             expContent.setMaxWidth(Double.MAX_VALUE);
             expContent.add(label, 0, 0);
             expContent.add(textArea, 0, 1);
-            
+
             alert.getDialogPane().setExpandableContent(expContent);
-            
+
             Platform.runLater(()
                     -> alert.showAndWait()
-                            .filter(response -> response == ButtonType.OK)
-                            .ifPresent(response -> shutdown())
+                    .filter(response -> response == ButtonType.OK)
+                    .ifPresent(response -> shutdown())
             );
-           
+
         }
 
     }
 
     private static void checkJavaVersion() {
-        final int REQUIRED_SUBVERSION = 8;
-
-        String version = System.getProperty("java.version");
-
-        String[] numbers = version.split("\\.");
-
-        if (numbers.length > 0) {
-            Integer versionNumber = Integer.parseInt(numbers[1]);
-
-            if (versionNumber < REQUIRED_SUBVERSION) {
-                String message = "Java version detected: " + version + System.getProperty("line.separator")
-                        + "Please update to version 1." + REQUIRED_SUBVERSION + " or later";
-
-                JOptionPane.showMessageDialog(null, message, "UEA sRNA Workbench", JOptionPane.ERROR_MESSAGE);
-
-                System.exit(1);
-            }
-        }
+//        final int REQUIRED_SUBVERSION = 8;
+//
+//        String version = System.getProperty("java.version");
+//
+//        String[] numbers = version.split("\\.");
+//
+//        if (numbers.length > 0) {
+//            Integer versionNumber = Integer.parseInt(numbers[1]);
+//
+//            if (versionNumber < REQUIRED_SUBVERSION) {
+//                String message = "Java version detected: " + version + System.getProperty("line.separator")
+//                        + "Please update to version 1." + REQUIRED_SUBVERSION + " or later";
+//
+//                JOptionPane.showMessageDialog(null, message, "UEA sRNA Workbench", JOptionPane.ERROR_MESSAGE);
+//
+//                System.exit(1);
+//            }
+//        }
     }
 
     /**
@@ -229,21 +227,48 @@ public class MainAppFX extends Application {
 
         int i = 0;
 
-        while (i < args.length) {
-            String arg = args[i++];
+        //paresnip2 allows the user to input multiple files for each option
+        //this means we have to split the args in a slightly different way....
+        //this is a tempory fix and a better solution should be found
+        if (args.length > 1 && args[0].equals("-tool") && args[1].toLowerCase().equals("paresnip2")) {
 
-            if ("-help".equals(arg) || "--help".equals(arg)) {
-                //TO_DO goToHelp some new help output here
-                ToolBox.UNKNOWN_TOOL.printUsage();
-                System.exit(0);
+            String option = null;
+            for(i = 0; i < args.length; i++)
+            {
+                if(args[i].startsWith("-"))
+                {
+                    option = args[i].split("-")[1];
+                    argmap.put(option, "");
+                }
+                else
+                {
+                    argmap.put(option, argmap.get(option)+ " " + args[i]);
+                }
             }
-            if ("-verbose".equals(arg) || "--verbose".equals(arg)) {
-                // verbose flag has special treatment
-                AppUtils.INSTANCE.setVerbose(true);
-                argmap.put("verbose", Boolean.TRUE.toString());
-            } else {
-                if (arg.indexOf('-') == 0) {
-          // argument starts with '-' so need to work out if it's a flag or a key-value pair
+            
+            //remove any leading and trailing spaces
+            for(String s : argmap.keySet())
+            {
+                argmap.put(s, argmap.get(s).trim());
+            }
+            
+            
+        } else {
+
+            while (i < args.length) {
+                String arg = args[i++];
+
+                if ("-help".equals(arg) || "--help".equals(arg)) {
+                    //TO_DO goToHelp some new help output here
+                    ToolBox.UNKNOWN_TOOL.printUsage();
+                    System.exit(0);
+                }
+                if ("-verbose".equals(arg) || "--verbose".equals(arg)) {
+                    // verbose flag has special treatment
+                    AppUtils.INSTANCE.setVerbose(true);
+                    argmap.put("verbose", Boolean.TRUE.toString());
+                } else if (arg.indexOf('-') == 0) {
+                    // argument starts with '-' so need to work out if it's a flag or a key-value pair
 
                     // Remove the prefixes '-' or '--'
                     if (arg.indexOf("--") == 0) {
@@ -319,7 +344,7 @@ public class MainAppFX extends Application {
         LOGGER.log(Level.ALL, "GUI startup...");
 
         primaryStage.getIcons().add(new Image(MainAppFX.class.getResource("/images/GUI_Icons/workbench_transparent.png").toString()));
-        primaryStage.setTitle("The sRNA Workbench Version 4.4 Alpha (On Disk build)");
+        primaryStage.setTitle("The sRNA Workbench Version 4.7");
 
         if (Tools.isMac()) {
 
@@ -343,7 +368,7 @@ public class MainAppFX extends Application {
         primaryStage.setWidth(bounds.getWidth());
         primaryStage.setHeight(bounds.getHeight());
 
-       /* // chris tmp added
+        /* // chris tmp added
         primaryStage.widthProperty().addListener(new ChangeListener<Object>() {
             @Override
             public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
@@ -351,7 +376,6 @@ public class MainAppFX extends Application {
                 System.out.println("width: " + width);
             }
         });*/
-
         workflowSceneController = new WorkflowSceneController();
 
         workflowSceneController.setSizeValues(internalBounds);

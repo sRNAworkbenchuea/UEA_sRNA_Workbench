@@ -579,7 +579,7 @@ and open the template in the editor.
 
             $(document).ready(function () {
                 Tipped.create('.simple-tooltip', {behavior: 'hide'});
-                version4_1AlphaSetup();
+                //version4_1AlphaSetup();
                 
                 
             });
@@ -587,7 +587,7 @@ and open the template in the editor.
             function version4_1AlphaSetup()
             {
                 var d = document.getElementById("addTranscriptomeButton");
-                d.className = d.className + " buttonDisabled";
+                //d.className = d.className + " buttonDisabled";
             }
 
             $('#filetable_div').fileTable({
@@ -615,7 +615,7 @@ and open the template in the editor.
                         addTranscriptButtonText = "Add Transcriptome";
                     }
                 }
-                document.getElementById("addTranscriptomeButtonText").innerHTML = addTranscriptButtonText;
+                document.getElementById("addTranscriptomeButtonText").innerHTML = addTranscriptButtonText;                
             }
 
             function updateAddSampleButton() {
@@ -686,7 +686,17 @@ and open the template in the editor.
                 {
                     maxReplicates = 3; //debug test
                 }
-                var numReps = app.getNumberRepsForSample(sampleID);
+                
+                var numReps = -1;
+        
+                if (typeof app !== "undefined")
+                {
+                    numReps = app.getNumberRepsForSample(sampleID);
+                }
+                else
+                {
+                    numReps = 1; //debug test
+                }               
               
                 if (maxReplicates !== -1 && numReps >= maxReplicates) {
                     return;
@@ -892,7 +902,7 @@ and open the template in the editor.
                 row.id = referenceID;
 
                 // Add some text to the new cells:
-                var sampleLabel = "TRANSCRIPTOME";
+                var sampleLabel = "Transcriptome";
                 sampleLabel += "<a href='#' onclick='removeTranscriptome(";
                 sampleLabel += referenceID;
                 sampleLabel += ")'><img src='../../images/cross_black.png' alt='Cross' style='width:12px;height:12px'></a>";

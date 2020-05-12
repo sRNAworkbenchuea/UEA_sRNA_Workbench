@@ -92,7 +92,7 @@ public class HQLDataTable {
     }
 
     public void setTableHeader(String str) {
-        System.out.println(str);
+        //System.out.println(str);
         this.tableHeader = str;
     }
 
@@ -156,7 +156,7 @@ public class HQLDataTable {
                     t.start(); // start the thread
                 }
             } else {
-                System.out.println("no SQL");
+                //System.out.println("no SQL");
             }
         }
 
@@ -235,8 +235,8 @@ public class HQLDataTable {
 
         initialisationStr += "}";
         String func = "createDataTable(\"" + thead + "\", \"" + this.id + "\", " + initialisationStr + ");";
-        System.out.println("init string:" + initialisationStr);
-        System.out.println("id:" + this.id);
+        //System.out.println("init string:" + initialisationStr);
+        //System.out.println("id:" + this.id);
         engine.executeScript(func);
 
         Set<String> col_names = this.output.get(0).keySet();
@@ -268,7 +268,11 @@ public class HQLDataTable {
               //  System.out.println(output.get(r).get(col_name).toString()) ;
              //   System.out.println("----");
                 String content = output.get(r).get(col_name).toString();
-
+                if(Tools.isWindows()){
+                    if(col_name.equalsIgnoreCase("Duplex") || col_name.equalsIgnoreCase("Hairpin")){ // it cause error in Windows when using \r
+                        content = content.replaceAll("\r", "");
+                    }
+                }
                 rowStr = rowStr.replaceAll("\n", "</br>");
                 if (this.preTagCols.contains(col_name)) {
                     rowStr += String.format("\"<pre>%s</pre>\"", content);

@@ -91,7 +91,7 @@ public class ExternalsConfiguration
 
     String path = getBinariesPath();
 
-    String[] executables = { "gs", "patman", "RNAplot", "RNAfold", "randfold",
+    String[] executables = { "gs", "patman", "RNAplot", "RNAfold", "randfold", "RNAplex",
     "bowtie" + DIR_SEPARATOR + "bowtie",
     "bowtie" + DIR_SEPARATOR + "bowtie-align-s",
     "bowtie" + DIR_SEPARATOR + "bowtie-build-l",

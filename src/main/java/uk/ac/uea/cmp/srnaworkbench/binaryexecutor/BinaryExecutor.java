@@ -64,6 +64,27 @@ public final class BinaryExecutor
         return result;
     }
     
+    public String execRNAplex(String input, String output)
+    {
+    //String message = BinaryManager.RNAFOLD.name() + TAB + input + ( options.isEmpty() ? "" : " " + options ) + LINE_SEPARATOR;
+
+    //String result = sendMessage( message );
+        String result = "";
+        try
+        {
+            String[] data = new String[2];
+            data[0] = input;
+            data[1] = output;
+    
+            result = BinaryManager.RNAPLEX.run(data);
+        }
+        catch (Exception ex)
+        {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+    
     //
 //    /**
 //     * Call RNALFold
@@ -126,6 +147,26 @@ public final class BinaryExecutor
             String[] data = new String[1];
             data[0] = input;
             BinaryManager.PATMAN.run(data);
+        }
+        catch (Exception ex)
+        {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+
+    }
+    
+    /**
+     * Call dustmasker
+     *
+     * @param input cmdline arguments to run the tool
+     */
+    public void execDustmasker(String input)
+    {
+        try
+        {
+            String[] data = new String[1];
+            data[0] = input;
+            BinaryManager.DUSTMASKER.run(data);
         }
         catch (Exception ex)
         {

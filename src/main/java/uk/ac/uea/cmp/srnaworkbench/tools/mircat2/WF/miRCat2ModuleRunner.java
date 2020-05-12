@@ -6,7 +6,6 @@
 
 package uk.ac.uea.cmp.srnaworkbench.tools.mircat2.WF;
 
-import uk.ac.uea.cmp.srnaworkbench.tools.mircat.WF.MiRCatModule;
 import uk.ac.uea.cmp.srnaworkbench.workflow.WorkflowRunner;
 
 /**

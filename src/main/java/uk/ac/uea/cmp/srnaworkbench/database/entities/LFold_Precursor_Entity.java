@@ -376,7 +376,7 @@ public class LFold_Precursor_Entity implements Serializable{
         double log_odds = slope * this.abundance + intercept;
 
         //#if no strong evidence for 3' overhangs, limit the score contribution to 0
-        if (miRStarSeq == -1){
+        if (this.miRStarSeq == -1){
             log_odds = Math.min(log_odds, log_odds/10);
         }
         

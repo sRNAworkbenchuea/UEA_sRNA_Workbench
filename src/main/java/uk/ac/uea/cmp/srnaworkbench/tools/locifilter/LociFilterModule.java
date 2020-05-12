@@ -23,6 +23,7 @@ import uk.ac.uea.cmp.srnaworkbench.workflow.DataContainerList;
 import uk.ac.uea.cmp.srnaworkbench.exceptions.DuplicateIDException;
 import uk.ac.uea.cmp.srnaworkbench.exceptions.InitialisationException;
 import uk.ac.uea.cmp.srnaworkbench.exceptions.MaximumCapacityException;
+import uk.ac.uea.cmp.srnaworkbench.utils.AppUtils;
 import uk.ac.uea.cmp.srnaworkbench.utils.HQLQuery;
 import uk.ac.uea.cmp.srnaworkbench.utils.HQLQueryComplex;
 import uk.ac.uea.cmp.srnaworkbench.utils.HQLQuerySimple;
@@ -52,7 +53,7 @@ public class LociFilterModule extends WorkflowModule {
         // outputs
         this.out_query = new DataContainerList<>("output", CompatibilityKey.sRNA_QUERY, 1, 1);
 
-        setFXMLResource(IOUtils.DIR_SEPARATOR + "fxml" + IOUtils.DIR_SEPARATOR + "LociFilterScene.fxml");
+        setFXMLResource("/fxml/" + "LociFilterScene.fxml");
         lociController = new LociFilterController(this, visualBounds);
         this.controller = lociController;
 
@@ -73,20 +74,27 @@ public class LociFilterModule extends WorkflowModule {
     public boolean isComplete() {
         return this.complete;
     }
+    
+    public void log(String s){
+        if (!AppUtils.INSTANCE.isCommandLine()&& lociController != null) {
+            this.lociController.write2Log(s);
+        }
+    }
 
     @Override
     public void process() throws HQLQuery.HQLFormatException, FileNotFoundException, Exception {
-
-        lociController.write2Log("INFORMATION: Locifilter module started.");
+        log("INFORMATION: Locifilter module started.");
         if (!enable) {
             HQLQuerySimple q = this.out_query.getContainer(0).getData();
             q.addWhere(String.format("A.id IN (%s)", this.in_srnaomeQuery.getContainer(0).getData().eval()));
             // this.out_query.getContainer(0).getData()this.in_srnaomeQuery.getContainer(0).getData();
             this.complete = true;
-            this.lociController.updateUI();
+            if (!AppUtils.INSTANCE.isCommandLine()&& lociController != null) {
+                this.lociController.updateUI();
+            }
             return;
         }
-        lociController.write2Log("INFORMATION: Getting alignments.");
+        log("INFORMATION: Getting alignments.");
         // copy the in sRNA sequence query
         HQLQuerySimple sSimpleQuery = this.in_srnaomeQuery.getContainer(0).getData();
         HQLQueryComplex sQuery = new HQLQueryComplex(sSimpleQuery);
@@ -116,8 +124,10 @@ public class LociFilterModule extends WorkflowModule {
         targetSequencesAlignmentQuery.addOrder("A.id.start", HQLQuery.HQL_DIR.ASC);
         targetSequencesAlignmentQuery.addOrder("A.id.end", HQLQuery.HQL_DIR.ASC);
 
-        PrintWriter writer = new PrintWriter(new File("testalignment.txt"));
-        lociController.write2Log("INFORMATION: Computing Loci.");
+        File f = new File("testalignment.txt");
+        
+        PrintWriter writer = new PrintWriter(f);
+        log("INFORMATION: Computing Loci.");
         int extend = 400;
 
         List<Map<String, Object>> records = sequence_service.executeGenericSQL(targetSequencesAlignmentQuery.eval());
@@ -149,7 +159,7 @@ public class LociFilterModule extends WorkflowModule {
                 }
             }
         }
-        lociController.write2Log("INFORMATION: Mapping sRNAs to computed loci.");
+        log("INFORMATION: Mapping sRNAs to computed loci.");
         HQLQueryComplex lociSequencesAlignmentQuery = new HQLQueryComplex();
         lociSequencesAlignmentQuery.addSelect("S.id", "id");
         lociSequencesAlignmentQuery.addFrom(Aligned_Sequences_Entity.class, "A");
@@ -165,7 +175,7 @@ public class LociFilterModule extends WorkflowModule {
                 }
             }
         }
-        lociController.write2Log("INFORMATION: Saving results to database.");
+        log("INFORMATION: Saving results to database.");
         records = sequence_service.executeGenericSQL(sQuery.eval());
         for (Map<String, Object> record : records) {
             for (String s : record.keySet()) {
@@ -190,7 +200,7 @@ public class LociFilterModule extends WorkflowModule {
 //       ;
         // System.out.println("q: " + q.eval());
         // this.out_query.getContainer(0).getData().append(query.eval());
-        writer.close();
+        //writer.close();
 
         for (String chr : all_loci.keySet()) {
             System.out.println("chromosome: " + chr);
@@ -212,9 +222,11 @@ public class LociFilterModule extends WorkflowModule {
         //      }
         // }
         this.complete = true;
-        this.lociController.updateUI();
-        lociController.write2Log("INFORMATION: Module complete.");
-
+        if (!AppUtils.INSTANCE.isCommandLine()&& lociController != null) {
+            this.lociController.updateUI();
+        }
+        log("INFORMATION: Module complete.");
+        f.delete();
     }
 
     /*

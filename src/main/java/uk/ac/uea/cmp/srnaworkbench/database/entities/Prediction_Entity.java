@@ -215,7 +215,7 @@ public class Prediction_Entity implements Serializable, Comparable<Prediction_En
         return out_array;
     }
 
-    public static List<String> toStringTitleArray() {
+    public static List<String> toStringTitleArrayMiRCat() {
         List<String> out_array = new ArrayList<>();
         out_array.add("ID");
         out_array.add("Predictior");
@@ -233,4 +233,31 @@ public class Prediction_Entity implements Serializable, Comparable<Prediction_En
         out_array.add("Star Sequence");
         return out_array;
     }
+    public static List<String> toStringTitleArrayMiRCat2() {
+        List<String> out_array = new ArrayList<>();
+        out_array.add("ID");
+        out_array.add("Predictior");
+        out_array.add("Precursor Score");
+        out_array.add("Chromosome");
+        out_array.add("Sequence");
+        out_array.add("Abundance");
+        out_array.add("Start");
+        out_array.add("End");
+        out_array.add("Strand");
+        out_array.add("Mismatches");
+        out_array.add("Hairpin Sequence");
+        out_array.add("Hairpin Start");
+        out_array.add("Hairpin End");
+        out_array.add("Hairpin Dot-Bracket");
+        out_array.add("Hairpin MFE");
+        out_array.add("HairpinaMFE");
+        out_array.add("p-Value");
+        out_array.add("Star Sequence");
+        out_array.add("Star Abundance");
+        out_array.add("Star Start");
+        out_array.add("Star End");
+        out_array.add("miRBase Precursor");        
+        
+        return out_array;
+}
 }

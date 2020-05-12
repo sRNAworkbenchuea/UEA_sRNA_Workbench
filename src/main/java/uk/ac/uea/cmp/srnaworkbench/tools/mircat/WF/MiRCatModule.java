@@ -81,7 +81,7 @@ public class MiRCatModule extends WorkflowModule {
         super(id, title);
         complete = false;
 
-        this.outDir = new File(Tools.miRPARE_DATA_Path + DIR_SEPARATOR + id + "_output");
+        this.outDir = new File(Tools.PAREfirst_DATA_Path + DIR_SEPARATOR + id + "_output");
         this.outDir.mkdirs();
 
 
@@ -411,7 +411,7 @@ public class MiRCatModule extends WorkflowModule {
             mirCatController.write2Log("INFORMATION: writing parameters to file:");
 
             // output mircat params to file
-            File paramsFile = new File(Tools.miRPARE_DATA_Path + DIR_SEPARATOR + getID() + "_params.cfg");
+            File paramsFile = new File(Tools.PAREfirst_DATA_Path + DIR_SEPARATOR + getID() + "_params.cfg");
 
             this.params.save(paramsFile);
            // mirCatController.write2Log(this.params.toDescriptiveString());
@@ -425,7 +425,7 @@ public class MiRCatModule extends WorkflowModule {
 
             List<Sequence_Entity> sequences = sequence_service.executeSQL(this.in_sRNAQuery.getContainer(0).getData().eval());
             // write sequences to file
-            File inputSequencesFile = new File(Tools.miRPARE_DATA_Path + DIR_SEPARATOR + getID() + "_input_sequences.fa");
+            File inputSequencesFile = new File(Tools.PAREfirst_DATA_Path + DIR_SEPARATOR + getID() + "_input_sequences.fa");
             PrintWriter writer = new PrintWriter(inputSequencesFile);
             for (Sequence_Entity sequence : sequences) {
                 for (int i = 0; i < sequence.getAbundance(); i++) {
@@ -434,7 +434,7 @@ public class MiRCatModule extends WorkflowModule {
                 }
             }
             writer.close();
-            File inputSequencesFileFormatted = new File(Tools.miRPARE_DATA_Path + DIR_SEPARATOR + getID() + "_input_sequences_formatted.fa");
+            File inputSequencesFileFormatted = new File(Tools.PAREfirst_DATA_Path + DIR_SEPARATOR + getID() + "_input_sequences_formatted.fa");
             parseFA(inputSequencesFile, inputSequencesFileFormatted);
 
             args.put("srna_file", inputSequencesFileFormatted.getAbsolutePath());

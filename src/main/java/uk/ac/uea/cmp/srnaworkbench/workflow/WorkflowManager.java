@@ -52,6 +52,9 @@ import uk.ac.uea.cmp.srnaworkbench.tools.mircat.MiRCatParams;
 import uk.ac.uea.cmp.srnaworkbench.tools.mircat2.MiRCat2Params;
 import uk.ac.uea.cmp.srnaworkbench.tools.mircat2.WF.MiRCat2Module;
 import uk.ac.uea.cmp.srnaworkbench.tools.paresnip.ParesnipParams;
+import uk.ac.uea.cmp.srnaworkbench.tools.paresnip2.RuleSet;
+import uk.ac.uea.cmp.srnaworkbench.tools.paresnip2.fileinput.Paresnip2Configuration;
+import uk.ac.uea.cmp.srnaworkbench.tools.paresnip2.fileinput.Paresnip2DataInputWorkflowModule;
 import uk.ac.uea.cmp.srnaworkbench.utils.AppUtils;
 import static uk.ac.uea.cmp.srnaworkbench.utils.LOGGERS.WorkbenchLogger.LOGGER;
 import uk.ac.uea.cmp.srnaworkbench.workflow.gui.WorkflowSceneController;
@@ -412,14 +415,19 @@ public final class WorkflowManager implements WorkflowToolHost {
                 @Override
                 public void run() {
                     try {
-                        if (isValidWorkflow() && DatabaseWorkflowModule.getInstance().checkReadyToBuild()) {
+                        //Modify this as well as the WorkflowController                       
+                        
+                       
+                        if (isValidWorkflow() && (DatabaseWorkflowModule.getInstance().checkReadyToBuild() || (!isUsingDB() && !isUsingFileManager()))) {
                             //System.out.println("INFORMATION: Workflow started.");
                             // put all graph nodes containing workflow modules on the waiting list
                             waitingNodes.addAll(graph.getAllNodes());
 
+                            
                             // lock all the nodes
                             for (DirectedGraphNode<WorkflowRunner> node : graph.getAllNodes()) {
-                                node.getElement().engine.controller.workflowStartedListener();
+                                if(!AppUtils.INSTANCE.isCommandLine() && node.getElement().engine.controller != null)
+                                    node.getElement().engine.controller.workflowStartedListener();
                             }
 
                             //retrieve the first node (default database)...
@@ -436,6 +444,8 @@ public final class WorkflowManager implements WorkflowToolHost {
 
                     }
                 }
+
+                
             };
             thread.start();
             if(AppUtils.INSTANCE.isCommandLine())
@@ -482,6 +492,17 @@ public final class WorkflowManager implements WorkflowToolHost {
         }
         return modules;
     }
+    
+    public boolean isUsingDB()
+    {
+        return containsID("Database");
+    }
+    
+    public boolean isUsingFileManager()
+    {
+        return containsID("FileManager");
+    }
+    
     /**
      * Searches the graphs for the given ID
      * @param ID
@@ -847,6 +868,53 @@ public final class WorkflowManager implements WorkflowToolHost {
 
         }
     }
+
+    
+    // twh14ura
+    // setup PAREsnip2 and miRCat2 parameters when running PAREfirst commandline
+    public void getPAREfirstParameters(JsonObject jsonObject) throws IOException, Exception{
+        
+        if (jsonObject.containsKey("mircat2_parameters")){
+            Path mc_paramsPath = Paths.get(jsonObject.getString("mircat2_parameters"));
+            if (Files.exists(mc_paramsPath)){
+                MiRCat2Module.readParams(mc_paramsPath.toString());
+                LOGGER.log(Level.INFO, "mircat 2 params loaded");
+            }
+            else{
+                throw new IOException("Params file: " + mc_paramsPath + " not found.");
+            }
+        }
+        else{
+            throw new IOException("A miRCat 2 parameter file is required.");
+        }
+        
+        if (!jsonObject.containsKey("paresnip2_parameters")){
+                System.out.println("Parameter file has not been specified... Using default stringent configuration and transcriptome as reference...");
+                Paresnip2Configuration.getInstance().setDefaultStringentParameters();
+        } else {
+            Path path = Paths.get(jsonObject.getString("paresnip2_parameters"));
+            if (Files.exists(path)){
+                Paresnip2Configuration.getInstance().loadConfig(new File(path.toString()));
+            }else{
+                System.out.println("Parameter file has not been specified... Using default stringent configuration and transcriptome as reference...");
+                Paresnip2Configuration.getInstance().setDefaultStringentParameters();
+            }
+        }
+
+          if (!jsonObject.containsKey("paresnip2_rules")) {
+            System.out.println("Targeting rules file has not been specified... Using default Allen et al rules...");
+            RuleSet.getRuleSet().setDefaultAllen();
+        } else {
+            Path path = Paths.get(jsonObject.getString("paresnip2_rules"));
+            if (Files.exists(path)) {
+                RuleSet.getRuleSet().loadRules(new File(path.toString()));
+            }else{
+                System.out.println("Targeting rules file has not been specified... Using default Allen et al rules...");
+                RuleSet.getRuleSet().setDefaultAllen();
+            }
+        }
+    }
+    
     //public void setUpDatabase(JsonObject jsonObject) throws IOException, JSONParserException {
     public void setUpDatabase(JsonObject jsonObject) throws IOException {
 
@@ -980,18 +1048,20 @@ public final class WorkflowManager implements WorkflowToolHost {
         // get annotation
         if (jsonObject.containsKey("annotation_filename")) {
             Path annotationPath = Paths.get(jsonObject.getString("annotation_filename"));
-            if (annotationPath.toFile().exists()) {
-                List<Path> pathList = new ArrayList<>();
-                pathList.add(annotationPath);
-                HTMLWizardViewController.setGFFs(pathList);
-                List<String> annotations = new ArrayList<>();
-                annotations.add("miRNA");
-                HTMLWizardViewController.setAnnoations(annotations);
-                String message = "Added annotation file: " + annotationPath;
-                System.out.println(message);
-                LOGGER.log(Level.INFO, message);
-            } else {
-                throw new IOException("Annotation file: " + annotationPath + " not found.");
+            if(!annotationPath.toString().trim().isEmpty()){
+                if (annotationPath.toFile().exists()) {
+                    List<Path> pathList = new ArrayList<>();
+                    pathList.add(annotationPath);
+                    HTMLWizardViewController.setGFFs(pathList);
+                    List<String> annotations = new ArrayList<>();
+                    annotations.add("miRNA");
+                    HTMLWizardViewController.setAnnoations(annotations);
+                    String message = "Added annotation file: " + annotationPath;
+                    System.out.println(message);
+                    LOGGER.log(Level.INFO, message);
+                } else {
+                    throw new IOException("Annotation file: " + annotationPath + " not found.");
+                }
             }
         }
 

@@ -78,8 +78,9 @@ function SmartWizard(target, options) {
         if ($this.options.includeFinishButton){
             elmActionBar.append($this.buttons.finish);
         }
-        
+        elmActionBar.append($this.buttons.export);
         elmActionBar.append($this.buttons.cancel);
+               
 
         elmActionBar.append($this.buttons.next)
             .append($this.buttons.previous);
@@ -415,7 +416,8 @@ function SmartWizard(target, options) {
             $(this.steps.eq(stepnum-1), this.target).removeClass("error");
         }
     }
-
+    
+    
     SmartWizard.prototype.fixHeight = function(){
         var height = 0;
 

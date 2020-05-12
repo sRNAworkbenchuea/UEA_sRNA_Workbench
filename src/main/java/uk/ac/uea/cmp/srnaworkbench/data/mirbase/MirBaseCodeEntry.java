@@ -119,7 +119,7 @@ public class MirBaseCodeEntry
         }
         
         // Trim off mir_str (must be present otherwise exception is thrown)
-        Matcher om = Pattern.compile("^(mir-?|let-?|bantam-?|lin-?|lsy-?)").matcher(trimmedID);
+        Matcher om = Pattern.compile("^(mir-?|let-?|iab-?|bantam-?|lin-?|lsy-?)").matcher(trimmedID);
         if (om.find())
         {
             mir_str = om.group();

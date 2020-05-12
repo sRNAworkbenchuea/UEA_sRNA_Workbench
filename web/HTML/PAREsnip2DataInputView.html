@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+
+1) How many samples?
+2) How many replicates per sample?
+3) Would you like a level? What would you like your level to be called? 
+* Time points, Tissue types, Treatments
+
+-->
+<html>
+    <head>
+        <title>PAREsnip 2 Setup Wizard</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!--Javascript-->
+
+
+
+        <!--JQuery files -->
+        <script type="text/javascript" src="../js/lib/jquery/jquery-1.11.2.min.js"></script>
+        <!--<script type="text/javascript" src="../js/lib/jquery.cookie-1.3.1.js"></script>
+        <script type="text/javascript" src="../js/lib/jquery/jquery.validate.js"></script>-->
+
+        <!--wizard JS-->
+        <!--<script type="text/javascript" src="../js/steps/jquery.steps.js"></script>-->
+        <script type="text/javascript" src="../js/wizards/jquery.smartWizard.paresnip.datainput.js"></script>
+
+
+        <!--Workbench Routines -->
+        <script type="text/javascript" src="../js/utils/workbenchutils.js"></script>
+        <script type="text/javascript" src="../js/files/FileTable.js"></script>
+
+        <!--list drag and sort-->
+        <!--<script src="../js/utils/jquery.sortable.js"></script>-->
+        <!--<script type="text/javascript" src="../js/ListUtils/dragdrop.js"></script>-->
+        <!--<script type="text/javascript" src="../js/ListUtils/drag.js"></script>-->
+        <!--<script type="text/javascript" src="../js/ListUtils/coordinates.js"></script>-->
+        <script src="../js/lib/jqueryui/jquery-ui.min.js"></script>
+
+
+
+        <!--tooltip Javascript-->
+        <script type="text/javascript" src="../js/tipped/tipped.js"></script>
+
+
+
+
+        <!-- CSS -->
+        <!--Workbench CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/wbstyles.css" />
+
+
+        <!--Menu CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/normalize.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/menus.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/icons.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/component.css" />
+
+        <!--tooltip CSS-->
+        <link rel="stylesheet" type="text/css" href="../CSS/tipped/tipped.css" />
+
+
+        <!-- Import FontAwesome 4.2 
+        <link rel="stylesheet" href="../CSS/font-awesome.css">-->
+
+        <!--Wizard CSS-->
+        <!--<link rel="stylesheet" href="../CSS/jquery.steps.css">-->
+        <link rel="stylesheet" type="text/css" href="../CSS/smart_wizard_vertical.css" />
+
+        <!-- Import FontAwesome 4.2 -->
+        <link rel="stylesheet" href="../CSS/font-awesome.min.css">
+        <!--Buttons CSS-->
+        <link rel="stylesheet" href="../CSS/fancy-buttons.css">
+        <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+        <style type="text/css">
+            td
+            {
+                padding:0 5px 0 5px;
+            }
+            #available_annot_list, #selected_annot_list, #other_list {
+                border: 1px solid #eee;
+                width: 142px;
+                min-height: 20px;
+                list-style-type: none;
+                margin: 0;
+                padding: 5px 0 0 0;
+                float: left;
+                margin-right: 10px;
+            }
+            #sortable1 li, #sortable2 li {
+                margin: 0 5px 5px 5px;
+                padding: 5px;
+                font-size: 1.2em;
+                width: 120px;
+            }
+        </style>
+
+
+        <script type="text/javascript">
+
+
+
+            $(document).ready(function () {
+
+            // Smart Wizard 	
+            $('#wizard').smartWizard(
+            {
+            onLeaveStep: leaveAStepCallback,
+            onFinish: onFinishCallback,
+            onCancel: onCancelCallback,
+            labelCancel: 'Cancel',
+            labelDefaultStringent: 'Default Stringent',
+            labelDefaultFlexible: 'Default Flexible',
+            //labelLoad: 'Load Parameters',
+            labelExport: 'Save Parameters'
+            });
+
+            function leaveAStepCallback(obj, context) {
+
+            // return false to stay on step and true to continue navigation 
+            return validateSteps(context.fromStep, context.toStep); // return false to stay on step and true to continue navigation 
+            }
+
+            function validateSteps(stepnumber, tostep) {
+
+            if (stepnumber === 2 && !threadsSetUp)
+            {
+            document.getElementById('threads_used').value = setThreads();
+            threadsSetUp = true;
+            }
+
+            if (typeof app !== "undefined")
+            {
+            return app.isStepComplete(stepnumber, tostep);
+            }
+            return true;
+            }
+
+            function onFinishCallback(objs, context) {
+            //Check that the input is all correct
+            if (app.checkIfValid())
+            {
+            app.setReady();
+            }
+            }
+
+            function onCancelCallback()
+            {
+
+            }
+
+            });
+
+            $("#wizard").smartWizard('disableStep', 3);
+
+
+
+        </script>
+
+    </head>
+    <body>
+        <table class="mainwizardtable">
+            <tr><td> 
+                    <!-- Smart Wizard -->
+                    <div id="wizard" class="swMain">
+                        <ul id="wizardlist">
+                            <li class="simple-tooltip" title="Use this step to input small RNA and degradome data"><a href="#step-1">
+                                    <span class="stepNumber">1</span>
+                                    <span class="stepDesc">
+                                        Step 1<br />
+                                        <small>Input Short Reads</small>
+                                    </span>
+                                </a>
+                            </li>
+
+
+                            <li class="simple-tooltip" title="Use this step to select the reference sequence"><a href="#step-2">
+                                    <span class="stepNumber">2</span>
+                                    <span class="stepDesc">
+                                        Step 2<br />
+                                        <small>Select Reference</small>
+                                    </span>
+                                </a>
+                            </li>
+
+                            <li class="simple-tooltip" title="Use this step to configure the analysis"><a href="#step-3">
+                                    <span class="stepNumber">3</span>
+                                    <span class="stepDesc">
+                                        Step 3<br />
+                                        <small>Configure Analysis</small>
+                                    </span>
+                                </a>
+                            </li>
+
+
+                        </ul>
+                        <div id="step-1">	
+                            <h2 class="StepTitle">Short Read Datasets</h2>
+                            <div id="filetable_div">
+
+                                <table class="filetable" id="fileInputTable" cellspacing="0" style = "width: 95%;">
+                                    <thead>
+                                        <tr>
+                                            <th id="sRNA_Header">Small RNA Replicate Details</th>
+                                            <th id="deg_Header">Degradome Replicate Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="ftb"><tr id="_replicateInputTable_1" class="sampleRow">
+                                            <!--<td>
+                                                <a href="#">1<img src="../images/cross_black.png" alt="Cross" style="width:12px;height:12px"></a>
+                                            </td>-->
+                                            <td>
+                                                <table class="filetable" id="sRNA_replicateInputTable_1" cellspacing="0" style = "width: 95%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width: 10%">Delete</th>
+                                                            <th>Filename</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>                                                    
+                                                        <tr class="addFileRow" id="addSRNAReplicate">
+                                                            <td class="addFile" colspan="3">
+                                                                <a href="javascript:void(0)" onclick="addSmallRNAReplicate()">Add Files</a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table class="filetable" id="deg_replicateInputTable_1" cellspacing="0" style = "width: 95%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width: 10%">Delete</th>
+                                                            <th>Filename</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr class="addFileRow" id="addDegradomeReplicate">
+                                                            <td class="addFile" colspan="3">
+                                                                <a href="javascript:void(0)" onclick= "addDegradomeReplicate()">Add Files</a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                        <div id="step-2" style="overflow: auto;" >	
+                            <h2 class="StepTitle">Select Reference Input</h2>
+                            <fieldset  style="min-height:100px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="selectReference" id="use_transcriptome" class="radio" onclick="setUseTranscriptome()" checked />
+                                            <label for="use_transcriptome">Use Transcriptome</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="selectReference" id="use_genome_gff" class="radio" onclick="setUseGenomeGFF()" />
+                                            <label for="use_genome_gff">Use Genome + GFF3</label>
+                                        </td>                            
+                                        <td>
+                                            <input type="radio" name="includeUTR" id="include_utr" class="radio" onclick="setIncludeUTR()" disabled/>
+                                            <label for="include_utr" id="include_utr_label" style = "display: none;" disabled>Include 5' and 3' UTR</label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                            <h2 class="StepTitle">Genome Alignment</h2>
+                            <fieldset  style="min-height:100px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="alignToGenome" id="align_small_RNAs" class="radio" onclick="setAlignSmallRNAs()" />
+                                            <label for="align_small_RNAs">Align Small RNAs to the Genome</label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+
+                            <div id="transcriptome_div">
+
+                                <table class="filetable" id="fileInputTable" cellspacing="0" style = "width: 95%;">
+                                    <thead>
+                                        <tr>
+                                            <th id="transcriptome_Header">Transcriptome File</th>
+                                            <th id="genome_Header">Genome File (optional)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="ftb"><tr id="transcriptome_genome_input" class="sampleRow">
+                                            <!--<td>
+                                                <a href="#">1<img src="../images/cross_black.png" alt="Cross" style="width:12px;height:12px"></a>
+                                            </td>-->
+                                            <td>
+                                                <table class="filetable" id="transcriptome_input" cellspacing="0" style = "width: 95%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width: 10%">Delete</th>
+                                                            <th>Filename</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>                                                    
+                                                        <tr class="addFileRow" id="addTranscriptome">
+                                                            <td class="addFile" colspan="3">
+                                                                <a href="javascript:void(0)" onclick="addTranscriptome()">Add File</a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table class="filetable" id="genome_input_opt" cellspacing="0" style = "width: 95%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width: 10%">Delete</th>
+                                                            <th>Filename</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr class="addFileRow" id="addGenomeOpt">
+                                                            <td class="addFile" colspan="3">
+                                                                <a href="javascript:void(0)" onclick= "addGenomeOpt()">Add File</a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                            <div id="genome_div" style = "display: none">
+
+                                <table class="filetable" id="fileInputTable" cellspacing="0" style = "width: 95%;">
+                                    <thead>
+                                        <tr>
+                                            <th id="gff3_Header">GFF3 File</th>
+                                            <th id="genome_Header_req">Genome File</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="ftb"><tr id="gff3_genome_input" class="sampleRow">
+                                            <!--<td>
+                                                <a href="#">1<img src="../images/cross_black.png" alt="Cross" style="width:12px;height:12px"></a>
+                                            </td>-->
+                                            <td>
+                                                <table class="filetable" id="gff3_input" cellspacing="0" style = "width: 95%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width: 10%">Delete</th>
+                                                            <th>Filename</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>                                                    
+                                                        <tr class="addFileRow" id="addGff3">
+                                                            <td class="addFile" colspan="3">
+                                                                <a href="javascript:void(0)" onclick="addGFF3()">Add File</a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table class="filetable" id="genome_input" cellspacing="0" style = "width: 95%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width: 10%">Delete</th>
+                                                            <th>Filename</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr class="addFileRow" id="addGenome">
+                                                            <td class="addFile" colspan="3">
+                                                                <a href="javascript:void(0)" onclick= "addGenome()">Add File</a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                        <div id="step-3" style="overflow: auto;" >
+                            <!--<h2 class="StepTitle">Select Degradome Abundance Type</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="abundanceType" id="use_raw_abundance" class="radio" onclick="changeAbundanceType()" checked />
+                                            <label for="use_raw_abundance">Use Raw Abundance</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="abundanceType" id="use_weighted_abundance" class="radio" onclick="changeAbundanceType()" />
+                                            <label for="use_weighted_abundance">Use Weighted Abundance</label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>-->
+
+                            <h2 class="StepTitle">Choose Allowed Categories</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="cat0" id="category_0" class="radio" onclick="setCategory(0)" checked />
+                                            <label for="category_0" style="width: 175px;">Category 0</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="cat1" id="category_1" class="radio" onclick="setCategory(1)" checked />
+                                            <label for="category_1" style="width: 175px;">Category 1</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="cat2" id="category_2" class="radio" onclick="setCategory(2)" checked />
+                                            <label for="category_2" style="width: 175px;">Category 2</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="cat3" id="category_3" class="radio" onclick="setCategory(3)" checked />
+                                            <label for="category_3" style="width: 175px;">Category 3</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="cat4" id="category_4" class="radio" onclick="setCategory(4)"/>
+                                            <label for="category_4" style="width: 175px;">Category 4</label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+
+                            <h2 class="StepTitle">Degradome Filters</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="useMfeFilter" id="use_mfe_filter" class="radio" onclick="setUseFilter()" checked />
+                                            <label for="use_mfe_filter">Use Minimum free energy filter</label>
+                                        </td>
+                                        <td>
+                                            <span id="filterVal" style="color: #777"> Minimum MFE threshold: </span>
+                                            <input type="text" name="cutOff" id="filter_cutoff" style ="margin-top: 2em; width: 60px;" value="0.7" onchange="checkFilterValue()"/>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="usePValueFilter" id="use_p_val" class="radio" onclick="setUsePValue()" checked />
+                                            <label for="use_p_val">Use <i>p</i>-value filter</label>
+                                        </td>
+                                        <td>
+                                            <span id="pVal" style="color: #777"> Maximum <i>p</i>-value: </span>
+                                            <input type="text" name="pValueCutOff" id="p_val_cutoff" style ="margin-top: 2em; width: 60px;" value="0.05" onchange="checkPValue()"/>
+
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </fieldset>
+                            <h2 class="StepTitle">Sequence Filters</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="useConservation" id="use_conservation" class="radio" onclick="setUseConservation()"/>
+                                            <label for="use_conservation">Use Conservation Filter</label>
+                                        </td>
+         
+                                        <td>
+                                            <input type="radio" name="useLowComplexityFilter" id="use_low_complexity_filter" class="radio" onclick="setUseLowComplexityFilter()" checked/>
+                                            <label for="use_low_complexity_filter">Filter Low Complexity Sequences</label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                            <h2 class="StepTitle">Search Settings</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <span id="numThreads" style="color: #777"> Number of Threads: </span>
+                                            <input type="text" id="threads_used" onchange="checkNumThreads()" style ="margin-top: 2em; margin-left: 15px; width: 60px;"/>
+                                        </td>
+                                        <td>
+                                            <span id="minSeqAbundance" style="color: #777"> Minimum sRNA Abundance: </span>
+                                            <input type="text" id="min_seq_abundance" onchange="checkMinAbundance()" value ="5" style ="margin-top: 2em; width: 60px;"/>
+                                        </td>
+                                        <td>
+                                            <span id="minFragmentLength" style="color: #777"> Minimum Tag Length: </span>
+                                            <input type="text" id="min_tag_length" onchange="checkMinTagLength()" value ="19" style ="margin-top: 2em; margin-left: 13px; width: 60px;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+
+                                        <td>
+                                            <span id="maxFragmentLength" style="color: #777"> Maximum Tag Length: </span>
+                                            <input type="text" id="max_tag_length" value ="21" onchange="checkMaxTagLength()" style ="margin-top: 2em; width: 60px;"/>
+                                        </td>
+                                        <td>
+                                            <span id="minSeqLength" style="color: #777"> Minimum sRNA Length: </span>
+                                            <input type="text" id="min_seq_length" value ="19" onchange="checkMinSRNALength()" style ="margin-top: 2em; margin-left: 25px; width: 60px;"/>
+                                        </td>
+                                        <td>
+                                            <span id="maxSeqLength" style="color: #777"> Maximum sRNA Length: </span>
+                                            <input type="text" id="max_seq_length" onchange="checkMaxSRNALength()" value ="24" style ="margin-top: 2em; width: 60px;"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                            <h2 class="StepTitle">Select Output Directory</h2>
+                            <fieldset  style="min-height:75px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <button type="button" id="set_output_dir" style ="margin-top: 2em; width: 120px;" onclick="selectOutputDir()">Select Directory</button>        
+                                        </td>
+                                        <td>
+                                            <span id="output_dir_label" style="color: #777"> Tool output directory: </span>
+                                            <input type="text" name="" id="output_dir" style ="margin-top: 2em; width: 250px;" disabled value = "Not Yet Selected"/>
+
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+
+                        </div>
+
+
+
+                    </div>
+                    <!-- End SmartWizard Content  	-->	
+
+                </td></tr>
+        </table>
+
+        <script>
+
+$(document).ready(function() {
+     Tipped.create('.simple-tooltip', {
+         behavior: 'hide'
+     });
+ });
+
+ var threadsSetUp = false;
+
+ function setThreads() {
+     if (typeof app !== "undefined") {
+         return app.getThreads();
+     } else {
+         return 1;
+     }
+ }
+
+ function addTranscriptome() {
+     var fileName = transcriptomeFilePicker();
+     if (fileName !== "") {
+         if ($('#transcriptome_input tr').length > 2) {
+             document.getElementById("transcriptome_input").deleteRow(1);
+         }
+         var rowContent = "<tr class=\"replicateRow\"><td class=\"label\"><a href=\"javascript:void(0)\" onclick=\"removeTranscriptomeRow(this)\"><img src=\"../images/cross_black.png\" alt=\"Cross\" style=\"width:12px;height:12px\"></a></td><td class=\"filename\"><a href=\"javascript:void(0)\">" + fileName + "</a></td></tr>"
+         $(rowContent).insertBefore('#addTranscriptome');
+     }
+ }
+
+ function addGFF3() {
+     var fileName = gff3FilePicker();
+     if (fileName !== "") {
+         if ($('#gff3_input tr').length > 2) {
+             document.getElementById("gff3_input").deleteRow(1);
+         }
+         var rowContent = "<tr class=\"replicateRow\"><td class=\"label\"><a href=\"javascript:void(0)\" onclick=\"removeGffRow(this)\"><img src=\"../images/cross_black.png\" alt=\"Cross\" style=\"width:12px;height:12px\"></a></td><td class=\"filename\"><a href=\"javascript:void(0)\">" + fileName + "</a></td></tr>"
+         $(rowContent).insertBefore('#addGff3');
+     }
+ }
+
+ function addGenome() {
+     var fileName = genomeFilePicker();
+     if (fileName !== "") {
+         if ($('#genome_input tr').length > 2) {
+             document.getElementById("genome_input").deleteRow(1);
+         }
+         var rowContent = "<tr class=\"replicateRow\"><td class=\"label\"><a href=\"javascript:void(0)\" onclick=\"removeGenomeRow(this)\"><img src=\"../images/cross_black.png\" alt=\"Cross\" style=\"width:12px;height:12px\"></a></td><td class=\"filename\"><a href=\"javascript:void(0)\">" + fileName + "</a></td></tr>"
+         $(rowContent).insertBefore('#addGenome');
+     }
+ }
+
+ function addGenomeOpt() {
+     var fileName = genomeFilePicker();
+     if (fileName !== "") {
+         if ($('#genome_input_opt tr').length > 2) {
+             document.getElementById("genome_input_opt").deleteRow(1);
+         }
+         var rowContent = "<tr class=\"replicateRow\"><td class=\"label\"><a href=\"javascript:void(0)\" onclick=\"removeGenomeRow(this)\"><img src=\"../images/cross_black.png\" alt=\"Cross\" style=\"width:12px;height:12px\"></a></td><td class=\"filename\"><a href=\"javascript:void(0)\">" + fileName + "</a></td></tr>"
+         $(rowContent).insertBefore('#addGenomeOpt');
+     }
+ }
+
+ function addDegradomeReplicate() {
+     var fileName = degradomeFilePicker();
+     if (fileName !== "") {
+         var rowContent = "<tr class=\"replicateRow\"><td class=\"label\"><a href=\"javascript:void(0)\" onclick=\"removeDegradomeRow(this)\"><img src=\"../images/cross_black.png\" alt=\"Cross\" style=\"width:12px;height:12px\"></a></td><td class=\"filename\"><a href=\"javascript:void(0)\">" + fileName + "</a></td></tr>"
+         $(rowContent).insertBefore('#addDegradomeReplicate');
+     }
+ }
+
+ function addSmallRNAReplicate() {
+     var fileName = smallRNAFilePicker();
+     if (fileName !== "") {
+         var rowContent = "<tr class=\"replicateRow\"><td class=\"label\"><a href=\"javascript:void(0)\" onclick=\"removeSmallRNARow(this)\"><img src=\"../images/cross_black.png\" alt=\"Cross\" style=\"width:12px;height:12px\"></a></td><td class=\"filename\"><a href=\"javascript:void(0)\">" + fileName + "</a></td></tr>";
+         $(rowContent).insertBefore('#addSRNAReplicate');
+     }
+
+
+
+ }
+
+ function smallRNAFilePicker() {
+     if (typeof app !== "undefined") {
+         return app.pickSmallRNAFile();
+     } else {
+         return "DEBUG FILE";
+     }
+ }
+
+ function degradomeFilePicker() {
+     if (typeof app !== "undefined") {
+         return app.pickDegradomeFile();
+     } else {
+         return "DEBUG FILE";
+     }
+ }
+
+ function transcriptomeFilePicker() {
+     if (typeof app !== "undefined") {
+         return app.pickTranscriptomeFile();
+     } else {
+         return "DEBUG FILE";
+     }
+ }
+
+ function genomeFilePicker() {
+     if (typeof app !== "undefined") {
+         return app.pickGenomeFile();
+     } else {
+         return "DEBUG FILE";
+     }
+ }
+
+ function gff3FilePicker() {
+     if (typeof app !== "undefined") {
+         return app.pickGFF3File();
+     } else {
+         return "DEBUG FILE";
+     }
+ }
+
+ function removeSmallRNARow(element) {
+
+     //Get the file name and remove using app
+     if (typeof app !== "undefined") {
+         var text = $(element).closest("tr").find('.filename').text();
+         if (app.removeSmallRNADataset(text)) {
+             $(element).closest("tr").remove();
+         }
+     }
+ }
+
+ function removeDegradomeRow(element) {
+
+     //Get the file name and remove using app
+     if (typeof app !== "undefined") {
+         var text = $(element).closest("tr").find('.filename').text();
+         if (app.removeDegradomeDataset(text)) {
+             $(element).closest("tr").remove();
+         }
+     }
+ }
+
+ function removeTranscriptomeRow(element) {
+
+     //Get the file name and remove using app
+     if (typeof app !== "undefined") {
+         if (app.removeTranscriptome()) {
+             $(element).closest("tr").remove();
+         }
+     }
+ }
+
+ function removeGenomeRow(element) {
+
+     //Get the file name and remove using app
+     if (typeof app !== "undefined") {
+         if (app.removeGenome()) {
+             $(element).closest("tr").remove();
+         }
+     }
+ }
+
+ function removeGffRow(element) {
+
+     //Get the file name and remove using app
+     if (typeof app !== "undefined") {
+         if (app.removeGff3()) {
+             $(element).closest("tr").remove();
+         }
+     }
+ }
+
+ function setUseTranscriptome() {
+
+     if (typeof app !== "undefined") {
+         app.setUsingTranscriptome(true);
+     }
+     document.getElementById('genome_div').style.display = 'none';
+     document.getElementById('transcriptome_div').style.display = 'inline';
+     document.getElementById('include_utr_label').style.display = 'none';
+     document.getElementById('include_utr').disabled = true;
+     
+ }
+
+ function setUseGenomeGFF() {
+     if (typeof app !== "undefined") {
+         app.setUsingGenomeGFF(true);
+     }
+
+     document.getElementById('transcriptome_div').style.display = 'none';
+     document.getElementById('genome_div').style.display = 'inline';
+     document.getElementById('include_utr_label').style.display = 'inline';
+     document.getElementById('include_utr').disabled = false;
+ }
+
+ function setAlignSmallRNAs() {
+     if (typeof app !== "undefined") {
+
+         if (!app.alignSmallRNAsToGenome()) {
+             document.getElementById('align_small_RNAs').checked = false;
+             document.getElementById('genome_Header').innerHTML = "Genome File (optional)";
+         } else {
+             document.getElementById('genome_Header').innerHTML = "Genome File";
+         }
+     }
+ }
+
+ function setUseFilter() {
+     if (typeof app !== "undefined") {
+         if (!app.usingFilter()) {
+             document.getElementById('use_mfe_filter').checked = false;
+             document.getElementById('filterVal').style.display = 'none';
+             document.getElementById('filter_cutoff').style.display = 'none';
+         } else {
+             document.getElementById('use_mfe_filter').checked = true;
+             document.getElementById('filterVal').style.display = 'inline';
+             document.getElementById('filter_cutoff').style.display = 'inline';
+         }
+     } else {
+         document.getElementById('use_mfe_filter').checked = false;
+         document.getElementById('filterVal').style.display = 'none';
+         document.getElementById('filter_cutoff').style.display = 'none';
+     }
+
+ }
+ 
+ function setUseLowComplexityFilter() {
+     if (typeof app !== "undefined") {
+         if (!app.usingLowComplexityFilter()) {
+             document.getElementById('use_low_complexity_filter').checked = false;
+         }
+         else
+         {
+            document.getElementById('use_low_complexity_filter').checked = true; 
+         }
+     }
+ }
+
+ function setUsePValue() {
+
+     if (typeof app !== "undefined") {
+         if (!app.usingPValue()) {
+             document.getElementById('use_p_val').checked = false;
+             document.getElementById('pVal').style.display = 'none';
+             document.getElementById('p_val_cutoff').style.display = 'none';
+         } else {
+             document.getElementById('use_p_val').checked = true;
+             document.getElementById('pVal').style.display = 'inline';
+             document.getElementById('p_val_cutoff').style.display = 'inline';
+         }
+     } else {
+  
+         document.getElementById('use_p_val').checked = false;
+         document.getElementById('pVal').style.display = 'none';
+         document.getElementById('p_val_cutoff').style.display = 'none';
+     }
+ }
+
+ function checkPValue() {
+     //Get the value
+     var n = document.getElementById('p_val_cutoff').value;
+     //Turn it into a float
+     n = parseFloat(n);
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The P-value must be a decimal number between 0 and 1");
+         document.getElementById('p_val_cutoff').value = '0.05';
+         app.setPValue(0.05);
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the p-value is between 0-1....
+     if (!(n >= 0 && n <= 1)) {
+         app.showErrorMessage("The P-value must be a decimal number between 0 and 1");
+         document.getElementById('p_val_cutoff').value = '0.05';
+         app.setPValue(0.05);
+         //$("#wizard").smartWizard('disableFinishButton');
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     app.setPValue(n);
+ }
+
+ function checkFilterValue() {
+     //Get the value
+     var n = document.getElementById('filter_cutoff').value;
+     //Turn it into a float
+     n = parseFloat(n);
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The MFE filter value must be a decimal number between 0 and 1");
+         document.getElementById('filter_cutoff').value = '0.70';
+         app.setFilterValue(0.7);
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the value is between 0-1....
+     if (!(n >= 0 && n <= 1)) {
+         app.showErrorMessage("The MFE filter value must be a decimal number between 0 and 1");
+         document.getElementById('filter_cutoff').value = '0.70';
+         app.setFilterValue(0.7);
+         //$("#wizard").smartWizard('disableFinishButton');
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     app.setFilterValue(n);
+ }
+
+ function checkMinSRNALength() {
+     //Get the value
+     var n = document.getElementById('min_seq_length').value;
+     //Turn it into a int
+     n = parseInt(n);
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The sRNA length must be between 18-25");
+         document.getElementById('min_seq_length').value = '19';
+         app.setMinSRNALength(19);
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the value is between 18-25
+     if (!(n >= 18 && n <= 25)) {
+         app.showErrorMessage("The sRNA length must be between 18-25");
+         document.getElementById('min_seq_length').value = '19';
+         app.setMinSRNALength(19);
+         //$("#wizard").smartWizard('disableFinishButton');
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     app.setMinSRNALength(n);
+ }
+
+ function checkMaxSRNALength() {
+     //Get the value
+     var n = document.getElementById('max_seq_length').value;
+     //Turn it into a int
+     n = parseInt(n);
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The sRNA length must be between 18-25");
+         document.getElementById('max_seq_length').value = '24';
+         app.setMaxSRNALength(24);
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the value is between 18-25
+     if (!(n >= 18 && n <= 25)) {
+         app.showErrorMessage("The sRNA length must be between 18-25");
+         document.getElementById('max_seq_length').value = '24';
+         app.setMaxSRNALength(24);
+         //$("#wizard").smartWizard('disableFinishButton');
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     app.setMaxSRNALength(n);
+ }
+
+ //tag
+
+ function checkMinTagLength() {
+     //Get the value
+     var n = document.getElementById('min_tag_length').value;
+     //Turn it into a int
+     n = parseInt(n);
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The tag length must be a number between 15 and 30");
+         document.getElementById('min_tag_length').value = '20';
+         app.setMinTagLength(20);
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the value is between 18-25
+     if (!(n > 15)) {
+         app.showErrorMessage("The tag length must be at least 16");
+         document.getElementById('min_tag_length').value = '20';
+         app.setMinTagLength(20);
+         //$("#wizard").smartWizard('disableFinishButton');
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     app.setMinTagLength(n);
+ }
+
+ function checkMaxTagLength() {
+     //Get the value
+     var n = document.getElementById('max_tag_length').value;
+     //Turn it into a int
+     n = parseInt(n);
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The tag length must be a number between 15 and 30");
+         document.getElementById('max_tag_length').value = '21';
+         app.setMaxTagLength(21);
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the value is between 18-25
+     if (!(n > 15)) {
+         app.showErrorMessage("The minimum tag length must be at least 16");
+         document.getElementById('max_tag_length').value = '21';
+         app.setMaxTagLength(21);
+         //$("#wizard").smartWizard('disableFinishButton');
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     app.setMaxTagLength(n);
+ }
+
+ function checkNumThreads() {
+     //Get the value
+     var n = document.getElementById('threads_used').value;
+     //Turn it into a int
+     n = parseInt(n);
+
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The number of threads must greater than or equal to 1");
+         document.getElementById('threads_used').value = setThreads();
+         app.setNumThreads(setThreads());
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the value is 1 or greater
+     if (!(n >= 1)) {
+         app.showErrorMessage("The number of threads must greater than or equal to 1");
+         document.getElementById('threads_used').value = setThreads();
+         app.setNumThreads(setThreads());
+         //$("#wizard").smartWizard('disableFinishButton');
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     app.setNumThreads(n);
+ }
+
+ function checkMinAbundance() {
+     //Get the value
+     var n = document.getElementById('min_seq_abundance').value;
+     //Turn it into a int
+     n = parseInt(n);
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The minimum abundance must greater than or equal to 1");
+         document.getElementById('min_seq_abundance').value = '1';
+         app.setMinAbundance(1);
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the value is 1 or greater
+     if (!(n >= 1)) {
+         app.showErrorMessage("The minumum abundance must greater than or equal to 1");
+         document.getElementById('min_seq_abundance').value = '1';
+         app.setMinAbundance(1);
+         return;
+     }
+
+     app.setMinAbundance(n);
+ }
+
+ function changeAbundanceType() {
+     if (typeof app !== "undefined") {
+         app.changeAbundanceType();
+     }
+ }
+
+ function setUseConservation() {
+     if (typeof app !== "undefined") {
+         if (app.setUseConservation()) {
+             document.getElementById('use_conservation').checked = true;
+         } else {
+             document.getElementById('use_conservation').checked = false;
+         }
+     }
+ }
+ 
+  function setIncludeUTR() {
+     if (typeof app !== "undefined") {
+         if (app.includeUTR()) {
+             document.getElementById('include_utr').checked = true;
+         } else {
+             document.getElementById('include_utr').checked = false;
+         }
+     }
+ }
+
+ function setCategory(n) {
+     if (typeof app !== "undefined") {
+         if (app.setCategory(n)) {
+             document.getElementById('category_' + n).checked = true;
+         } else {
+             document.getElementById('category_' + n).checked = false;
+         }
+
+     }
+ }
+ 
+
+ function selectOutputDir() {
+     if (typeof app !== "undefined") {
+         var dir = app.setOutputDir();
+
+         document.getElementById('output_dir').value = dir;
+
+     } else {
+         document.getElementById('output_dir').value = 'debug';
+     }
+ }
+ 
+ function setDefaultStringent() {
+
+  if (app.setDefaultStringentParameters()) {
+   document.getElementById('category_0').checked = true;
+   document.getElementById('category_1').checked = true;
+   document.getElementById('category_2').checked = true;
+   document.getElementById('category_3').checked = true;
+   document.getElementById('category_4').checked = false;
+   document.getElementById('use_mfe_filter').checked = true;
+   document.getElementById('filterVal').style.display = 'inline';
+   document.getElementById('filter_cutoff').style.display = 'inline';
+   document.getElementById('filter_cutoff').value = '0.70';
+   document.getElementById('min_seq_abundance').value = '5';
+  }
+
+ }
+
+ function setDefaultFlexible() {
+  if (app.setDefaultFlexibleParameters()) {
+   document.getElementById('category_0').checked = true;
+   document.getElementById('category_1').checked = true;
+   document.getElementById('category_2').checked = true;
+   document.getElementById('category_3').checked = true;
+   document.getElementById('category_4').checked = true;
+   document.getElementById('use_mfe_filter').checked = true;
+   document.getElementById('filterVal').style.display = 'inline';
+   document.getElementById('filter_cutoff').style.display = 'inline';
+   document.getElementById('filter_cutoff').value = '0.7';
+   document.getElementById('min_seq_abundance').value = '1';
+  }
+
+ }
+ 
+        </script>
+    </body>
+</html>

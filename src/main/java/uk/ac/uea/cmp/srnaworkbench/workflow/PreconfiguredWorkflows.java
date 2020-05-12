@@ -38,11 +38,12 @@ import uk.ac.uea.cmp.srnaworkbench.database.WF.DatabaseWorkflowModule;
 import uk.ac.uea.cmp.srnaworkbench.database.WF.DatabaseWorkflowRunner;
 import uk.ac.uea.cmp.srnaworkbench.database.entities.Sequence_Entity;
 import uk.ac.uea.cmp.srnaworkbench.exceptions.DuplicateIDException;
+import uk.ac.uea.cmp.srnaworkbench.exceptions.InitialisationException;
 import uk.ac.uea.cmp.srnaworkbench.io.GenomeManager;
-import uk.ac.uea.cmp.srnaworkbench.tools.degradometoolWF.DegradomeToolWorkflowModule;
-import uk.ac.uea.cmp.srnaworkbench.tools.degradometoolWF.DegradomeToolWorkflowModuleRunner;
-import uk.ac.uea.cmp.srnaworkbench.tools.mirpare.MiRPAREModule;
-import uk.ac.uea.cmp.srnaworkbench.tools.mirpare.MiRPAREWorkflowRunner;
+import uk.ac.uea.cmp.srnaworkbench.tools.paresnip2WF.Paresnip2WorkflowModule;
+import uk.ac.uea.cmp.srnaworkbench.tools.paresnip2WF.Paresnip2WorkflowModuleRunner;
+import uk.ac.uea.cmp.srnaworkbench.tools.parefirst.PAREfirstModule;
+import uk.ac.uea.cmp.srnaworkbench.tools.parefirst.PAREfirstWorkflowRunner;
 import uk.ac.uea.cmp.srnaworkbench.tools.srnaConservation.ConservationModule;
 import uk.ac.uea.cmp.srnaworkbench.tools.srnaConservation.ConservationRunner;
 import uk.ac.uea.cmp.srnaworkbench.tools.interactionConservation.InteractionConservationModule;
@@ -58,17 +59,29 @@ import uk.ac.uea.cmp.srnaworkbench.tools.filemanagerWF.FileManagerWorkflowModule
 import uk.ac.uea.cmp.srnaworkbench.tools.filemanagerWF.FileManagerWorkflowModuleRunner;
 import uk.ac.uea.cmp.srnaworkbench.tools.filter2WF.Filter2WorkflowModule;
 import uk.ac.uea.cmp.srnaworkbench.tools.filter2WF.Filter2WorkflowModuleRunner;
+import uk.ac.uea.cmp.srnaworkbench.tools.firepat.fileinput.FiRePatDataInputWorkflowModule;
+import uk.ac.uea.cmp.srnaworkbench.tools.firepat.fileinput.FiRePatDataInputWorkflowModuleRunner;
+import uk.ac.uea.cmp.srnaworkbench.tools.firepatWF.FiRePatToolWorkflowModule;
+import uk.ac.uea.cmp.srnaworkbench.tools.firepatWF.FiRePatToolWorkflowModuleRunner;
 import uk.ac.uea.cmp.srnaworkbench.tools.locifilter.LociFilterModule;
 import uk.ac.uea.cmp.srnaworkbench.tools.locifilter.LociFilterWorkflowRunner;
 import uk.ac.uea.cmp.srnaworkbench.tools.mircat.MiRCatParams;
 import uk.ac.uea.cmp.srnaworkbench.tools.mircat.WF.MiRCatModuleRunner;
 import uk.ac.uea.cmp.srnaworkbench.tools.mircat.WF.MiRCatModule;
+import uk.ac.uea.cmp.srnaworkbench.tools.mircat2.MiRCat2Params;
 import uk.ac.uea.cmp.srnaworkbench.tools.mircat2.WF.MiRCat2Module;
 import uk.ac.uea.cmp.srnaworkbench.tools.mircat2.WF.miRCat2ModuleRunner;
 import uk.ac.uea.cmp.srnaworkbench.tools.normalise.WF.NormalisationWorkflowServiceModuleRunner;
 import uk.ac.uea.cmp.srnaworkbench.tools.paresnip.PAREsnipModule;
 import uk.ac.uea.cmp.srnaworkbench.tools.paresnip.PAREsnipRunner;
 import uk.ac.uea.cmp.srnaworkbench.tools.paresnip.ParesnipParams;
+import uk.ac.uea.cmp.srnaworkbench.tools.paresnip2.fileinput.Paresnip2DataInputWorkflowModule;
+import uk.ac.uea.cmp.srnaworkbench.tools.paresnip2.fileinput.Paresnip2DataInputWorkflowModuleRunner;
+import uk.ac.uea.cmp.srnaworkbench.tools.paresnip2.fileinput.Paresnip2InputFiles;
+import uk.ac.uea.cmp.srnaworkbench.tools.paresnip2.targetrules.Paresnip2TargetRulesWorkflowModule;
+import uk.ac.uea.cmp.srnaworkbench.tools.paresnip2.targetrules.Paresnip2TargetRulesWorkflowModuleRunner;
+import uk.ac.uea.cmp.srnaworkbench.tools.parefirst.paresnip2.Paresnip2WithinPAREfirstWorkflowModule;
+import uk.ac.uea.cmp.srnaworkbench.tools.parefirst.paresnip2.Paresnip2WithinPAREfirstWorkflowModuleRunner;
 import uk.ac.uea.cmp.srnaworkbench.tools.qualitycheck.WF.ReportWorkflowModule;
 import uk.ac.uea.cmp.srnaworkbench.tools.qualitycheck.WF.ReportWorkflowModuleRunner;
 import uk.ac.uea.cmp.srnaworkbench.utils.AppUtils;
@@ -88,12 +101,11 @@ public class PreconfiguredWorkflows extends Application {
     private PreconfiguredWorkflows() {
 
     }
-
-    public static String createDefaultMiRPAREWorkflow(Rectangle2D frameSize) throws Exception {
-
-        AppUtils.INSTANCE.setCommandLine(true);
+    
+    public static String createDefaultPAREfirstWorkflow(Rectangle2D frameSize) throws Exception {
+        
         WorkflowManager.getInstance().reset();
-        WorkflowManager.getInstance().setName("mirpare");
+        WorkflowManager.getInstance().setName("parefirst");
         WorkflowManager.getInstance().transcriptomeOptional = false;
         WorkflowManager.getInstance().degradomeOptional = false;
         WorkflowManager.getInstance().maxSamples = 1;
@@ -102,7 +114,23 @@ public class PreconfiguredWorkflows extends Application {
         DatabaseWorkflowModule.getInstance().setFrameSize(frameSize);
         DatabaseWorkflowModule.getInstance().setPos(60, (float) frameSize.getMaxY() / 4.0f);
 
-        File jsonFile = new File(Tools.WEB_SCRIPTS_DIR.getAbsolutePath() + IOUtils.DIR_SEPARATOR + "json" + IOUtils.DIR_SEPARATOR + "miRPARE.json");
+        File jsonFile = new File(Tools.WEB_SCRIPTS_DIR.getAbsolutePath() + IOUtils.DIR_SEPARATOR + "json" + IOUtils.DIR_SEPARATOR + "PAREfirst.json");
+        WorkflowManager.getInstance().outputJsonFile(jsonFile);
+        // return a file URL which appears to be more compatible with D3 javascript on windows
+        return jsonFile.toURI().toURL().toString();
+
+    }
+    
+    public static String createDefaultPAREfirstWorkflow() throws Exception {
+
+        WorkflowManager.getInstance().reset();
+        WorkflowManager.getInstance().setName("parefirst");
+        WorkflowManager.getInstance().transcriptomeOptional = false;
+        WorkflowManager.getInstance().degradomeOptional = false;
+        WorkflowManager.getInstance().maxSamples = 1;
+        DatabaseWorkflowRunner DB_runner = new DatabaseWorkflowRunner();
+        WorkflowManager.getInstance().addModule(DB_runner);
+        File jsonFile = new File(Tools.WEB_SCRIPTS_DIR.getAbsolutePath() + IOUtils.DIR_SEPARATOR + "json" + IOUtils.DIR_SEPARATOR + "PAREfirst.json");
         WorkflowManager.getInstance().outputJsonFile(jsonFile);
         // return a file URL which appears to be more compatible with D3 javascript on windows
         return jsonFile.toURI().toURL().toString();
@@ -158,7 +186,7 @@ public class PreconfiguredWorkflows extends Application {
         float centreY = (minY + height) / 2;
 
         String id = "PAREsnip";
-        PAREsnipModule paresnipModule = new PAREsnipModule(id, "PAREsnip", frameSize);
+        PAREsnipModule paresnipModule = new PAREsnipModule(id, "PAREsnip", frameSize, false);
         PAREsnipRunner paresnipRunner = new PAREsnipRunner(paresnipModule);
         WorkflowManager.getInstance().addModule(paresnipRunner);
         // inputs
@@ -218,46 +246,27 @@ public class PreconfiguredWorkflows extends Application {
         return jsonFile.toURI().toURL().toString();
 
     }
-   
-    public static String runCommandLineWorkflowMiRCat(String workflow, File jsonPath, Rectangle2D frameSize) throws Exception {
-        String json = createDefaultMiRPAREWorkflow(frameSize);
-        JsonObject jsonObject = JsonUtils.parseJsonFile(jsonPath);
-        WorkflowManager.getInstance().setUpDatabase(jsonObject);
-        MiRCatParams miRCatParams = WorkflowManager.getInstance().getMiRCatParameters(jsonObject);
-        configureMiRCatWorkflow(miRCatParams, frameSize);
-        return json;
-    }
 
-    public static String runCommandLineWorkflowPAREsnip(String workflow, File jsonPath, Rectangle2D frameSize) throws Exception {
-        String json = createDefaultMiRPAREWorkflow(frameSize);
-        JsonObject jsonObject = JsonUtils.parseJsonFile(jsonPath);
-        WorkflowManager.getInstance().setUpDatabase(jsonObject);
-        List<ParesnipParams> paresnipParams = WorkflowManager.getInstance().getPAREsnipParameters(jsonObject);
-        configurePAREsnipWorkflow(paresnipParams.get(0), frameSize);
-        return json;
-    }
-
-    public static String runCommandLineWorkflowMiRPARE(String workflow, File jsonPath, Rectangle2D frameSize) {
+    public static String runCommandLineWorkflowPAREfirst(String workflow, File jsonPath) {
         String str = "";
         JsonObject jsonObject = null;
-
+        
         try {
             jsonObject = JsonUtils.parseJsonFile(jsonPath);
         } catch (Exception ex) {
-            MessageBox.messageJFX("Workbench Error", "Unable to load workflow", "There was an error parsing the JSON file: " + ex);
+            LOGGER.log (Level.SEVERE, null, "There was an error parsing the JSON file: " + ex);
         }
         try {
-            createDefaultMiRPAREWorkflow(frameSize);
+            createDefaultPAREfirstWorkflow();
             WorkflowManager.getInstance().setUpDatabase(jsonObject);
-            MiRCatParams miRCatParams = WorkflowManager.getInstance().getMiRCatParameters(jsonObject);
-            List<ParesnipParams> paresnipParams = WorkflowManager.getInstance().getPAREsnipParameters(jsonObject);
-            str = configureMiRPAREWorkflow(miRCatParams, paresnipParams.get(0), frameSize);
+            WorkflowManager.getInstance().getPAREfirstParameters(jsonObject);
+            str = configurePAREfirstWorkflow(Rectangle2D.EMPTY);
         } catch (Exception ex) {
-            MessageBox.messageJFX("Workbench Error", "Unable to load workflow", "There was an error loading the workflow: " + ex);
+            LOGGER.log (Level.SEVERE, null, "There was an error loading the workflow: " + ex);
         }
         return str;
     }
-
+    
     public static void parseFA(File input, File output) throws FileNotFoundException {
         Map<String, Integer> rnas = new HashMap<>();
         Scanner in = new Scanner(input);
@@ -283,45 +292,105 @@ public class PreconfiguredWorkflows extends Application {
         writer.close();
     }
 
-    public static String configureMiRPAREWorkflow(MiRCatParams mircatParams, ParesnipParams paresnipParams, Rectangle2D frameSize) throws IOException, FileNotFoundException, DuplicateIDException, Exception {
-        // add genome to workflow
-        if (WorkflowManager.getInstance().getInputData("genome") == null) {
-            Path genomePath = HTMLWizardViewController.getGenome();
-            WorkflowManager.getInstance().addInputDataContainerList("genome", WorkflowManager.CompatibilityKey.GENOME, 1, 1);
-            WorkflowManager.getInstance().addInputData("genome", WorkflowManager.CompatibilityKey.GENOME, new GenomeManager(genomePath));
+    public static void createRedundantFASTA(File input, File output) throws FileNotFoundException {
+        Map<String, Integer> rnas = new HashMap<>();
+        Scanner in = new Scanner(input);
+        while (in.hasNextLine()) {
+            String line = in.nextLine();
+            if (line.startsWith(">") && !line.isEmpty()) {
+                String[] seqData = line.split("\\(");
+
+                if (seqData.length > 0) {
+                    String tempAbun = seqData[1].replace(")", "");
+                    int abundance = Integer.parseInt(tempAbun.trim());
+                    String sequence = seqData[0].replaceAll(">", "").trim();
+                
+                    rnas.put(sequence, abundance);
+                }
+            }
         }
+        in.close();
 
-        // add transcriptome to workflow
-        Path transcriptPath = HTMLWizardViewController.getTranscriptome();
-        WorkflowManager.getInstance().addInputDataContainerList("transcripts", CompatibilityKey.TRANSCRIPT_FILE, 1, 1);
-        WorkflowManager.getInstance().addInputData("transcripts", CompatibilityKey.TRANSCRIPT_FILE, transcriptPath);
-
+        PrintWriter writer = new PrintWriter(output);
+        for (String rna : rnas.keySet()) {
+            for(int a=0 ; a < rnas.get(rna) ; a++){
+                writer.println(">" + rna );
+                writer.println(rna);
+            }
+        }
+        writer.close();
+    }
+    
+    
+    public static String configurePAREfirstWorkflow( Rectangle2D frameSize) throws Exception {
+        File out = new File(Tools.PAREfirst_DATA_Path);
+        if(!out.exists())
+            out.mkdir();
+        File tmp_dir = new File("tmp");
+        if(!tmp_dir.exists())
+            tmp_dir.mkdir();
         ArrayList<Integer> degDataTypes = new ArrayList<>();
         // add degradomes to workflow
         Map<String, List<Pair<Path, Integer>>> degradomes = HTMLWizardViewController.getDegradomes();
         WorkflowManager.getInstance().addInputDataContainerList("degradomes", CompatibilityKey.DEGRADOME_FILE, 1, -1);
         int nDegradomes = 0;
+        boolean isDegradome = false;    // is the input degradome OR PAREsnip2 results
+        
+        // input data to PAREsnip using Database input
+        Paresnip2InputFiles input = Paresnip2InputFiles.getInstance();
+        
+        input.setOuputDirectory(new File(Tools.PAREfirst_DATA_Path + DIR_SEPARATOR + "paresnip2_output"));
+        // add degradome or PAREsnip2 resultss to workflow
         for (String key : degradomes.keySet()) {
             for (Pair<Path, Integer> pair : degradomes.get(key)) {
-                WorkflowManager.getInstance().addInputData("degradomes", CompatibilityKey.DEGRADOME_FILE, pair.getKey().toFile());
+                File f = pair.getKey().toFile();
+                WorkflowManager.getInstance().addInputData("degradomes", CompatibilityKey.DEGRADOME_FILE, f);
                 nDegradomes++;
                 degDataTypes.add(pair.getValue());
+                
+                if (degDataTypes.get(0) == 0) {
+                    isDegradome = true;
+                    input.addDegradomeReplicate(f);
+                }
             }
         }
-        //  System.out.println(nDegradomes + " degradomes");
+
+        // add genome to workflow
+        if (WorkflowManager.getInstance().getInputData("genome") == null) {
+            Path genomePath = HTMLWizardViewController.getGenome();
+            WorkflowManager.getInstance().addInputDataContainerList("genome", WorkflowManager.CompatibilityKey.GENOME, 1, 1);
+            WorkflowManager.getInstance().addInputData("genome", WorkflowManager.CompatibilityKey.GENOME, new GenomeManager(genomePath));
+            if (isDegradome) 
+                input.addGenome(genomePath.toFile());
+        }
+        
+        // add transcriptome to workflow
+        if (isDegradome) {
+            Path transcriptPath = HTMLWizardViewController.getTranscriptome();
+            WorkflowManager.getInstance().addInputDataContainerList("transcripts", CompatibilityKey.TRANSCRIPT_FILE, 1, 1);
+            WorkflowManager.getInstance().addInputData("transcripts", CompatibilityKey.TRANSCRIPT_FILE, transcriptPath);
+            input.addTranscriptome(transcriptPath.toFile());
+        }
+        
         // create srna input queries
         Map<String, List<Path>> srnaSamples = HTMLWizardViewController.getSamples();
         WorkflowManager.getInstance().addInputDataContainerList("srnaQuery", CompatibilityKey.sRNA_QUERY, 1, -1);
         int nSamples = 0;
         for (String key : srnaSamples.keySet()) {
             for (Path path : srnaSamples.get(key)) {
+                
                 HQLQuerySimple q = new HQLQuerySimple(Sequence_Entity.class);
                 q.addWhere("A.filename = '" + path.getFileName() + "'");
                 WorkflowManager.getInstance().addInputData("srnaQuery", CompatibilityKey.sRNA_QUERY, q);
                 nSamples++;
+                if(isDegradome){
+                    // creating redundant file for PAREsnip2
+                    File sample_redundant = new File(tmp_dir.getAbsolutePath() + DIR_SEPARATOR  + path.getFileName().toString().replace(".fa", "_redundant.fa"));
+                    createRedundantFASTA(path.toFile(), sample_redundant);
+                    input.addSmallRNAReplicate(sample_redundant);
+                }
             }
         }
-        //  System.out.println(nDegradomes + " srna samples");
         // positioning
         int blockSize = 100;
         int widthSpacing = blockSize + blockSize / 2;
@@ -330,21 +399,17 @@ public class PreconfiguredWorkflows extends Application {
         float minX = 60.0f;
         float paresnipMinY = minY;
         float paresnipMaxY = paresnipMinY + ((nDegradomes - 1) * blockSize);
-        float mircatMinY = paresnipMaxY + blockSize * 2;
+        float mircat2MinY = paresnipMaxY + blockSize * 2;
         float centreY = (minY + height) / 2;
 
         // database module should already be in place        
         // add normalisation module
         if (nSamples > 1) {
-
             NormalisationWorkflowServiceModule newNormaliser = new NormalisationWorkflowServiceModule(
                     "Normaliser", frameSize);
             newNormaliser.setPos(600, (float) frameSize.getMaxY() / 4);
-//
             NormalisationWorkflowServiceModuleRunner normRunner = new NormalisationWorkflowServiceModuleRunner(newNormaliser);
-
             WorkflowManager.getInstance().addModule(normRunner);
-
             // inputs
             WorkflowManager.getInstance().connectModule2Module("Database", "Normaliser");
 
@@ -360,175 +425,131 @@ public class PreconfiguredWorkflows extends Application {
 //        WorkflowManager.getInstance().connectDB2Module("srnaQuery", "sRNA Conservation Filter", "input");
             WorkflowManager.getInstance().getModule("sRNAConservationFilter").setPos(minX + widthSpacing, (paresnipMinY + paresnipMaxY) / 2);
         }
-        // add paresnip modules
+        // add paresnip2 modules
         for (int i = 0; i < nDegradomes; i++) {
-            String id = String.format("PAREsnip%d", i + 1);
-            PAREsnipModule paresnipModule = new PAREsnipModule(id, String.format("PAREsnip (%d)", i + 1), frameSize);
+            String id = String.format("PAREsnip2");
+            PAREsnipModule paresnipModule = new PAREsnipModule(id, String.format("PAREsnip2 Results"), frameSize, true);
+            paresnipModule.runPAREsnip = false;
             if (degDataTypes.get(i) == 0) {
-                paresnipModule.runPAREsnip = true;
-            } else {
-                paresnipModule.runPAREsnip = false;
-            }
+                //paresnipModule.runPAREsnip = true;
+                paresnipModule.isPAREsnip2 = true;
+                String paresnip2id = String.format("PAREsnip2Settings");
+
+                //create the PAREsnip 2 data input module and add it to the workflow
+                Paresnip2WithinPAREfirstWorkflowModule paresnip2_module = new Paresnip2WithinPAREfirstWorkflowModule(paresnip2id, frameSize);
+                paresnip2_module.setPos(260, (float) frameSize.getMaxY() / 4);
+                Paresnip2WithinPAREfirstWorkflowModuleRunner paresnip2_runner = new Paresnip2WithinPAREfirstWorkflowModuleRunner(paresnip2_module);
+                WorkflowManager.getInstance().addModule(paresnip2_runner);
+                
+                WorkflowManager.getInstance().connectModule2Module("Database", paresnip2id);
+                //create the PAREsnip 2 module and add it to the workflow
+                
+            } 
             PAREsnipRunner paresnipRunner = new PAREsnipRunner(paresnipModule);
             WorkflowManager.getInstance().addModule(paresnipRunner);
             // inputs
             WorkflowManager.getInstance().connectDB2Module("genome", 0, id, "genome");
             WorkflowManager.getInstance().connectDB2Module("degradomes", i, id, "degradome");
-            WorkflowManager.getInstance().connectDB2Module("transcripts", 0, id, "transcripts");
+            if (degDataTypes.get(i) == 0) {
+                WorkflowManager.getInstance().connectDB2Module("transcripts", 0, id, "transcripts");
+            }
             if (nSamples > 1) {
                 WorkflowManager.getInstance().connectModule2Module("sRNAConservationFilter", "output", id, "srnaQuery");
             } else {
                 WorkflowManager.getInstance().connectDB2Module("srnaQuery", id, "srnaQuery");
-                WorkflowManager.getInstance().connectModule2Module("Database", id);
+                if (degDataTypes.get(0) == 0) {
+                    WorkflowManager.getInstance().connectModule2Module("PAREsnip2Settings", id);
+                } else {
+                    WorkflowManager.getInstance().connectModule2Module("Database", id);
+                }
+                //WorkflowManager.getInstance().connectModule2Module("Database", id);
             }
 
             if (i > 0) {
-                String previousPAREsnipID = String.format("PAREsnip%d", i);
+                String previousPAREsnipID = String.format("PAREsnip2");
                 WorkflowManager.getInstance().connectModule2Module(previousPAREsnipID, id);
             }
-            paresnipModule.setPos(minX + widthSpacing * 2, paresnipMinY + blockSize * i);
-            if (paresnipParams != null) {
-                paresnipModule.setParameters(paresnipParams);
-            }
+            paresnipModule.setPos(460, (float) frameSize.getMaxY() / 4);
+//            if (paresnipParams != null) {
+//                paresnipModule.setParameters(paresnipParams);
+//            }
         }
-        String lastPAREsnipID = String.format("PAREsnip%d", nDegradomes);
-        // WorkflowManager.getInstance().connectModule2Module(lastPAREsnipID, "miRCat1");
-        // add interaction module
+        // add interaction conservation module
         if (nDegradomes > 1) {
             InteractionConservationModule interactionConservationModule = new InteractionConservationModule("InteractionConservationFilter", "Interaction Conservation Filter", frameSize);
             InteractionConservationRunner interactionConservationRunner = new InteractionConservationRunner(interactionConservationModule);
             WorkflowManager.getInstance().addModule(interactionConservationRunner);
             // inputs
             for (int i = 0; i < nDegradomes; i++) {
-                String id = String.format("PAREsnip%d", i + 1);
+                String id = String.format("PAREsnip2");
                 WorkflowManager.getInstance().connectModule2Module(id, "interactionQuery", "InteractionConservationFilter", "input");
             }
             WorkflowManager.getInstance().getModule("InteractionConservationFilter").setPos(minX + widthSpacing * 3, paresnipMinY);
         }
 
-        // add loci filter
+        // add loci filter, it keep the sRNAs that are in the same loci of the functional sRNAs
         for (int i = 0; i < nSamples; i++) {
-            String id = String.format("LociFilter%d", i + 1);
-            LociFilterModule lociModule = new LociFilterModule(id, String.format("Loci Filter (%d)", i + 1), frameSize);
+            String id = String.format("LociFilter");
+            LociFilterModule lociModule = new LociFilterModule(id, String.format("Loci Filter", i + 1), frameSize);
             LociFilterWorkflowRunner lociRunner = new LociFilterWorkflowRunner(lociModule);
             WorkflowManager.getInstance().addModule(lociRunner);
             if (nDegradomes > 1) {
                 WorkflowManager.getInstance().connectModule2Module("InteractionConservationFilter", "output", id, "targetQuery");
             } else {
-                WorkflowManager.getInstance().connectModule2Module("PAREsnip1", "interactionQuery", id, "targetQuery");
+                WorkflowManager.getInstance().connectModule2Module("PAREsnip2", "interactionQuery", id, "targetQuery");
             }
             WorkflowManager.getInstance().connectDB2Module("srnaQuery", i, id, "srnaomeQuery");
+            lociModule.setPos(660, (float) frameSize.getMaxY() / 4);
         }
 
-        // add mircat modules
+        // add mircat2 modules
         for (int i = 0; i < nSamples; i++) {
-            String id = String.format("miRCat%d", i + 1);
-            String lociFilterID = String.format("LociFilter%d", i + 1);
-            MiRCatModule mircatModule = new MiRCatModule(id, String.format("miRCat (%d)", i + 1), frameSize);
-            MiRCatModuleRunner mircatRunner = new MiRCatModuleRunner(mircatModule);
-            WorkflowManager.getInstance().addModule(mircatRunner);
+            String id = String.format("miRCat2");
+            String lociFilterID = String.format("LociFilter");
+            MiRCat2Module mircat2Module = new MiRCat2Module(id, String.format("miRCat2"), frameSize, true);
+            miRCat2ModuleRunner mircat2Runner = new miRCat2ModuleRunner(mircat2Module);
+            WorkflowManager.getInstance().addModule(mircat2Runner);
             // inputs
             WorkflowManager.getInstance().connectDB2Module("genome", 0, id, "genome");
             WorkflowManager.getInstance().connectModule2Module(lociFilterID, "output", id, "srnaQuery");
-            //WorkflowManager.getInstance().connectDB2Module("srnaQuery", 0, id, "srnaQuery");
+//        WorkflowManager.getInstance().connectModule2Module(lociFilterID, id);
+//            WorkflowManager.getInstance().connectDB2Module("srnaQuery", 0, id, "srnaQuery");
             //  if (nSamples > 1) {
             //      WorkflowManager.getInstance().connectModule2Module("Normaliser", id);
             // } else {
             //     WorkflowManager.getInstance().connectModule2Module("Database", id);
             // }
             if (i != 0) {
-
-                //} else {
-                String previousMiRCatID = String.format("miRCat%d", i);
-                WorkflowManager.getInstance().connectModule2Module(previousMiRCatID, id);
+                String previousMiRCat2ID = String.format("miRCat2");
+                WorkflowManager.getInstance().connectModule2Module(previousMiRCat2ID, id);
             }
-            mircatModule.setPos(minX + widthSpacing * 4, mircatMinY + blockSize * i);
-            if (mircatParams != null) {
-                mircatModule.setParameters(mircatParams);
-            }
-
+            mircat2Module.setPos(860, (float) frameSize.getMaxY() / 4);         
         }
 
-        // add mirplant module
-        //  MiRPlantModule mirPlantModule = new MiRPlantModule("mirplant");
-        // MiRPlantRunner mirPlantRunner = new MiRPlantRunner(mirPlantModule);
-        //WorkflowManager.getInstance().addModule(mirPlantRunner);
-        // add tasi module
-        /*TasiModule tasiModule = new TasiModule("tasi", "TASI", frameSize);
-         TasiWorkflowRunner tasiRunner = new TasiWorkflowRunner(tasiModule);
-         WorkflowManager.getInstance().addModule(tasiRunner);
-         WorkflowManager.getInstance().connectDB2Module("genome", 0, "tasi", "genome");
-         WorkflowManager.getInstance().connectModule2Module("LociFilter1", "output", "tasi", "srnaQuery");
-         //   WorkflowManager.getInstance().connectModule2Module("Database", "tasi");
-         */
-        // add mirpare module
-        MiRPAREModule mirpareModule = new MiRPAREModule("ResultVisualiser", "Result Visualiser", frameSize);
-        MiRPAREWorkflowRunner biofuncRunner = new MiRPAREWorkflowRunner(mirpareModule);
+        // add parefirst module
+        PAREfirstModule parefirstModule = new PAREfirstModule("ResultVisualiser", "Result Visualiser", frameSize);
+        PAREfirstWorkflowRunner biofuncRunner = new PAREfirstWorkflowRunner(parefirstModule);
         WorkflowManager.getInstance().addModule(biofuncRunner);
         // inputs
         for (int i = 0; i < nSamples; i++) {
-            String id = String.format("miRCat%d", i + 1);
+            String id = String.format("miRCat2");
             WorkflowManager.getInstance().connectModule2Module(id, "predictionQuery", "ResultVisualiser", "predictionQuery");
+//            WorkflowManager.getInstance().connectModule2Module(id, "ResultVisualiser");
         }
         if (nDegradomes > 1) {
             WorkflowManager.getInstance().connectModule2Module("InteractionConservationFilter", "output", "ResultVisualiser", "interactionQuery");
         } else {
-            WorkflowManager.getInstance().connectModule2Module("PAREsnip1", "interactionQuery", "ResultVisualiser", "interactionQuery");
+            WorkflowManager.getInstance().connectModule2Module("PAREsnip2", "interactionQuery", "ResultVisualiser", "interactionQuery");
         }
-        mirpareModule.setPos(minX + widthSpacing * 5, (centreY));
+        parefirstModule.setPos(1060, (float) frameSize.getMaxY() / 4);
 
-        
-        
-        
-        
-        
-        
-        
-        
-        // WorkflowManager.getInstance().connectModule2Module("Database", "mirplant");
-        // WorkflowManager.getInstance().connectModule2Module("mirplant", "predictionQuery", "Result Visualiser", "predictionQuery");
-        File jsonFile = new File(Tools.WEB_SCRIPTS_DIR.getAbsolutePath() + IOUtils.DIR_SEPARATOR + "json" + IOUtils.DIR_SEPARATOR + "miRPARE_configured.json");
+        File jsonFile = new File(Tools.WEB_SCRIPTS_DIR.getAbsolutePath() + IOUtils.DIR_SEPARATOR + "json" + IOUtils.DIR_SEPARATOR + "PAREfirst_configured.json");
         WorkflowManager.getInstance().outputJsonFile(jsonFile);
         // return a file URL which appears to be more compatible with D3 javascript on windows
         return jsonFile.toURI().toURL().toString();
-
     }
+
     
-    
-
-    public static String createMiRPAREWorkflowTest2(Rectangle2D frameSize) throws IOException, Exception {
-
-        WorkflowManager.getInstance().reset();
-        WorkflowManager.getInstance().setName("mirpare");
-        //This method should be called after the file hierarchy has been finalised, that is, no new files can be added!
-        //initial to the workflow should be the database/filehierarchy
-        //First step is to pull in the selected data to start the database
-        //test phase, pull in the test data from the file hierarchy
-        //List<List<Path>> samples = FileHierarchyViewController.retrieveTestDataPaths();
-        AppUtils.INSTANCE.setCommandLine(true);
-
-        DatabaseWorkflowRunner DB_runner = new DatabaseWorkflowRunner();
-        WorkflowManager.getInstance().addModule(DB_runner);
-
-        //set size of file hierarchy web view
-        DatabaseWorkflowModule.getInstance().setDebugMode(true);
-        DatabaseWorkflowModule.getInstance().setFrameSize(frameSize);
-        DatabaseWorkflowModule.getInstance().setPos(60, (float) frameSize.getMaxY() / 4.0f);
-        NormalisationWorkflowServiceModule newNormaliser = new NormalisationWorkflowServiceModule(
-                "NORMALISER", frameSize);
-        newNormaliser.setPos(600, (float) frameSize.getMaxY() / 4);
-//
-        NormalisationWorkflowServiceModuleRunner normRunner = new NormalisationWorkflowServiceModuleRunner(newNormaliser);
-        WorkflowManager.getInstance().addModule(normRunner);
-        WorkflowManager.getInstance().connectModule2Module("Database", "NORMALISER");
-
-        return "null";//configureMiRPAREWorkflow();
-        //File jsonFile = new File(Tools.WEB_SCRIPTS_DIR.getAbsolutePath() + "/json/miRPARE.json");
-        //WorkflowManager.getInstance().outputJsonFile(jsonFile);
-
-        // return a file URL which appears to be more compatible with D3 javascript on windows
-        //return jsonFile.toURI().toURL().toString();
-    }
 
     public static String createQCWorkflow(Rectangle2D visualBounds) {
 
@@ -666,10 +687,47 @@ public class PreconfiguredWorkflows extends Application {
 
     }
 
+    public static String createFiRePatWorkflow(Rectangle2D visualBounds) {
+        try {
+            WorkflowManager.getInstance().reset();
+
+            clearOldJSONS();
+
+            WorkflowManager.getInstance().setFirstModuleTitle("DataInput");
+
+            //create the FiRePat data input module and add it to the workflow
+            FiRePatDataInputWorkflowModule.setUp(visualBounds);
+            FiRePatDataInputWorkflowModule dataInput_module = FiRePatDataInputWorkflowModule.getInstance();
+            dataInput_module.setPos(200, (float) visualBounds.getMaxY() / 4);
+            FiRePatDataInputWorkflowModuleRunner dataInput_runner = new FiRePatDataInputWorkflowModuleRunner(dataInput_module);
+            WorkflowManager.getInstance().addModule(dataInput_runner);
+
+            //create the FiRePat module and add it to the workflow
+            FiRePatToolWorkflowModule deg_module = new FiRePatToolWorkflowModule("FiRePat", visualBounds);
+            deg_module.setPos(460, (float) visualBounds.getMaxY() / 4);
+            FiRePatToolWorkflowModuleRunner deg_runner = new FiRePatToolWorkflowModuleRunner(deg_module);
+            WorkflowManager.getInstance().addModule(deg_runner);
+
+            WorkflowManager.getInstance().connectModule2Module("DataInput", "FiRePat");
+
+            File jsonFile = new File(Tools.WEB_SCRIPTS_DIR.getAbsolutePath() + DIR_SEPARATOR + "json" + DIR_SEPARATOR + "FM_FiRePat.json");
+            WorkflowManager.getInstance().outputJsonFile(jsonFile);
+
+            // return a file URL which appears to be more compatible with D3 javascript on windows
+            return jsonFile.toURI().toURL().toString();
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+        }
+
+        return "";
+
+    }
+
     public static String createQC_DE_Workflow(Rectangle2D visualBounds) {
 
         WorkflowManager.getInstance().reset();
-        
+
         clearOldJSONS();
 
         //This method should be called after the file hierarchy has been finalised, that is, no new files can be added!
@@ -720,7 +778,7 @@ public class PreconfiguredWorkflows extends Application {
         //create the second report module and add it to the workflow
         ReportWorkflowModule secondReportModule = new ReportWorkflowModule("SECONDREPORT", visualBounds);
         secondReportModule.disableTool(ReportWorkflowModule.QCTool.JACCARD);
-       
+
         // second report should not be used on unmapped data
         secondReportModule.setMappedOnly();
 
@@ -760,8 +818,6 @@ public class PreconfiguredWorkflows extends Application {
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        
-        
 
         return "";
 
@@ -770,7 +826,7 @@ public class PreconfiguredWorkflows extends Application {
     public static String createNorm_DE_Workflow(Rectangle2D visualBounds) {
 
         WorkflowManager.getInstance().reset();
-        
+
         clearOldJSONS();
 
         //This method should be called after the file hierarchy has been finalised, that is, no new files can be added!
@@ -799,7 +855,7 @@ public class PreconfiguredWorkflows extends Application {
         //create the second report module and add it to the workflow
         ReportWorkflowModule secondReportModule = new ReportWorkflowModule("SECONDREPORT", visualBounds);
         secondReportModule.disableTool(ReportWorkflowModule.QCTool.JACCARD);
-       
+
         // second report should not be used on unmapped data
         secondReportModule.setMappedOnly();
 
@@ -839,8 +895,6 @@ public class PreconfiguredWorkflows extends Application {
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        
-        
 
         return "";
 
@@ -988,11 +1042,9 @@ public class PreconfiguredWorkflows extends Application {
         return "failed creation of miRCat Workflow";
 
     }
-    
-    public static String createMiRCat2Workflow(Rectangle2D visualBounds) throws IOException, FileNotFoundException, DuplicateIDException{
-        WorkflowManager.getInstance().reset();
-        
 
+    public static String createMiRCat2Workflow(Rectangle2D visualBounds) throws IOException, FileNotFoundException, DuplicateIDException {
+        WorkflowManager.getInstance().reset();
 
         //This method should be called after the file hierarchy has been finalised, that is, no new files can be added!
         //initial to the workflow should be the database/filehierarchy
@@ -1000,46 +1052,38 @@ public class PreconfiguredWorkflows extends Application {
         //create the database workflow module
         DatabaseWorkflowRunner DB_runner = new DatabaseWorkflowRunner();
         WorkflowManager.getInstance().addModule(DB_runner);
-        
+
         //limit samples and replicates
         WorkflowManager.getInstance().maxSamples = 1;
         WorkflowManager.getInstance().maxReplicates = 1;
-        
-        
+
         //set size of file hierarchy web view
         DatabaseWorkflowModule.getInstance().setFrameSize(visualBounds);
-                    
 
         DatabaseWorkflowModule.getInstance().setPos(60, (float) visualBounds.getMaxY() / 4.0f);
-        
+
         //create the first report module and add it to the workflow
-        MiRCat2Module miRCat2Module = new MiRCat2Module("miRCat2", "MIRCAT2", visualBounds);
+        MiRCat2Module miRCat2Module = new MiRCat2Module("miRCat2", "MIRCAT2", visualBounds, false);
         miRCat2Module.setPos(200, (float) visualBounds.getMaxY() / 4.0f);
-        
-        
+
         miRCat2ModuleRunner miRCat2ModuleRunner = new miRCat2ModuleRunner(miRCat2Module);
-        
-        
 
         WorkflowManager.getInstance().addModule(miRCat2ModuleRunner);
 
         WorkflowManager.getInstance().connectModule2Module("Database", "miRCat2");
-  
-        try
-        {
+
+        try {
             File jsonFile = new File(Tools.WEB_SCRIPTS_DIR.getAbsolutePath() + DIR_SEPARATOR + "json" + DIR_SEPARATOR + "miRCat2.json");
             WorkflowManager.getInstance().outputJsonFile(jsonFile);
 
             // return a file URL which appears to be more compatible with D3 javascript on windows
             return jsonFile.toURI().toURL().toString();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        
+
         return "failed creation of miRCat 2 Workflow";
-        
+
     }
 
     public static String runCommandLineWorkflowMiRCat2(String workflow, File jsonPath) {
@@ -1048,54 +1092,58 @@ public class PreconfiguredWorkflows extends Application {
 
         AppUtils.INSTANCE.setCommandLine(true);
 
-
-        try
-        {
+        try {
             jsonObject = JsonUtils.parseJsonFile(jsonPath);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             MessageBox.messageJFX("Workbench Error", "Unable to load workflow", "There was an error parsing the JSON file: " + ex);
         }
-        try
-        {
+        try {
             str = createMiRCat2Workflow(Rectangle2D.EMPTY);
 
             WorkflowManager.getInstance().setUpDatabase(jsonObject);
             WorkflowManager.getInstance().configureMiRCat2(jsonObject);
-        }
-        catch (IOException | DuplicateIDException ex)
-        {
+        } catch (IOException | DuplicateIDException ex) {
             MessageBox.messageJFX("Workbench Error", "Unable to load workflow", "There was an error loading the workflow: " + ex);
         }
         return str;
     }
 
-    //Degradome 2 Workflows
-    
-    public static String createDegradome2Workflow(Rectangle2D visualBounds) {
+    //PAREsnip2 Workflows
+    public static String createPAREsnip2Workflow(Rectangle2D visualBounds) throws InitialisationException {
 
         WorkflowManager.getInstance().reset();
-        
-        clearOldJSONS();
-        
-        WorkflowManager.getInstance().setFirstModuleTitle("FileManager");
-        
-        
-        //create the file manager module and add it to the workflow
-        FileManagerWorkflowModule fm_module = new FileManagerWorkflowModule("FileManager", visualBounds);
-        fm_module.setPos(60, (float) visualBounds.getMaxY() / 4);
-        FileManagerWorkflowModuleRunner fm_runner = new FileManagerWorkflowModuleRunner(fm_module);
-        WorkflowManager.getInstance().addModule(fm_runner);
 
-        
-        //create the filter module and add it to the workflow
-        DegradomeToolWorkflowModule deg_module = new DegradomeToolWorkflowModule("Degradome2", visualBounds);
-        deg_module.setPos(260, (float) visualBounds.getMaxY() / 4);
-        DegradomeToolWorkflowModuleRunner deg_runner = new DegradomeToolWorkflowModuleRunner(deg_module);
+        clearOldJSONS();
+
+        WorkflowManager.getInstance().setFirstModuleTitle("DataInput");
+
+        //create the file manager module and add it to the workflow
+//        FileManagerWorkflowModule fm_module = new FileManagerWorkflowModule("FileManager", visualBounds);
+//        fm_module.setPos(60, (float) visualBounds.getMaxY() / 4);
+//        FileManagerWorkflowModuleRunner fm_runner = new FileManagerWorkflowModuleRunner(fm_module);
+//        WorkflowManager.getInstance().addModule(fm_runner);
+        //create the PAREsnip 2 data input module and add it to the workflow
+        Paresnip2DataInputWorkflowModule.setUp(visualBounds);
+        Paresnip2DataInputWorkflowModule dataInput_module = Paresnip2DataInputWorkflowModule.getInstance();
+        dataInput_module.setPos(60, (float) visualBounds.getMaxY() / 4);
+        Paresnip2DataInputWorkflowModuleRunner dataInput_runner = new Paresnip2DataInputWorkflowModuleRunner(dataInput_module);
+        WorkflowManager.getInstance().addModule(dataInput_runner);
+
+        //create the PAREsnip 2 data input module and add it to the workflow
+        Paresnip2TargetRulesWorkflowModule targetRules_module = new Paresnip2TargetRulesWorkflowModule("TargetRules", visualBounds);
+        targetRules_module.setPos(260, (float) visualBounds.getMaxY() / 4);
+        Paresnip2TargetRulesWorkflowModuleRunner targetRules_runner = new Paresnip2TargetRulesWorkflowModuleRunner(targetRules_module);
+        WorkflowManager.getInstance().addModule(targetRules_runner);
+
+        WorkflowManager.getInstance().connectModule2Module("DataInput", "TargetRules");
+
+        //create the PAREsnip 2 module and add it to the workflow
+        Paresnip2WorkflowModule deg_module = new Paresnip2WorkflowModule("PAREsnip2", visualBounds);
+        deg_module.setPos(460, (float) visualBounds.getMaxY() / 4);
+        Paresnip2WorkflowModuleRunner deg_runner = new Paresnip2WorkflowModuleRunner(deg_module);
         WorkflowManager.getInstance().addModule(deg_runner);
 
-        WorkflowManager.getInstance().connectModule2Module("FileManager", "Degradome2");
+        WorkflowManager.getInstance().connectModule2Module("TargetRules", "PAREsnip2");
 
         try {
             File jsonFile = new File(Tools.WEB_SCRIPTS_DIR.getAbsolutePath() + DIR_SEPARATOR + "json" + DIR_SEPARATOR + "FM_Deg.json");
@@ -1106,8 +1154,6 @@ public class PreconfiguredWorkflows extends Application {
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        
-        
 
         return "";
 
@@ -1117,19 +1163,17 @@ public class PreconfiguredWorkflows extends Application {
     public static String createFM_FilterWorkflow(Rectangle2D visualBounds) {
 
         WorkflowManager.getInstance().reset();
-        
+
         clearOldJSONS();
-        
+
         WorkflowManager.getInstance().setFirstModuleTitle("FileManager");
-        
-        
+
         //create the file manager module and add it to the workflow
         FileManagerWorkflowModule fm_module = new FileManagerWorkflowModule("FileManager", visualBounds);
         fm_module.setPos(60, (float) visualBounds.getMaxY() / 4);
         FileManagerWorkflowModuleRunner fm_runner = new FileManagerWorkflowModuleRunner(fm_module);
         WorkflowManager.getInstance().addModule(fm_runner);
 
-        
         //create the filter module and add it to the workflow
         Filter2WorkflowModule filter_module = new Filter2WorkflowModule("Filter", visualBounds);
         filter_module.setPos(260, (float) visualBounds.getMaxY() / 4);
@@ -1147,26 +1191,21 @@ public class PreconfiguredWorkflows extends Application {
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        
-        
 
         return "";
 
     }
 
-    public static void clearOldJSONS()
-    {
-        try
-        {
+    public static void clearOldJSONS() {
+        try {
             Path jsonPath = Paths.get(Tools.WEB_SCRIPTS_DIR.getAbsolutePath() + DIR_SEPARATOR + "json");
             FileUtils.deleteDirectory(jsonPath.toFile());
             Files.createDirectory(jsonPath);
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             Logger.getLogger(PreconfiguredWorkflows.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     //Test harness
     public static void main(String[] args) {
 
@@ -1176,8 +1215,7 @@ public class PreconfiguredWorkflows extends Application {
 //                {
             //DatabaseWorkflowModule.getInstance().setDebugMode(true);
             try {
-                
-                
+
                 //createMiRCat2Workflow(new Rectangle2D(0, 0, 0, 0));
                 //createQCWorkflow(new Rectangle2D(0, 0, 0, 0));
                 createQC_DE_Workflow(new Rectangle2D(0, 0, 0, 0));
@@ -1222,4 +1260,264 @@ public class PreconfiguredWorkflows extends Application {
         //StandardServiceRegistryBuilder.destroy(serviceRegistry);
 
     }
+    
+    
+    
+    /*
+    
+    // run and parse PAREsnip2
+    public static String configureMiRPARE2_Workflow(MiRCatParams mircatParams, ParesnipParams paresnipParams, Rectangle2D frameSize) throws IOException, FileNotFoundException, DuplicateIDException, Exception {
+        // add genome to workflow
+        if (WorkflowManager.getInstance().getInputData("genome") == null) {
+            Path genomePath = HTMLWizardViewController.getGenome();
+            WorkflowManager.getInstance().addInputDataContainerList("genome", WorkflowManager.CompatibilityKey.GENOME, 1, 1);
+            WorkflowManager.getInstance().addInputData("genome", WorkflowManager.CompatibilityKey.GENOME, new GenomeManager(genomePath));
+        }
+
+        // add transcriptome to workflow (if the input was degradome)
+        Path transcriptPath = HTMLWizardViewController.getTranscriptome();
+        WorkflowManager.getInstance().addInputDataContainerList("transcripts", CompatibilityKey.TRANSCRIPT_FILE, 1, 1);
+        WorkflowManager.getInstance().addInputData("transcripts", CompatibilityKey.TRANSCRIPT_FILE, transcriptPath);
+
+        ArrayList<Integer> degDataTypes = new ArrayList<>();
+        // add degradomes to workflow
+        Map<String, List<Pair<Path, Integer>>> degradomes = HTMLWizardViewController.getDegradomes();
+        WorkflowManager.getInstance().addInputDataContainerList("degradomes", CompatibilityKey.DEGRADOME_FILE, 1, -1);
+        int nDegradomes = 0;
+        for (String key : degradomes.keySet()) {
+            for (Pair<Path, Integer> pair : degradomes.get(key)) {
+                WorkflowManager.getInstance().addInputData("degradomes", CompatibilityKey.DEGRADOME_FILE, pair.getKey().toFile());
+                nDegradomes++;
+                degDataTypes.add(pair.getValue());
+            }
+        }
+        //  System.out.println(nDegradomes + " degradomes");
+        // create srna input queries
+        Map<String, List<Path>> srnaSamples = HTMLWizardViewController.getSamples();
+        WorkflowManager.getInstance().addInputDataContainerList("srnaQuery", CompatibilityKey.sRNA_QUERY, 1, -1);
+        int nSamples = 0;
+        for (String key : srnaSamples.keySet()) {
+            for (Path path : srnaSamples.get(key)) {
+                HQLQuerySimple q = new HQLQuerySimple(Sequence_Entity.class);
+                q.addWhere("A.filename = '" + path.getFileName() + "'");
+                WorkflowManager.getInstance().addInputData("srnaQuery", CompatibilityKey.sRNA_QUERY, q);
+                nSamples++;
+            }
+        }
+        //  System.out.println(nDegradomes + " srna samples");
+        // positioning
+        int blockSize = 100;
+        int widthSpacing = blockSize + blockSize / 2;
+        float height = blockSize * (nDegradomes + nSamples);
+        float minY = 55.0f;
+        float minX = 60.0f;
+        float paresnipMinY = minY;
+        float paresnipMaxY = paresnipMinY + ((nDegradomes - 1) * blockSize);
+        float mircat2MinY = paresnipMaxY + blockSize * 2;
+        float centreY = (minY + height) / 2;
+
+        // database module should already be in place        
+        if (nSamples > 1) {
+            NormalisationWorkflowServiceModule newNormaliser = new NormalisationWorkflowServiceModule(
+                    "Normaliser", frameSize);
+            newNormaliser.setPos(600, (float) frameSize.getMaxY() / 4);
+            NormalisationWorkflowServiceModuleRunner normRunner = new NormalisationWorkflowServiceModuleRunner(newNormaliser);
+            WorkflowManager.getInstance().addModule(normRunner);
+            // inputs
+            WorkflowManager.getInstance().connectModule2Module("Database", "Normaliser");
+
+        }
+
+        if (nSamples > 1) {
+            // add srna conservation module
+            ConservationModule conservationModule = new ConservationModule("sRNAConservationFilter", "sRNA Conservation Filter", frameSize);
+            ConservationRunner conservationRunner = new ConservationRunner(conservationModule);
+            WorkflowManager.getInstance().addModule(conservationRunner);
+            // inputs
+            WorkflowManager.getInstance().connectModule2Module("Normaliser", "sRNAConservationFilter");
+//        WorkflowManager.getInstance().connectDB2Module("srnaQuery", "sRNA Conservation Filter", "input");
+            WorkflowManager.getInstance().getModule("sRNAConservationFilter").setPos(minX + widthSpacing, (paresnipMinY + paresnipMaxY) / 2);
+        }
+
+        for (int i = 0; i < nDegradomes; i++) {
+            String PAREsnipid = String.format("PAREsnip%d", i + 1);
+            PAREsnipModule paresnipModule = new PAREsnipModule(PAREsnipid, String.format("PAREsnip2 results (%d)", i + 1), frameSize);
+            paresnipModule.runPAREsnip = false;
+
+            // add paresnip2 modules
+            if (degDataTypes.get(0) == 0) {
+                paresnipModule.isPAREsnip2 = true;
+                String id = String.format("PAREsnip2");
+
+                //WorkflowManager.getInstance().setFirstModuleTitle("DataInput");
+                //create the PAREsnip 2 data input module and add it to the workflow
+                //Paresnip2DataInputWorkflowModule.setUp(frameSize);
+                Paresnip2DataInputWorkflowModule dataInput_module = new Paresnip2DataInputWorkflowModule("DataInput", frameSize);
+                dataInput_module.setPos(160, (float) frameSize.getMaxY() / 4);
+                Paresnip2DataInputWorkflowModuleRunner dataInput_runner = new Paresnip2DataInputWorkflowModuleRunner(dataInput_module);
+                WorkflowManager.getInstance().addModule(dataInput_runner); //  we could comment this one to delete its node from the GUI
+
+                //create the PAREsnip 2 data input module and add it to the workflow
+                Paresnip2TargetRulesWorkflowModule targetRules_module = new Paresnip2TargetRulesWorkflowModule("TargetRules", frameSize);
+                targetRules_module.setPos(260, (float) frameSize.getMaxY() / 4);
+                Paresnip2TargetRulesWorkflowModuleRunner targetRules_runner = new Paresnip2TargetRulesWorkflowModuleRunner(targetRules_module);
+                WorkflowManager.getInstance().addModule(targetRules_runner);
+
+                WorkflowManager.getInstance().connectModule2Module("Database", "DataInput");
+                WorkflowManager.getInstance().connectModule2Module("DataInput", "TargetRules");
+
+                //create the PAREsnip 2 module and add it to the workflow
+                Paresnip2WorkflowModule deg_module = new Paresnip2WorkflowModule(id, frameSize);
+                deg_module.setPos(460, (float) frameSize.getMaxY() / 4);
+                Paresnip2WorkflowModuleRunner deg_runner = new Paresnip2WorkflowModuleRunner(deg_module);
+                WorkflowManager.getInstance().addModule(deg_runner);
+
+                //            WorkflowManager.getInstance().connectDB2Module("genome", 0, id, "genome");
+                //            WorkflowManager.getInstance().connectDB2Module("degradomes", i, id, "degradome");
+                //            WorkflowManager.getInstance().connectDB2Module("transcripts", 0, id, "transcripts");
+                //            WorkflowManager.getInstance().connectDB2Module("srnaQuery", id, "srnaQuery");
+                WorkflowManager.getInstance().connectModule2Module("TargetRules", id);
+            }
+            //        String lastPAREsnipID = String.format("PAREsnip2%d", nDegradomes);
+            // WorkflowManager.getInstance().connectModule2Module(lastPAREsnipID, "miRCat1");
+            PAREsnipRunner paresnipRunner = new PAREsnipRunner(paresnipModule);
+            System.out.println("Hello1");
+            WorkflowManager.getInstance().addModule(paresnipRunner);
+            // inputs
+            System.out.println("Hello2");
+            WorkflowManager.getInstance().connectDB2Module("genome", 0, PAREsnipid, "genome");
+            WorkflowManager.getInstance().connectDB2Module("degradomes", 0, PAREsnipid, "degradome");
+            WorkflowManager.getInstance().connectDB2Module("transcripts", 0, PAREsnipid, "transcripts");
+
+            if (nSamples > 1) {
+                WorkflowManager.getInstance().connectModule2Module("sRNAConservationFilter", "output", PAREsnipid, "srnaQuery");
+            } else {
+                WorkflowManager.getInstance().connectDB2Module("srnaQuery", PAREsnipid, "srnaQuery");
+                WorkflowManager.getInstance().connectModule2Module("Database", PAREsnipid);
+            }
+
+            if (i > 0) {
+                String previousPAREsnipID = String.format("PAREsnip%d", i);
+                WorkflowManager.getInstance().connectModule2Module(previousPAREsnipID, PAREsnipid);
+            }
+            //WorkflowManager.getInstance().connectDB2Module("srnaQuery", PAREsnipid, "srnaQuery");
+            if (degDataTypes.get(0) == 0) {
+                WorkflowManager.getInstance().connectModule2Module("PAREsnip2", PAREsnipid);
+            } else {
+                WorkflowManager.getInstance().connectModule2Module("Database", PAREsnipid);
+            }
+
+            paresnipModule.setPos(minX + widthSpacing * 2, paresnipMinY + blockSize * 0);
+            if (paresnipParams != null) {
+                paresnipModule.setParameters(paresnipParams);
+            }
+        }
+        
+        // add interaction module
+        if (nDegradomes > 1) {
+            InteractionConservationModule interactionConservationModule = new InteractionConservationModule("InteractionConservationFilter", "Interaction Conservation Filter", frameSize);
+            InteractionConservationRunner interactionConservationRunner = new InteractionConservationRunner(interactionConservationModule);
+            WorkflowManager.getInstance().addModule(interactionConservationRunner);
+            // inputs
+            for (int i = 0; i < nDegradomes; i++) {
+                String id = String.format("PAREsnip%d", i + 1);
+                WorkflowManager.getInstance().connectModule2Module(id, "interactionQuery", "InteractionConservationFilter", "input");
+            }
+            WorkflowManager.getInstance().getModule("InteractionConservationFilter").setPos(minX + widthSpacing * 3, paresnipMinY);
+        }
+        
+        // add loci filter
+        for (int i = 0; i < nSamples; i++) {
+            String id = String.format("LociFilter%d", i + 1);
+            LociFilterModule lociModule = new LociFilterModule(id, String.format("Loci Filter (%d)", i + 1), frameSize);
+            lociModule.setPos(460, centreY);
+            LociFilterWorkflowRunner lociRunner = new LociFilterWorkflowRunner(lociModule);
+            WorkflowManager.getInstance().addModule(lociRunner);
+            if (nDegradomes > 1) {
+                WorkflowManager.getInstance().connectModule2Module("InteractionConservationFilter", "output", id, "targetQuery");
+            } else {
+                WorkflowManager.getInstance().connectModule2Module("PAREsnip1", "interactionQuery", id, "targetQuery");
+            }
+            WorkflowManager.getInstance().connectDB2Module("srnaQuery", 0, id, "srnaomeQuery");
+        }
+
+        // add mircat2 modules
+        for (int i = 0; i < nSamples; i++) {
+            String mircat2id = String.format("miRCat2%d", i + 1);
+            String lociFilterID = String.format("LociFilter%d", i + 1);
+            MiRCat2Module mircat2Module = new MiRCat2Module(mircat2id, String.format("miRCat2 (%d)", i + 1), frameSize, true);
+            miRCat2ModuleRunner mircat2Runner = new miRCat2ModuleRunner(mircat2Module);
+            WorkflowManager.getInstance().addModule(mircat2Runner);
+            // inputs
+            WorkflowManager.getInstance().connectDB2Module("genome", 0, mircat2id, "genome");
+            WorkflowManager.getInstance().connectModule2Module(lociFilterID, "output", mircat2id, "srnaQuery");
+            //        WorkflowManager.getInstance().connectModule2Module(lociFilterID, id);
+            //            WorkflowManager.getInstance().connectDB2Module("srnaQuery", 0, id, "srnaQuery");
+            //  if (nSamples > 1) {
+            //      WorkflowManager.getInstance().connectModule2Module("Normaliser", id);
+            // } else {
+            //     WorkflowManager.getInstance().connectModule2Module("Database", id);
+            // }
+            if (i != 0) {
+                //} else {
+                String previousMiRCatID = String.format("miRCat2%d", i);
+                WorkflowManager.getInstance().connectModule2Module(previousMiRCatID, mircat2id);
+            }
+            mircat2Module.setPos(minX + widthSpacing * 4, mircat2MinY + blockSize * 0);
+        }
+
+//        // add mircat modules
+//        for (int i = 0; i < nSamples; i++) {
+//            String mircatid = String.format("miRCat");
+//            String lociFilterID = String.format("LociFilter");
+//            MiRCatModule mircatModule = new MiRCatModule(mircatid, String.format("miRCat"), frameSize);
+//            MiRCatModuleRunner mircatRunner = new MiRCatModuleRunner(mircatModule);
+//            WorkflowManager.getInstance().addModule(mircatRunner);
+//            // inputs
+//            WorkflowManager.getInstance().connectDB2Module("genome", 0, mircatid, "genome");
+//            WorkflowManager.getInstance().connectModule2Module(lociFilterID, "output", mircatid, "srnaQuery");
+//            //WorkflowManager.getInstance().connectDB2Module("srnaQuery", 0, id, "srnaQuery");
+//            //  if (nSamples > 1) {
+//            //      WorkflowManager.getInstance().connectModule2Module("Normaliser", id);
+//            // } else {
+//            //     WorkflowManager.getInstance().connectModule2Module("Database", id);
+//            // }
+//            if (i != 0) {
+//
+//                //} else {
+//                String previousMiRCatID = String.format("miRCat");
+//                WorkflowManager.getInstance().connectModule2Module(previousMiRCatID, id);
+//            }
+//            mircatModule.setPos(minX + widthSpacing * 4, mircat2MinY + blockSize * i);
+//            if (mircatParams != null) {
+//                mircatModule.setParameters(mircatParams);
+//            }
+////
+//        }
+        // add mirpare module
+        MiRPAREModule mirpareModule = new MiRPAREModule("ResultVisualiser", "Result Visualiser", frameSize);
+        MiRPAREWorkflowRunner biofuncRunner = new MiRPAREWorkflowRunner(mirpareModule);
+        WorkflowManager.getInstance().addModule(biofuncRunner);
+        // inputs
+        //WorkflowManager.getInstance().connectModule2Module("miRCat2", "predictionQuery", "ResultVisualiser", "predictionQuery");
+        for (int i = 0; i < nSamples; i++) {
+            String id = String.format("miRCat2%d", i + 1);
+            WorkflowManager.getInstance().connectModule2Module(id, "predictionQuery", "ResultVisualiser", "predictionQuery");
+        }
+        if (nDegradomes > 1) {
+            WorkflowManager.getInstance().connectModule2Module("InteractionConservationFilter", "output", "ResultVisualiser", "interactionQuery");
+        } else {
+            WorkflowManager.getInstance().connectModule2Module("PAREsnip1", "interactionQuery", "ResultVisualiser", "interactionQuery");
+        }
+        mirpareModule.setPos(minX + widthSpacing * 5, (centreY));
+        
+        // WorkflowManager.getInstance().connectModule2Module("Database", "mirplant");
+        // WorkflowManager.getInstance().connectModule2Module("mirplant", "predictionQuery", "Result Visualiser", "predictionQuery");
+        File jsonFile = new File(Tools.WEB_SCRIPTS_DIR.getAbsolutePath() + IOUtils.DIR_SEPARATOR + "json" + IOUtils.DIR_SEPARATOR + "miRPARE_configured.json");
+        WorkflowManager.getInstance().outputJsonFile(jsonFile);
+        // return a file URL which appears to be more compatible with D3 javascript on windows
+        return jsonFile.toURI().toURL().toString();
+
+    }
+    */
 }

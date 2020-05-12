@@ -47,9 +47,9 @@ and open the template in the editor.
 
         <!--tooltip Javascript-->
         <script type="text/javascript" src="../js/tipped/tipped.js"></script>
-        
-        
-        
+
+
+
 
     </head>
     <body>
@@ -70,35 +70,40 @@ and open the template in the editor.
                                     <ul>
                                         <li class="simple-tooltip" id='QC_PC_WF' title="A Workflow containing Quality Checks and Normalisation">
                                             <a href="#" onclick="createQCFlow();
-                                                        return false">Create Quality Check Workflow</a>
+                                                    return false">Create Quality Check Workflow</a>
                                         </li>
                                         <li class="simple-tooltip" id='QC_DE_WF' title="A Workflow containing Quality Checks, Normalisation and Differential Expression">
                                             <a href="#" onclick="createQC_DE_Flow();
-                                                        return false">Create Quality Check and Differential Expression Workflow</a>
+                                                    return false">Create Quality Check and Differential Expression Workflow</a>
                                         </li>
                                         <li class="simple-tooltip" id='NORM_DE_WF' title="A Workflow containing Normalisation and Differential Expression">
                                             <a href="#" onclick="createNORM_DE_Flow();
-                                                        return false">Create Normalisation and Differential Expression Workflow</a>
+                                                    return false">Create Normalisation and Differential Expression Workflow</a>
                                         </li>
                                         <li class="simple-tooltip" id='MC2_WF' title="A Workflow containing miRCat 2">
                                             <a href="#" onclick="createMiCat2_Flow();
-                                                        return false">Create miRCat2 Workflow</a>
+                                                    return false">Create miRCat2 Workflow</a>
                                         </li>
                                         <li class="simple-tooltip" id='FM_DB_WF' title="A Workflow containing the Filter tool">
                                             <a href="#" onclick="createFM_FilterWorkflow();
-                                                        return false">Create Filter Workflow</a>
+                                                    return false">Create Filter Workflow</a>
                                         </li>
-                                        <!--<li class="simple-tooltip" id='FM_DEG_WF' title="A Workflow containing the File manager and the degradome tool">
+                                        <li class="simple-tooltip" id='FM_DEG_WF' title="A Workflow containing PAREsnip 2">
                                             <a href="#" onclick="create_FM_DEG_Flow();
-                                                        return false">Create Degradome 2 Workflow</a>
-                                        </li>-->
+                                                    return false">Create PAREsnip 2 Workflow</a>                                          
+                                        </li>
+                                        <li class="simple-tooltip" id='FM_FiRePat_WF' title="A Workflow containing FiRePat">
+                                            <a href="#" onclick="create_FM_FiRePat_Flow();
+                                                    return false">Create FiRePat Workflow</a>
+                                        </li>
                                         <!--<li class="simple-tooltip" id='QC_DE_WF' title="A Workflow containing Quality Checks and Normalisation without any pause to review files,
                                                                                         This may be useful if you are not using ">
                                             <a href="#" onclick="createQC_DE_NP_Flow();return false">Create Quality Check Workflow with no pause</a>
                                         </li>-->
-                                        <!--<li class="simple-tooltip" id='MP_WF'><a href="#" onclick="createMiRPAREWorkflow();
-                                                    return false">miRPARE</a></li>
-                                        <li class="simple-tooltip" id='MP_WF_CLI'><a href="#" onclick="createMiRPAREWorkflowCommandLine();
+                                        <li class="simple-tooltip" id='MP_WF' title="A Workflow containing PAREfirst">  
+                                        	<a href="#" onclick="createPAREfirstWorkflow();
+                                                    return false">Create PAREfirst Workflow</a></li>
+                                        <!--<li class="simple-tooltip" id='MP_WF_CLI'><a href="#" onclick="createMiRPAREWorkflowCommandLine();
                                                     return false">miRPARE (command line)</a></li>
                                         <li class="simple-tooltip" id='PS_WF'><a href="#" onclick="createPAREsnipWorkflow();
                                                     return false">PAREsnip</a></li>
@@ -113,7 +118,7 @@ and open the template in the editor.
 
                             <li id='Begin'><a href="#" onclick="app.startWorkflow();">Begin Workflow</a></li>
                             <li id='switch_to_swing'><a href="#" onclick="app.showVersion3();
-                                        return false">Show Version 3.2</a></li>
+                                    return false">Show Individual Tools Menu</a></li>
 
                             <li class="icon icon-arrow-left" id="console_view">
                                 <a class="icon icon-news simple-tooltip" href="#" title="View information about the current run">View Console</a>
@@ -142,28 +147,28 @@ and open the template in the editor.
                         <div class="content clearfix" >
                             <div class="block block-80 clearfix">
                                 <p><a href="#" id="trigger" class="menu-trigger" onclick="hideInfo()">Open/Close Menu</a></p>
-                                
+
 
                                 <div id="key" style="width: 60%;font-size: 8px; display: none">
-                                <fieldset>
-                                    <legend><font size="3"> Key </font> </legend>
-                                    <p><font color="#ff3300">Node is Processing</font></p>
-                                    <p><font color="#ffbf00">Waiting User Input</font></p>
-                                    <p><font color="#33ff00">Node has Completed</font></p>
-                                    <p><font color="#0000A0"> Node is ready</font></p>
-                                </fieldset>
+                                    <fieldset>
+                                        <legend><font size="3"> Key </font> </legend>
+                                        <p><font color="#ff3300">Node is Processing</font></p>
+                                        <p><font color="#ffbf00">Waiting User Input</font></p>
+                                        <p><font color="#33ff00">Node has Completed</font></p>
+                                        <p><font color="#0000A0"> Node is ready</font></p>
+                                    </fieldset>
                                 </div>
                                 <div id="welcomeInfo">
-                                <p>Welcome to the sRNA Workbench Version 4.4 Alpha (On Disk build)</p>
-                                <p>This is the third Alpha build. Please submit any crashes or bugs to the Website</p>
-                                <p>http://srna-workbench.cmp.uea.ac.uk</p>
-                                <br>
-                                <br>
-                                <p>Please use the open close menu to begin...</p>
+                                    <p>Welcome to the sRNA Workbench Version 4.7 Alpha</p>
+                                    <p>Please submit any crashes or bugs to the Website</p>
+                                    <p>http://srna-workbench.cmp.uea.ac.uk</p>
+                                    <br>
+                                    <br>
+                                    <p>Please use the open close menu to begin...</p>
                                 </div>
 
                             </div>
-                            
+
 
 
                         </div>
@@ -181,25 +186,25 @@ and open the template in the editor.
 
 
         <script src="../js/workflow/graph-creator.js"></script>
-       <!-- <script> createPreconfiguredFlow("/Users/ujy06jau/Workbench/web/json/miRPARE-check.json");</script>-->
+        <!-- <script> createPreconfiguredFlow("/Users/ujy06jau/Workbench/web/json/miRPARE-check.json");</script>-->
 
         <script>
                                     new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
 
                                     $(document).ready(function () {
                                         Tipped.create('.simple-tooltip', {behavior: 'hide'});
-                                        
-                                        
-                                        
+
+
+
 
                                     });
-                                    
-                                    
-                                    
+
+
+
                                     function hideInfo()
                                     {
-                                        document.getElementById("welcomeInfo").style.display="none";
-                                        document.getElementById("key").style.display="block";
+                                        document.getElementById("welcomeInfo").style.display = "none";
+                                        document.getElementById("key").style.display = "block";
 
                                     }
 
@@ -212,13 +217,13 @@ and open the template in the editor.
                                     {
                                         setCompleteNodeGFX(id);
                                     }
-                                    
+
                                     function setWorkflowNodeGFXtoWaitingInput(id)
                                     {
                                         //alert("SettingID to waiting " + id);
                                         setWaitingNodeGFX(id);
                                     }
-                                    
+
                                     function setWorkflowNodeGFXtoReady(id)
                                     {
                                         setReadyNodeGFX(id);
@@ -231,8 +236,7 @@ and open the template in the editor.
                                             $("#pre-conf_menu").find('a').addClass('disabled');
                                             $("#Begin").find('a').addClass('disabled');
                                             $("#switch_to_swing").find('a').addClass('disabled');
-                                        }
-                                        else
+                                        } else
                                         {
                                             $("#pre-conf_menu").find('a').removeClass('disabled');
                                             $("#Begin").find('a').removeClass('disabled');

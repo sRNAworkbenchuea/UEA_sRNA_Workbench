@@ -34,6 +34,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
@@ -73,6 +74,7 @@ import org.apache.commons.net.util.Base64;
 import org.apache.fop.svg.PDFTranscoder;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.util.PDFMergerUtility;
+import uk.ac.uea.cmp.srnaworkbench.workflow.gui.WorkflowSceneController;
 
 /**
  * FXML Controller class
@@ -105,7 +107,7 @@ public class MiRCat2SceneController implements Initializable, ControlledScreen
 
     public MiRCat2SceneController(Rectangle2D size, MiRCat2Module engine)
     {
-        webViewSize = size;
+        this.webViewSize = size;
         
         this.parentModule = engine;
     }
@@ -115,25 +117,25 @@ public class MiRCat2SceneController implements Initializable, ControlledScreen
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-        assert mainAnchorPane != null : "fx:id=\"mainAnchorPane\" was not injected: check your FXML file 'MiRCat2Scene.fxml'.";
+        assert this.mainAnchorPane != null : "fx:id=\"mainAnchorPane\" was not injected: check your FXML file 'MiRCat2Scene.fxml'.";
 
-        assert mainWebView != null : "fx:id=\"mainWebView\" was not injected: check your FXML file 'MiRCat2Scene.fxml'.";
-        assert mainAnchorPane != null : "fx:id=\"mainAnchorPane\" was not injected: check your FXML file 'MiRCat2Scene.fxml'.";
+        assert this.mainWebView != null : "fx:id=\"mainWebView\" was not injected: check your FXML file 'MiRCat2Scene.fxml'.";
+        assert this.mainAnchorPane != null : "fx:id=\"mainAnchorPane\" was not injected: check your FXML file 'MiRCat2Scene.fxml'.";
 
-        mainWebEngine = mainWebView.getEngine();
+        this.mainWebEngine = this.mainWebView.getEngine();
 
-        mainWebEngine.getLoadWorker().stateProperty().addListener((ObservableValue<? extends State> ov, State oldState, State newState) ->
+        this.mainWebEngine.getLoadWorker().stateProperty().addListener((ObservableValue<? extends State> ov, State oldState, State newState) ->
         {
-            myJSBridge = new MiRCat2JavascriptReceiver(this.myController);
+            this.myJSBridge = new MiRCat2JavascriptReceiver(this.myController);
             if (newState == State.SUCCEEDED)
             {
-                JSObject window = (JSObject) mainWebEngine.executeScript("window");
+                JSObject window = (JSObject) this.mainWebEngine.executeScript("window");
                 window.setMember("app", myJSBridge);
             }
         });
-        mainAnchorPane.setPrefSize(webViewSize.getWidth(), webViewSize.getHeight());
+        this.mainAnchorPane.setPrefSize(this.webViewSize.getWidth(), this.webViewSize.getHeight());
         
-        mainWebEngine.setOnAlert((WebEvent<String> arg0) -> {
+        this.mainWebEngine.setOnAlert((WebEvent<String> arg0) -> {
             System.out.println("miRCAT2 Event: " + arg0);
         });
 
@@ -152,7 +154,7 @@ public class MiRCat2SceneController implements Initializable, ControlledScreen
             final URL h_view = new URL("file:" + Tools.WEB_SCRIPTS_DIR + "/HTML/MiRCat2View.html");
             //final URL h_view = new URL("http://www.google.com");
 
-            mainWebEngine.load(h_view.toExternalForm());
+            this.mainWebEngine.load(h_view.toExternalForm());
             //  mainWebEngine.loadContent("<html><body>This is a test</body></html>");
         }
         catch (MalformedURLException ex)
@@ -164,7 +166,7 @@ public class MiRCat2SceneController implements Initializable, ControlledScreen
     @Override
     public void setScreenParent(ScreensController screenPage)
     {
-        myController = screenPage;
+        this.myController = screenPage;
     }
 
     @Override
@@ -185,7 +187,7 @@ public class MiRCat2SceneController implements Initializable, ControlledScreen
         {
             Platform.runLater(() ->
             {
-                mainWebEngine.executeScript("setBusy( '" + state + "' )");
+                this.mainWebEngine.executeScript("setBusy( '" + state + "' )");
             });
         }
 
@@ -203,7 +205,7 @@ public class MiRCat2SceneController implements Initializable, ControlledScreen
         {
             String[] tokens = printOneSRNACSV.split(",");
 
-            mainWebEngine.executeScript(
+            this.mainWebEngine.executeScript(
                     "addToData('"
                     + tokens[0] + "','"
                     + tokens[1] + "','"
@@ -258,18 +260,30 @@ public class MiRCat2SceneController implements Initializable, ControlledScreen
         
         public void setOutputDir()
         {
-            DirectoryChooser chooser = new DirectoryChooser();
-            if (this.lastFileDir != null) {
-                chooser.setInitialDirectory(this.lastFileDir);
-            }
-            chooser.setTitle("Select directory to save results");
-
-            File selectedDirectory = chooser.showDialog(scene.getWindow());
-
-            if (selectedDirectory != null) {
-                this.lastFileDir = selectedDirectory;
+            if(parentModule.isPAREfirst){
+                File selectedDirectory = new File(Tools.PAREfirst_DATA_Path + DIR_SEPARATOR + parentModule.getID() + "_output");
+                selectedDirectory.mkdir();
                 MiRCat2Module.setOutputDir(selectedDirectory.toPath());
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("miRCat2 Output Directory");
+                alert.setHeaderText("miRCat2 output directory Message");
+                alert.setContentText("miRCat2 output directory is set to: " + selectedDirectory.getAbsolutePath());
 
+                alert.showAndWait();
+            } else {
+                DirectoryChooser chooser = new DirectoryChooser();
+                if (this.lastFileDir != null) {
+                    chooser.setInitialDirectory(this.lastFileDir);
+                }
+                chooser.setTitle("Select directory to save results");
+
+                File selectedDirectory = chooser.showDialog(scene.getWindow());
+
+                if (selectedDirectory != null) {
+                    this.lastFileDir = selectedDirectory;
+                    MiRCat2Module.setOutputDir(selectedDirectory.toPath());
+
+                }
             }
             
         }
@@ -284,6 +298,7 @@ public class MiRCat2SceneController implements Initializable, ControlledScreen
             //System.out.println("ready status: " + readyStatus);
             
             parentModule.setReadyToContinue(state);
+            WorkflowSceneController.setReadyNode(parentModule.getID());
         }
         
         public void exportMiRNAToFASTA()
@@ -660,6 +675,31 @@ public class MiRCat2SceneController implements Initializable, ControlledScreen
             {
                 LOGGER.log(Level.SEVERE,ex.getMessage());
             }
+        }
+        
+        public String loadParameters() {
+            String filePath = "";
+            try {
+                FileChooser fileChooser = new FileChooser();
+
+                fileChooser.setTitle("Select saved miRCat2 configuration file");
+
+                if (this.lastFileDir != null) {
+                    fileChooser.setInitialDirectory(this.lastFileDir);
+                }
+
+                //File file = fileChooser.showOpenDialog(scene.getWindow());
+                File file = fileChooser.showOpenDialog(scene.getWindow());
+                if(file.exists()){
+                    System.out.println(file.getAbsoluteFile());
+                    if(MiRCat2Module.readParams(file.getAbsolutePath())){
+                        filePath = file.getAbsolutePath();
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return filePath;
         }
                 
     }

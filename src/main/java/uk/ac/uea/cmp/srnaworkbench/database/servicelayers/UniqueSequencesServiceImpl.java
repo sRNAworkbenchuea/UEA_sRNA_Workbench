@@ -411,6 +411,7 @@ public class UniqueSequencesServiceImpl implements GenericService<Unique_Sequenc
         sw.lap("CSVREAD of Unique sequences");
         sw.stop();
         sw.printTimes();
+        tempCSVpath.toFile().deleteOnExit();
     }
     
     /**

@@ -227,7 +227,7 @@
 .swMain .buttonFinish {
   display:block;
   float:right;
-  margin:5px 10px 0 3px;
+  margin:5px 5px 0 3px;
   padding:5px;
   text-decoration: none;
   text-align: center;
@@ -243,12 +243,118 @@
 .swMain .buttonCancel {
   display:block;
   float:right;
-  margin:5px 10px 0 3px;
+  margin:5px 5px 0 3px;
   padding:5px;
   text-decoration: none;
   text-align: center;
   font: bold 13px Verdana, Arial, Helvetica, sans-serif;
   width:100px;
+  color:#FFF;
+  outline-style:none;
+  background-color:   #5A5655;
+  border: 1px solid #5A5655;
+  -moz-border-radius  : 5px; 
+  -webkit-border-radius: 5px;    
+}
+
+.swMain .buttonAllen {
+  display:block;
+  float:right;
+  margin:5px 5px 0 3px;
+  padding:5px;
+  text-decoration: none;
+  text-align: center;
+  font: bold 13px Verdana, Arial, Helvetica, sans-serif;
+  width:100px;
+  color:#FFF;
+  outline-style:none;
+  background-color:   #5A5655;
+  border: 1px solid #5A5655;
+  -moz-border-radius  : 5px; 
+  -webkit-border-radius: 5px;    
+}
+
+.swMain .buttonCarrington {
+  display:block;
+  float:right;
+  margin:5px 5px 0 3px;
+  padding:5px;
+  text-decoration: none;
+  text-align: center;
+  font: bold 13px Verdana, Arial, Helvetica, sans-serif;
+  width:150px;
+  color:#FFF;
+  outline-style:none;
+  background-color:   #5A5655;
+  border: 1px solid #5A5655;
+  -moz-border-radius  : 5px; 
+  -webkit-border-radius: 5px;    
+}
+
+.swMain .buttonExport {
+  display:block;
+  float:right;
+  margin:5px 5px 0 0px;
+  padding:5px;
+  text-decoration: none;
+  text-align: center;
+  font: bold 13px Verdana, Arial, Helvetica, sans-serif;
+  height: 27px;
+  width:140px;
+  color:#FFF;
+  outline-style:none;
+  background-color:   #5A5655;
+  border: 1px solid #5A5655;
+  -moz-border-radius  : 5px; 
+  -webkit-border-radius: 5px;    
+}
+
+.swMain .buttonLoad {
+  display:block;
+  float:right;
+  margin:5px 5px 0 0px;
+  padding:5px;
+  text-decoration: none;
+  text-align: center;
+  font: bold 13px Verdana, Arial, Helvetica, sans-serif;
+  height: 27px;
+  width:140px;
+  color:#FFF;
+  outline-style:none;
+  background-color:   #5A5655;
+  border: 1px solid #5A5655;
+  -moz-border-radius  : 5px; 
+  -webkit-border-radius: 5px;    
+}
+
+.swMain .buttonDefaultStringent {
+  display:block;
+  float:right;
+  margin:5px 5px 0 0px;
+  padding:5px;
+  text-decoration: none;
+  text-align: center;
+  font: bold 13px Verdana, Arial, Helvetica, sans-serif;
+  height: 27px;
+  width:140px;
+  color:#FFF;
+  outline-style:none;
+  background-color:   #5A5655;
+  border: 1px solid #5A5655;
+  -moz-border-radius  : 5px; 
+  -webkit-border-radius: 5px;    
+}
+
+.swMain .buttonDefaultFlexible {
+  display:block;
+  float:right;
+  margin:5px 5px 0 0px;
+  padding:5px;
+  text-decoration: none;
+  text-align: center;
+  font: bold 13px Verdana, Arial, Helvetica, sans-serif;
+  height: 27px;
+  width:140px;
   color:#FFF;
   outline-style:none;
   background-color:   #5A5655;

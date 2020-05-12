@@ -276,7 +276,7 @@ public class SequenceServiceImpl implements GenericService<Sequence_Entity, Stri
         org.hibernate.Session session = this.seqDao.getSessionFactory().openSession();
         // run generic sql query
         List<Map<String, Object>> result = DatabaseWorkflowModule.executeGenericSQLMapped(session, sql);
-         System.out.println("sql(" + result.size() + "): " + sql);
+         //System.out.println("sql(" + result.size() + "): " + sql);
         // close the session
         if (session.isOpen()) {
             session.close();

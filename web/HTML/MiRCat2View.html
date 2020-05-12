@@ -196,6 +196,7 @@ and open the template in the editor.
 
                                                 <ul>
                                                     <li>
+                                                        <a href="#" onclick="loadParameters()">Load Parameters File</a>
 
                                                         <!--<section style="margin: 10px;">
                                                             <fieldset  style="min-height:100px;">
@@ -454,7 +455,7 @@ and open the template in the editor.
                         })
                         app.setupParams(paramsString, $('#org_plant_radio').is(":checked"));
                         //app.setupParams();
-                        //app.setContinue(true);
+                        app.setContinue(true);
                     }
 
 
@@ -507,9 +508,27 @@ and open the template in the editor.
                     {
                         defaultPath = app.getAnimalDefaultPath();
                     }
-                    if (window.File && window.FileReader && window.FileList && window.Blob) 
+                    setParameters(defaultPath);
+                }
+            }
+            
+            function loadParameters(){
+                var defaultPath = '';
+                if(typeof app !== 'undefined'){
+                    defaultPath = app.loadParameters();
+                    if(defaultPath === ''){
+                        alert("Invalid miRCat2 parameter file.");
+                    }else{
+                        setParameters(defaultPath);
+                    }
+                }
+            }
+            
+            function setParameters(defaultPath){
+                
+                if (window.File && window.FileReader && window.FileList && window.Blob) 
                     {
-                        // Great success! All the File APIs are supported.
+                        // Great sloadParametersuccess! All the File APIs are supported.
 
                         getFileObject(defaultPath, function (fileObject) {
 
@@ -607,7 +626,6 @@ and open the template in the editor.
                     {
                       //  alert('The File APIs are not fully supported in this browser.');
                     }
-                }
             }
             
 

@@ -1,0 +1,12 @@
+##gff-version 3
+##date 2018-3-5
+#
+# 
+# 
+#
+#
+# Hairpin precursor sequences have type "miRNA_primary_transcript". 
+# Note, these sequences do not represent the full primary transcript, 
+# rather a predicted stem-loop portion that includes the precursor 
+# miRNA. Mature sequences have type "miRNA".
+#

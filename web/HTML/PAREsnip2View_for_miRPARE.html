@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+
+1) How many samples?
+2) How many replicates per sample?
+3) Would you like a level? What would you like your level to be called? 
+* Time points, Tissue types, Treatments
+
+-->
+<html>
+    <head>
+        <title>PAREsnip 2 Setup Wizard</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!--Javascript-->
+
+
+
+        <!--JQuery files -->
+        <script type="text/javascript" src="../js/lib/jquery/jquery-1.11.2.min.js"></script>
+        <!--<script type="text/javascript" src="../js/lib/jquery.cookie-1.3.1.js"></script>
+        <script type="text/javascript" src="../js/lib/jquery/jquery.validate.js"></script>-->
+
+        <!--wizard JS-->
+        <!--<script type="text/javascript" src="../js/steps/jquery.steps.js"></script>-->
+        <script type="text/javascript" src="../js/wizards/jquery.smartWizard.paresnip.for.parefirst.js"></script>
+
+
+        <!--Workbench Routines -->
+        <script type="text/javascript" src="../js/utils/workbenchutils.js"></script>
+        <script type="text/javascript" src="../js/files/FileTable.js"></script>
+
+        <!--list drag and sort-->
+        <!--<script src="../js/utils/jquery.sortable.js"></script>-->
+        <!--<script type="text/javascript" src="../js/ListUtils/dragdrop.js"></script>-->
+        <!--<script type="text/javascript" src="../js/ListUtils/drag.js"></script>-->
+        <!--<script type="text/javascript" src="../js/ListUtils/coordinates.js"></script>-->
+        <script src="../js/lib/jqueryui/jquery-ui.min.js"></script>
+
+
+
+        <!--tooltip Javascript-->
+        <script type="text/javascript" src="../js/tipped/tipped.js"></script>
+
+
+
+
+        <!-- CSS -->
+        <!--Workbench CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/wbstyles.css" />
+
+
+        <!--Menu CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/normalize.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/menus.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/icons.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/component.css" />
+
+        <!--tooltip CSS-->
+        <link rel="stylesheet" type="text/css" href="../CSS/tipped/tipped.css" />
+
+
+        <!-- Import FontAwesome 4.2 
+        <link rel="stylesheet" href="../CSS/font-awesome.css">-->
+
+        <!--Wizard CSS-->
+        <!--<link rel="stylesheet" href="../CSS/jquery.steps.css">-->
+        <link rel="stylesheet" type="text/css" href="../CSS/smart_wizard_vertical.css" />
+
+        <!-- Import FontAwesome 4.2 -->
+        <link rel="stylesheet" href="../CSS/font-awesome.min.css">
+        <!--Buttons CSS-->
+        <link rel="stylesheet" href="../CSS/fancy-buttons.css">
+        <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+        <style type="text/css">
+            td
+            {
+                padding:0 5px 0 5px;
+            }
+            #available_annot_list, #selected_annot_list, #other_list {
+                border: 1px solid #eee;
+                width: 142px;
+                min-height: 20px;
+                list-style-type: none;
+                margin: 0;
+                padding: 5px 0 0 0;
+                float: left;
+                margin-right: 10px;
+            }
+            #sortable1 li, #sortable2 li {
+                margin: 0 5px 5px 5px;
+                padding: 5px;
+                font-size: 1.2em;
+                width: 120px;
+            }
+        </style>
+
+
+        <script type="text/javascript">
+
+
+
+            $(document).ready(function () {
+
+            
+            // Smart Wizard 	
+            $('#wizard').smartWizard(
+            {
+            onLeaveStep: leaveAStepCallback,
+            onFinish: onFinishCallback,
+            onCancel: onCancelCallback,
+            labelCancel: 'Cancel',
+            labelDefaultStringent: 'Default Stringent',
+            labelDefaultFlexible: 'Default Flexible',
+            labelLoad: 'Load Parameters',
+            labelExport: 'Save Parameters',
+            //labelExport: 'Save Rules',
+            labelAllen: 'Allen Rules',
+            labelCarrington: 'Carrington Rules'
+            });
+
+            function leaveAStepCallback(obj, context) {
+
+            	// return false to stay on step and true to continue navigation 
+            	return validateSteps(context.fromStep, context.toStep); // return false to stay on step and true to continue navigation 
+            }
+
+            function validateSteps(stepnumber, tostep) {
+
+            	if (stepnumber === 2 && !threadsSetUp)
+            	{
+            		document.getElementById('threads_used').value = setThreads();
+            		threadsSetUp = true;
+            	}
+
+            	if (typeof app !== "undefined")
+            	{
+            		return app.isStepComplete(stepnumber, tostep);
+            	}
+            	return true;
+            }
+
+            function onFinishCallback(objs, context) {
+            	//Check that the input is all correct
+            	if (app.checkIfValid())
+            	{
+            		app.setReady();
+            	}
+            	}
+
+            function onCancelCallback()
+            {
+
+            }
+
+            });
+
+
+
+
+        </script>
+
+    </head>
+    <body>
+        <table class="mainwizardtable">
+            <tr><td> 
+                    <!-- Smart Wizard -->
+                    <div id="wizard" class="swMain">
+                        <ul id="wizardlist">
+
+							<li class="simple-tooltip" title="Use this step to configure the analysis"><a href="#step-1">
+                                    <span class="stepNumber">1</span>
+                                    <span class="stepDesc">
+                                        Step 1<br />
+                                        <small>Configure Analysis</small>
+                                    </span>
+                                </a>
+                            </li>
+                            
+                            <li class="simple-tooltip" title="Set up penalty scores"><a href="#step-2">
+                                    <span class="stepNumber">2</span>
+                                    <span class="stepDesc">
+                                        Step 2<br />
+                                        <small>Set Penalty Scores</small>
+                                    </span>
+                                </a>
+                            </li> 
+
+                            <li class="simple-tooltip" title="Use this step to set permissible and non permissible positions"><a href="#step-3">
+                                    <span class="stepNumber">3</span>
+                                    <span class="stepDesc">
+                                        Step 3<br />
+                                        <small>Position Specific Rules</small>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        
+                        <div id="step-1" style="overflow: auto;" >
+                            <!--<h2 class="StepTitle">Select Degradome Abundance Type</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="abundanceType" id="use_raw_abundance" class="radio" onclick="changeAbundanceType()" checked />
+                                            <label for="use_raw_abundance">Use Raw Abundance</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="abundanceType" id="use_weighted_abundance" class="radio" onclick="changeAbundanceType()" />
+                                            <label for="use_weighted_abundance">Use Weighted Abundance</label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>-->
+
+                            <h2 class="StepTitle">Choose Allowed Categories</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="cat0" id="category_0" class="radio" onclick="setCategory(0)" checked />
+                                            <label for="category_0" style="width: 175px;">Category 0</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="cat1" id="category_1" class="radio" onclick="setCategory(1)" checked />
+                                            <label for="category_1" style="width: 175px;">Category 1</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="cat2" id="category_2" class="radio" onclick="setCategory(2)" checked />
+                                            <label for="category_2" style="width: 175px;">Category 2</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="cat3" id="category_3" class="radio" onclick="setCategory(3)" checked />
+                                            <label for="category_3" style="width: 175px;">Category 3</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="cat4" id="category_4" class="radio" onclick="setCategory(4)"/>
+                                            <label for="category_4" style="width: 175px;">Category 4</label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+
+                            <h2 class="StepTitle">Degradome Filters</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="useMfeFilter" id="use_mfe_filter" class="radio" onclick="setUseFilter()" checked />
+                                            <label for="use_mfe_filter">Use Minimum free energy filter</label>
+                                        </td>
+                                        <td>
+                                            <span id="filterVal" style="color: #777"> Minimum MFE threshold: </span>
+                                            <input type="text" name="cutOff" id="filter_cutoff" style ="margin-top: 2em; width: 60px;" value="0.7" onchange="checkFilterValue()"/>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="usePValueFilter" id="use_p_val" class="radio" onclick="setUsePValue()" checked />
+                                            <label for="use_p_val">Use <i>p</i>-value filter</label>
+                                        </td>
+                                        <td>
+                                            <span id="pVal" style="color: #777"> Maximum <i>p</i>-value: </span>
+                                            <input type="text" name="pValueCutOff" id="p_val_cutoff" style ="margin-top: 2em; width: 60px;" value="0.05" onchange="checkPValue()"/>
+
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </fieldset>
+                            <h2 class="StepTitle">Sequence Filters</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="useConservation" id="use_conservation" class="radio" onclick="setUseConservation()"/>
+                                            <label for="use_conservation">Use Conservation Filter</label>
+                                        </td>
+         
+                                        <td>
+                                            <input type="radio" name="useLowComplexityFilter" id="use_low_complexity_filter" class="radio" onclick="setUseLowComplexityFilter()" checked/>
+                                            <label for="use_low_complexity_filter">Filter Low Complexity Sequences</label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                            <h2 class="StepTitle">Search Settings</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <span id="numThreads" style="color: #777"> Number of Threads: </span>
+                                            <input type="text" id="threads_used" onchange="checkNumThreads()" style ="margin-top: 2em; margin-left: 15px; width: 60px;"/>
+                                        </td>
+                                        <td>
+                                            <span id="minSeqAbundance" style="color: #777"> Minimum sRNA Abundance: </span>
+                                            <input type="text" id="min_seq_abundance" onchange="checkMinAbundance()" value ="5" style ="margin-top: 2em; width: 60px;"/>
+                                        </td>
+                                        <td>
+                                            <span id="minFragmentLength" style="color: #777"> Minimum Tag Length: </span>
+                                            <input type="text" id="min_tag_length" onchange="checkMinTagLength()" value ="19" style ="margin-top: 2em; margin-left: 13px; width: 60px;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+
+                                        <td>
+                                            <span id="maxFragmentLength" style="color: #777"> Maximum Tag Length: </span>
+                                            <input type="text" id="max_tag_length" value ="21" onchange="checkMaxTagLength()" style ="margin-top: 2em; width: 60px;"/>
+                                        </td>
+                                        <td>
+                                            <span id="minSeqLength" style="color: #777"> Minimum sRNA Length: </span>
+                                            <input type="text" id="min_seq_length" value ="19" onchange="checkMinSRNALength()" style ="margin-top: 2em; margin-left: 25px; width: 60px;"/>
+                                        </td>
+                                        <td>
+                                            <span id="maxSeqLength" style="color: #777"> Maximum sRNA Length: </span>
+                                            <input type="text" id="max_seq_length" onchange="checkMaxSRNALength()" value ="24" style ="margin-top: 2em; width: 60px;"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                            
+
+                        </div>
+                        
+                        <div id="step-2" style="overflow: auto;" >
+                            <h2 class="StepTitle">Canonical Small RNA Positions</h2>
+                            <fieldset style="min-height:100px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="mm_10" id="allow_mm_10" class="radio" onclick="allowMM10()"/>
+                                            <label for="allow_mm_10">Allow mismatch at position 10</label>
+                                        </td>
+                                        <td>
+                                            <span id="mmPos10" style="color: #777; display: none;">Penalty score: </span>
+                                            <input type="text" id="pos_10_mm_score" onchange="checkPos10MMscore()" value ="1" style ="margin-top: 2em; margin-left: 15px; width: 50px; display: none;"/>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="mm_11" id="allow_mm_11" class="radio" onclick="allowMM11()"/>
+                                            <label for="allow_mm_11">Allow mismatch at position 11</label>
+                                        </td>
+                                        <td>
+                                            <span id="mmPos11" style="color: #777; display: none;">Penalty score: </span>
+                                            <input type="text" id="pos_11_mm_score" onchange="checkPos11MMscore()" value ="1" style ="margin-top: 2em; margin-left: 15px; width: 50px; display: none;"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+
+                            <h2 class="StepTitle">Mismatch Settings</h2>
+                            <fieldset style="min-height:100px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="gaps_mm" id="gaps_count_as_mm" class="radio" onclick="setGapsAsMM()" checked />
+                                            <label for="gaps_count_as_mm">Gaps count as mismatches</label>
+                                        </td>
+
+                                        <td>
+                                            <input type="radio" name="gu_mm" id="gu_count_as_mm" class="radio" onclick="setGUAsMM()"/>
+                                            <label for="gu_count_as_mm">G:U pairs count as mismatches</label>
+                                        </td>
+
+
+                                    </tr>
+                                </table>
+                            </fieldset>
+
+                            <h2 class="StepTitle">Small RNA Core Region (Relative to the the 5' end)</h2>
+                            <fieldset style="min-height:100px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <span id="coreStart" style="color: #777">Core region start:</span>
+                                            <input type="text" id="core_start" onchange="checkCoreStart()" value ="2" style ="margin-top: 2em; margin-left: 40px; width: 50px;"/>
+                                        </td>
+                                        <td>
+                                            <span id="coreEnd" style="color: #777">Core region end:</span>
+                                            <input type="text" id="core_end" onchange="checkCoreEnd()" value ="13" style ="margin-top: 2em; margin-left: 15px; width: 50px;"/>
+                                        </td>
+
+
+                                    </tr>
+                                    <tr>
+
+                                        <td>
+                                            <span id="coreMultiplier" style="color: #777">Core region multiplier:</span>
+                                            <input type="text" id="core_multiplier" onchange="checkCoreMultiplier()" value ="2" style ="margin-top: 2em; margin-left: 13px; width: 50px;"/>
+                                        </td>
+                                        <td>
+                                            <span id="maxAdjacentCore" style="color: #777">Maximum adjacent mismatches in core region: </span>
+                                            <input type="text" id="max_adjacent_core" value ="1" onchange="checkMaxAdjacentCore()" style ="margin-top: 2em; margin-left: 1em; width: 60px;"/>
+                                        </td>
+                                        <td>
+                                            <span id="maxMMCore" style="color: #777">Maximum mismatches in core region: </span>
+                                            <input type="text" id="max_mm_core" value ="2" onchange="checkMaxMMCore()" style ="margin-top: 2em; margin-left: 1em; width: 60px;"/>
+                                        </td>
+
+                                    </tr>
+                                </table>
+                            </fieldset>
+
+                            <h2 class="StepTitle">Score Values</h2>
+                            <fieldset style="min-height:250px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <span id="mmScore" style="color: #777">Mismatch score:</span>
+                                            <input type="text" id="mm_score" onchange="checkMMScore()" value ="1" style ="margin-top: 2em; margin-left: 50px; width: 50px;"/>
+                                        </td>
+                                        <td>
+                                            <span id="gapScore" style="color: #777">Gap score:</span>
+                                            <input type="text" id="gap_score" onchange="checkGapScore()" value ="1" style ="margin-top: 2em; margin-left: 93px; width: 50px;"/>
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span id="guScore" style="color: #777">G:U pair score:</span>
+                                            <input type="text" id="gu_score" onchange="checkGUScore()" value ="0.5" style ="margin-top: 2em; margin-left: 57px; width: 50px;"/>
+                                        </td>
+
+                                        <td>
+                                            <span id="maxScore" style="color: #777">Maximum penalty score:</span>
+                                            <input type="text" id="max_score" onchange="checkMaxScore()" value ="4" style ="margin-top: 2em; margin-left: 10px; width: 50px;"/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <span id="maxMM" style="color: #777">Maximum mismatches:</span>
+                                            <input type="text" id="max_mm" onchange="checkMaxMM()" value ="4" style ="margin-top: 2em; margin-left: 10px; width: 50px;"/>
+                                        </td>
+
+                                        <td>
+                                            <span id="maxGU" style="color: #777">Maximum G:U pairs:</span>
+                                            <input type="text" id="max_gu" onchange="checkMaxGU()" value ="4" style ="margin-top: 2em; margin-left: 36px; width: 50px;"/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <span id="maxGaps" style="color: #777">Maximum gaps:</span>
+                                            <input type="text" id="max_gaps" onchange="checkMaxGaps()" value ="1" style ="margin-top: 2em; margin-left: 52px; width: 50px;"/>
+                                        </td>
+
+                                        <td>
+                                            <span id="maxAdjacent" style="color: #777">Maximum adjacent MM:</span>
+                                            <input type="text" id="max_adjacent" onchange="checkMaxAdjacent()" value ="2" style ="margin-top: 2em; margin-left: 14px; width: 50px;"/>
+                                        </td>
+
+
+
+
+                                    </tr>
+
+                                </table>
+                            </fieldset>
+
+                        </div>
+                        <div id="step-3" style="overflow: auto;" >	
+                            <h2 class="StepTitle">Permissible Mismatches from the Small RNA 5' End</h2>
+                            <fieldset style="min-height:200px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="allow_1" id="allow_1" class="radio" onclick="allowMM(1)"/>
+                                            <label for="allow_1" style="width: 65px;">1</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_2" id="allow_2" class="radio" onclick="allowMM(2)" />
+                                            <label for="allow_2" style="width: 65px;">2</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_3" id="allow_3" class="radio" onclick="allowMM(3)" />
+                                            <label for="allow_3" style="width: 65px;">3</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="allow_4" id="allow_4" class="radio" onclick="allowMM(4)" />
+                                            <label for="allow_4" style="width: 65px;">4</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_5" id="allow_5" class="radio" onclick="allowMM(5)" />
+                                            <label for="allow_5" style="width: 65px;">5</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_6" id="allow_6" class="radio" onclick="allowMM(6)" />
+                                            <label for="allow_6" style="width: 65px;">6</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_7" id="allow_7" class="radio" onclick="allowMM(7)" />
+                                            <label for="allow_7" style="width: 65px;">7</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_8" id="allow_8" class="radio" onclick="allowMM(8)" />
+                                            <label for="allow_8" style="width: 65px;">8</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_9" id="allow_9" class="radio" onclick="allowMM(9)" />
+                                            <label for="allow_9" style="width: 65px;">9</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_10" id="allow_10" class="radio" onclick="allowMM(10)" />
+                                            <label for="allow_10" style="width: 65px;">10</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_11" id="allow_11" class="radio" onclick="allowMM(11)" />
+                                            <label for="allow_11" style="width: 65px;">11</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_12" id="allow_12" class="radio" onclick="allowMM(12)" />
+                                            <label for="allow_12" style="width: 65px;">12</label>
+                                        </td> 
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="allow_13" id="allow_13" class="radio" onclick="allowMM(13)" />
+                                            <label for="allow_13" style="width: 65px;">13</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_14" id="allow_14" class="radio" onclick="allowMM(14)" />
+                                            <label for="allow_14" style="width: 65px;">14</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_15" id="allow_15" class="radio" onclick="allowMM(15)" />
+                                            <label for="allow_15" style="width: 65px;">15</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="allow_16" id="allow_16" class="radio" onclick="allowMM(16)" />
+                                            <label for="allow_16" style="width: 65px;">16</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_17" id="allow_17" class="radio" onclick="allowMM(17)" />
+                                            <label for="allow_17" style="width: 65px;">17</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_18" id="allow_18" class="radio" onclick="allowMM(18)" />
+                                            <label for="allow_18" style="width: 65px;">18</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_19" id="allow_19" class="radio" onclick="allowMM(19)" />
+                                            <label for="allow_19" style="width: 65px;">19</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_20" id="allow_20" class="radio" onclick="allowMM(20)" />
+                                            <label for="allow_20" style="width: 65px;">20</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_21" id="allow_21" class="radio" onclick="allowMM(21)" />
+                                            <label for="allow_21" style="width: 65px;">21</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_22" id="allow_22" class="radio" onclick="allowMM(22)" />
+                                            <label for="allow_22" style="width: 65px;">22</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_23" id="allow_23" class="radio" onclick="allowMM(23)" />
+                                            <label for="allow_23" style="width: 65px;">23</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="allow_24" id="allow_24" class="radio" onclick="allowMM(24)" />
+                                            <label for="allow_24" style="width: 65px;">24</label>
+                                        </td> 
+                                    </tr>
+                                </table>
+                            </fieldset>
+                            <h2 class="StepTitle">Non-Permissible Mismatches from the Small RNA 5' End</h2>
+                            <fieldset>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="disallow_1" id="disallow_1" class="radio" onclick="disallowMM(1)" />
+                                            <label for="disallow_1" style="width: 65px;">1</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_2" id="disallow_2" class="radio" onclick="disallowMM(2)" />
+                                            <label for="disallow_2" style="width: 65px;">2</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_3" id="disallow_3" class="radio" onclick="disallowMM(3)"/>
+                                            <label for="disallow_3" style="width: 65px;">3</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="disallow_4" id="disallow_4" class="radio" onclick="disallowMM(4)" />
+                                            <label for="disallow_4" style="width: 65px;">4</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_5" id="disallow_5" class="radio" onclick="disallowMM(5)" />
+                                            <label for="disallow_5" style="width: 65px;">5</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_6" id="disallow_6" class="radio" onclick="disallowMM(6)" />
+                                            <label for="disallow_6" style="width: 65px;">6</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_7" id="disallow_7" class="radio" onclick="disallowMM(7)" />
+                                            <label for="disallow_7" style="width: 65px;">7</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_8" id="disallow_8" class="radio" onclick="disallowMM(8)" />
+                                            <label for="disallow_8" style="width: 65px;">8</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_9" id="disallow_9" class="radio" onclick="disallowMM(9)" />
+                                            <label for="disallow_9" style="width: 65px;">9</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_10" id="disallow_10" class="radio" onclick="disallowMM(10)" />
+                                            <label for="disallow_10" style="width: 65px;">10</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_11" id="disallow_11" class="radio" onclick="disallowMM(11)" />
+                                            <label for="disallow_11" style="width: 65px;">11</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_12" id="disallow_12" class="radio" onclick="disallowMM(12)" />
+                                            <label for="disallow_12" style="width: 65px;">12</label>
+                                        </td> 
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="disallow_13" id="disallow_13" class="radio" onclick="disallowMM(13)" />
+                                            <label for="disallow_13" style="width: 65px;">13</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_14" id="disallow_14" class="radio" onclick="disallowMM(14)" />
+                                            <label for="disallow_14" style="width: 65px;">14</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_15" id="disallow_15" class="radio" onclick="disallowMM(15)" />
+                                            <label for="disallow_15" style="width: 65px;">15</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="disallow_16" id="disallow_16" class="radio" onclick="disallowMM(16)" />
+                                            <label for="disallow_16" style="width: 65px;">16</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_17" id="disallow_17" class="radio" onclick="disallowMM(17)" />
+                                            <label for="disallow_17" style="width: 65px;">17</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_18" id="disallow_18" class="radio" onclick="disallowMM(18)" />
+                                            <label for="disallow_18" style="width: 65px;">18</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_19" id="disallow_19" class="radio" onclick="disallowMM(19)" />
+                                            <label for="disallow_19" style="width: 65px;">19</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_20" id="disallow_20" class="radio" onclick="disallowMM(20)" />
+                                            <label for="disallow_20" style="width: 65px;">20</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_21" id="disallow_21" class="radio" onclick="disallowMM(21)" />
+                                            <label for="disallow_21" style="width: 65px;">21</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_22" id="disallow_22" class="radio" onclick="disallowMM(22)" />
+                                            <label for="disallow_22" style="width: 65px;">22</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_23" id="disallow_23" class="radio" onclick="disallowMM(23)" />
+                                            <label for="disallow_23" style="width: 65px;">23</label>
+                                        </td> 
+                                        <td>
+                                            <input type="radio" name="disallow_24" id="disallow_24" class="radio" onclick="disallowMM(24)" />
+                                            <label for="disallow_24" style="width: 65px;">24</label>
+                                        </td> 
+                                    </tr>
+                                </table>
+
+                        </div>
+
+                    </div>
+
+
+               
+                    <!-- End SmartWizard Content  	-->	
+
+                </td></tr>
+        </table>
+
+        <script>
+
+            $(document).ready(function () {
+                Tipped.create('.simple-tooltip', {behavior: 'hide'});
+            });
+
+            function allowMM10() {
+
+                if (typeof app !== "undefined") {
+
+                    if (!app.setMMPos10()) {
+                        document.getElementById('allow_mm_10').checked = false;
+                        document.getElementById('mmPos10').style.display = 'none';
+                        document.getElementById('pos_10_mm_score').style.display = 'none';
+                    } else {
+                        document.getElementById('allow_mm_10').checked = true;
+                        document.getElementById('mmPos10').style.display = 'inline';
+                        document.getElementById('pos_10_mm_score').style.display = 'inline';
+                    }
+
+                }
+
+            }
+
+            function allowMM11() {
+
+                if (typeof app !== "undefined") {
+
+                    if (!app.setMMPos11()) {
+                        document.getElementById('allow_mm_11').checked = false;
+                        document.getElementById('mmPos11').style.display = 'none';
+                        document.getElementById('pos_11_mm_score').style.display = 'none';
+                    } else {
+                        document.getElementById('allow_mm_11').checked = true;
+                        document.getElementById('mmPos11').style.display = 'inline';
+                        document.getElementById('pos_11_mm_score').style.display = 'inline';
+                    }
+
+                }
+
+            }
+
+            function setGapsAsMM() {
+                if (!app.setGapsAsMM()) {
+                    document.getElementById('gaps_count_as_mm').checked = false;
+                } else {
+                    document.getElementById('gaps_count_as_mm').checked = true;
+                }
+
+            }
+
+            function setGUAsMM() {
+                if (!app.setGUAsMM()) {
+                    document.getElementById('gu_count_as_mm').checked = false;
+                } else {
+                    document.getElementById('gu_count_as_mm').checked = true;
+                }
+
+            }
+
+            function checkCoreStart() {
+                //Get the value
+                var n = document.getElementById('core_start').value;
+                //Turn it into a int
+                n = parseInt(n);
+
+
+                //Check that is a number...        
+                if (isNaN(n)) {
+                    app.showErrorMessage("The core region start position must be a number");
+                    document.getElementById('core_start').value = '1';
+                    app.setCoreRegionStartPos(1);
+                    return;
+                }
+
+                //Check that the value is between 1-24
+                if (!(n >= 1 && n <= 24)) {
+                    app.showErrorMessage("The core region start position must be between 1 and 24");
+                    document.getElementById('core_start').value = '1';
+                    app.setCoreRegionStartPos(1);
+                    return;
+                }
+
+                app.setCoreRegionStartPos(n);
+            }
+
+            function checkCoreEnd() {
+                //Get the value
+                var n = document.getElementById('core_end').value;
+                //Turn it into a int
+                n = parseInt(n);
+
+
+                //Check that is a number...        
+                if (isNaN(n)) {
+                    app.showErrorMessage("The core region end position must be a number");
+                    document.getElementById('core_end').value = '10';
+                    app.setCoreRegionEndPos(10);
+                    return;
+                }
+
+                //Check that the value is between 1-24
+                if (!(n >= 1 && n <= 24)) {
+                    app.showErrorMessage("The core region end position must be between 1 and 24");
+                    document.getElementById('core_end').value = '10';
+                    app.setCoreRegionEndPos(10);
+                    return;
+                }
+
+                app.setCoreRegionEndPos(n);
+            }
+
+            function checkCoreMultiplier() {
+                //Get the value
+                var n = document.getElementById('core_multiplier').value;
+                //Turn it into a int
+                n = parseFloat(n);
+
+
+                //Check that is a number...        
+                if (isNaN(n)) {
+                    app.showErrorMessage("The core region multiplier must be a number");
+                    document.getElementById('core_multiplier').value = '1';
+                    app.setCoreRegionMultiplier(1);
+                    return;
+                }
+
+
+                app.setCoreRegionMultiplier(n);
+            }
+
+            function checkMaxAdjacentCore() {
+                //max_adjacent_core
+                //Get the value
+                var n = document.getElementById('max_adjacent_core').value;
+                //Turn it into a int
+                n = parseInt(n);
+
+
+                //Check that is a number...        
+                if (isNaN(n)) {
+                    app.showErrorMessage("The value must be a number");
+                    document.getElementById('max_adjacent_core').value = '1';
+                    app.setMaxAdjacentMMCore(1);
+                    return;
+                }
+
+
+                app.setMaxAdjacentMMCore(n);
+            }
+
+            function checkMaxMMCore() {
+                //max_mm_core
+                var n = document.getElementById('max_mm_core').value;
+                //Turn it into a int
+                n = parseInt(n);
+
+
+                //Check that is a number...        
+                if (isNaN(n)) {
+                    app.showErrorMessage("The value must be a number");
+                    document.getElementById('max_mm_core').value = '2';
+                    app.setMaxMMCore(2);
+                    return;
+                }
+
+                app.setMaxMMCore(n);
+
+            }
+
+            function checkMMScore() {
+                //mm_score
+                var n = document.getElementById('mm_score').value;
+                //Turn it into a int
+                n = parseFloat(n);
+
+
+                //Check that is a number...        
+                if (isNaN(n)) {
+                    app.showErrorMessage("The value must be a number");
+                    document.getElementById('mm_score').value = '1';
+                    app.setMMScore(1);
+                    return;
+                }
+
+                app.setMMScore(n);
+
+            }
+
+            function checkGapScore() {
+                //gap_score
+                var n = document.getElementById('gap_score').value;
+                //Turn it into a int
+                n = parseFloat(n);
+
+
+                //Check that is a number...        
+                if (isNaN(n)) {
+                    app.showErrorMessage("The value must be a number");
+                    document.getElementById('gap_score').value = '1';
+                    app.setGapScore(1);
+                    return;
+                }
+
+                app.setGapScore(n);
+            }
+            
+            function checkGUScore()
+            {
+            //gu_score
+             var n = document.getElementById('gu_score').value;
+                //Turn it into a int
+                n = parseFloat(n);
+
+
+                //Check that is a number...        
+                if (isNaN(n)) {
+                    app.showErrorMessage("The value must be a number");
+                    document.getElementById('gu_score').value = '0.5';
+                    app.setGUScore(0.5);
+                    return;
+                }
+
+                app.setGUScore(n);
+            }
+
+            function checkMaxScore()
+            {
+            
+            var n = document.getElementById('max_score').value;
+                //Turn it into a int
+                n = parseFloat(n);
+
+
+                //Check that is a number...        
+                if (isNaN(n)) {
+                    app.showErrorMessage("The value must be a number");
+                    document.getElementById('max_score').value = '4';
+                    app.setMaxScore(4);
+                    return;
+                }
+
+                app.setMaxScore(n);
+            }
+            
+            function checkMaxMM()
+            {
+            //max_mm
+            var n = document.getElementById('max_mm').value;
+                //Turn it into a int
+                n = parseInt(n);
+
+
+                //Check that is a number...        
+                if (isNaN(n)) {
+                    app.showErrorMessage("The value must be a number");
+                    document.getElementById('max_mm').value = '4';
+                    app.setMaxMM(4);
+                    return;
+                }
+
+                app.setMaxMM(n);
+            }
+            
+            function checkMaxGU() 
+            {
+            //max_gu
+            var n = document.getElementById('max_gu').value;
+                //Turn it into a int
+                n = parseInt(n);
+
+
+                //Check that is a number...        
+                if (isNaN(n)) {
+                    app.showErrorMessage("The value must be a whole number");
+                    document.getElementById('max_gu').value = '4';
+                    app.setMaxGU(4);
+                    return;
+                }
+
+                app.setMaxGU(n);
+            
+            }
+            
+            function checkMaxGaps()
+            {
+            //max_gaps
+            var n = document.getElementById('max_gaps').value;
+                //Turn it into a int
+                n = parseInt(n);
+
+
+                //Check that is a number...        
+                if (isNaN(n)) {
+                    app.showErrorMessage("The value must be a whole number");
+                    document.getElementById('max_gaps').value = '1';
+                    app.setMaxGaps(1);
+                    return;
+                }
+
+                app.setMaxGaps(n);
+            }
+            
+            function checkMaxAdjacent()
+            {
+            //max_adjacent
+            var n = document.getElementById('max_adjacent').value;
+                //Turn it into a int
+                n = parseInt(n);
+
+
+                //Check that is a number...        
+                if (isNaN(n)) {
+                    app.showErrorMessage("The value must be a whole number");
+                    document.getElementById('max_adjacent').value = '2';
+                    app.setMaxAdjacentMM(2);
+                    return;
+                }
+
+                app.setMaxAdjacentMM(n);
+            
+            }
+            
+            function checkPos10MMscore()
+            {
+                //pos_10_mm_score
+                var n = document.getElementById('pos_10_mm_score').value;
+                //Turn it into a float
+                n = parseFloat(n);
+
+
+                //Check that is a number...        
+                if (isNaN(n)) {
+                    app.showErrorMessage("The value must be a number");
+                    document.getElementById('pos_10_mm_score').value = '2.5';
+                    app.setPos10MMScore(2.5);
+                    return;
+                }
+
+                app.setPos10MMScore(n);
+                
+            }
+            
+            function checkPos11MMscore()
+            {
+            //pos_11_mm_score
+                var n = document.getElementById('pos_11_mm_score').value;
+                //Turn it into a float
+                n = parseFloat(n);
+
+
+                //Check that is a number...        
+                if (isNaN(n)) {
+                    app.showErrorMessage("The value must be a number");
+                    document.getElementById('pos_11_mm_score').value = '1';
+                    app.setPos11MMScore(1);
+                    return;
+                }
+
+                app.setPos11MMScore(n);
+            
+            }
+            
+            function disallowMM(n)
+            {
+                var id = "disallow_"+n;
+       
+                if(app.setNotAllowedMM(n))
+                {
+                    document.getElementById(id).checked = true;
+                }
+                else
+                {
+                    document.getElementById(id).checked = false;
+                }
+            }
+            
+            function allowMM(n)
+            {
+                var id = "allow_"+n;
+                
+                if(app.setAllowedMM(n))
+                {
+                    document.getElementById(id).checked = true;
+                }
+                else
+                {
+                    document.getElementById(id).checked = false;
+                }
+            }
+            
+            function setAllenRules()
+            {
+                app.setAllenRules();
+                
+                document.getElementById('allow_mm_10').checked = false;
+                document.getElementById('mmPos10').style.display = 'none';
+                document.getElementById('pos_10_mm_score').style.display = 'none';
+
+                document.getElementById('allow_mm_11').checked = false;
+                document.getElementById('mmPos11').style.display = 'none';
+                document.getElementById('pos_11_mm_score').style.display = 'none';
+
+                document.getElementById('gaps_count_as_mm').checked = true;
+
+                document.getElementById('gu_count_as_mm').checked = false;
+
+                document.getElementById('core_start').value = '2';
+                document.getElementById('core_end').value = '13';
+
+                document.getElementById('core_multiplier').value = '2';
+
+                document.getElementById('max_adjacent_core').value = '1';
+
+                document.getElementById('max_mm_core').value = '2';
+
+                document.getElementById('mm_score').value = '1';
+
+                document.getElementById('gap_score').value = '1';
+
+                document.getElementById('gu_score').value = '0.5';
+
+                document.getElementById('max_score').value = '4';
+
+                document.getElementById('max_mm').value = '4';
+
+                document.getElementById('max_gu').value = '4';
+
+                document.getElementById('max_gaps').value = '1';
+
+                document.getElementById('max_adjacent').value = '2';
+
+                document.getElementById('pos_10_mm_score').value = '1';
+
+                document.getElementById('pos_11_mm_score').value = '1';
+                
+            }
+            
+            function setCarringtonRules()
+            {
+                app.setCarringtonRules();
+                document.getElementById('allow_mm_10').checked = true;
+                document.getElementById('mmPos10').style.display = 'inline';
+                document.getElementById('pos_10_mm_score').style.display = 'inline';
+
+                document.getElementById('allow_mm_11').checked = true;
+                document.getElementById('mmPos11').style.display = 'inline';
+                document.getElementById('pos_11_mm_score').style.display = 'inline';
+
+                document.getElementById('gaps_count_as_mm').checked = true;
+
+                document.getElementById('gu_count_as_mm').checked = false;
+
+                document.getElementById('core_start').value = '2';
+                document.getElementById('core_end').value = '13';
+
+                document.getElementById('core_multiplier').value = '2';
+
+                document.getElementById('max_adjacent_core').value = '1';
+
+                document.getElementById('max_mm_core').value = '2';
+
+                document.getElementById('mm_score').value = '1';
+
+                document.getElementById('gap_score').value = '1';
+
+                document.getElementById('gu_score').value = '0.5';
+
+                document.getElementById('max_score').value = '4';
+
+                document.getElementById('max_mm').value = '4';
+
+                document.getElementById('max_gu').value = '4';
+
+                document.getElementById('max_gaps').value = '1';
+
+                document.getElementById('max_adjacent').value = '2';
+
+                document.getElementById('pos_10_mm_score').value = '1';
+
+                document.getElementById('pos_11_mm_score').value = '1';
+                
+            }
+            
+            
+            
+            
+            
+            
+    
+
+ 
+ 
+ 
+ 
+ 
+ 		var threadsSetUp = false;
+
+ function setThreads() {
+     if (typeof app !== "undefined") {
+         return app.getThreads();
+     } else {
+         return 1;
+     }
+ }
+
+ function addTranscriptome() {
+     var fileName = transcriptomeFilePicker();
+     if (fileName !== "") {
+         if ($('#transcriptome_input tr').length > 2) {
+             document.getElementById("transcriptome_input").deleteRow(1);
+         }
+         var rowContent = "<tr class=\"replicateRow\"><td class=\"label\"><a href=\"javascript:void(0)\" onclick=\"removeTranscriptomeRow(this)\"><img src=\"../images/cross_black.png\" alt=\"Cross\" style=\"width:12px;height:12px\"></a></td><td class=\"filename\"><a href=\"javascript:void(0)\">" + fileName + "</a></td></tr>"
+         $(rowContent).insertBefore('#addTranscriptome');
+     }
+ }
+
+ function addGFF3() {
+     var fileName = gff3FilePicker();
+     if (fileName !== "") {
+         if ($('#gff3_input tr').length > 2) {
+             document.getElementById("gff3_input").deleteRow(1);
+         }
+         var rowContent = "<tr class=\"replicateRow\"><td class=\"label\"><a href=\"javascript:void(0)\" onclick=\"removeGffRow(this)\"><img src=\"../images/cross_black.png\" alt=\"Cross\" style=\"width:12px;height:12px\"></a></td><td class=\"filename\"><a href=\"javascript:void(0)\">" + fileName + "</a></td></tr>"
+         $(rowContent).insertBefore('#addGff3');
+     }
+ }
+
+ function addGenome() {
+     var fileName = genomeFilePicker();
+     if (fileName !== "") {
+         if ($('#genome_input tr').length > 2) {
+             document.getElementById("genome_input").deleteRow(1);
+         }
+         var rowContent = "<tr class=\"replicateRow\"><td class=\"label\"><a href=\"javascript:void(0)\" onclick=\"removeGenomeRow(this)\"><img src=\"../images/cross_black.png\" alt=\"Cross\" style=\"width:12px;height:12px\"></a></td><td class=\"filename\"><a href=\"javascript:void(0)\">" + fileName + "</a></td></tr>"
+         $(rowContent).insertBefore('#addGenome');
+     }
+ }
+
+ function addGenomeOpt() {
+     var fileName = genomeFilePicker();
+     if (fileName !== "") {
+         if ($('#genome_input_opt tr').length > 2) {
+             document.getElementById("genome_input_opt").deleteRow(1);
+         }
+         var rowContent = "<tr class=\"replicateRow\"><td class=\"label\"><a href=\"javascript:void(0)\" onclick=\"removeGenomeRow(this)\"><img src=\"../images/cross_black.png\" alt=\"Cross\" style=\"width:12px;height:12px\"></a></td><td class=\"filename\"><a href=\"javascript:void(0)\">" + fileName + "</a></td></tr>"
+         $(rowContent).insertBefore('#addGenomeOpt');
+     }
+ }
+
+ function addDegradomeReplicate() {
+     var fileName = degradomeFilePicker();
+     if (fileName !== "") {
+         var rowContent = "<tr class=\"replicateRow\"><td class=\"label\"><a href=\"javascript:void(0)\" onclick=\"removeDegradomeRow(this)\"><img src=\"../images/cross_black.png\" alt=\"Cross\" style=\"width:12px;height:12px\"></a></td><td class=\"filename\"><a href=\"javascript:void(0)\">" + fileName + "</a></td></tr>"
+         $(rowContent).insertBefore('#addDegradomeReplicate');
+     }
+ }
+
+ function addSmallRNAReplicate() {
+     var fileName = smallRNAFilePicker();
+     if (fileName !== "") {
+         var rowContent = "<tr class=\"replicateRow\"><td class=\"label\"><a href=\"javascript:void(0)\" onclick=\"removeSmallRNARow(this)\"><img src=\"../images/cross_black.png\" alt=\"Cross\" style=\"width:12px;height:12px\"></a></td><td class=\"filename\"><a href=\"javascript:void(0)\">" + fileName + "</a></td></tr>";
+         $(rowContent).insertBefore('#addSRNAReplicate');
+     }
+
+
+
+ }
+
+ function smallRNAFilePicker() {
+     if (typeof app !== "undefined") {
+         return app.pickSmallRNAFile();
+     } else {
+         return "DEBUG FILE";
+     }
+ }
+
+ function degradomeFilePicker() {
+     if (typeof app !== "undefined") {
+         return app.pickDegradomeFile();
+     } else {
+         return "DEBUG FILE";
+     }
+ }
+
+ function transcriptomeFilePicker() {
+     if (typeof app !== "undefined") {
+         return app.pickTranscriptomeFile();
+     } else {
+         return "DEBUG FILE";
+     }
+ }
+
+ function genomeFilePicker() {
+     if (typeof app !== "undefined") {
+         return app.pickGenomeFile();
+     } else {
+         return "DEBUG FILE";
+     }
+ }
+
+ function gff3FilePicker() {
+     if (typeof app !== "undefined") {
+         return app.pickGFF3File();
+     } else {
+         return "DEBUG FILE";
+     }
+ }
+
+ function removeSmallRNARow(element) {
+
+     //Get the file name and remove using app
+     if (typeof app !== "undefined") {
+         var text = $(element).closest("tr").find('.filename').text();
+         if (app.removeSmallRNADataset(text)) {
+             $(element).closest("tr").remove();
+         }
+     }
+ }
+
+ function removeDegradomeRow(element) {
+
+     //Get the file name and remove using app
+     if (typeof app !== "undefined") {
+         var text = $(element).closest("tr").find('.filename').text();
+         if (app.removeDegradomeDataset(text)) {
+             $(element).closest("tr").remove();
+         }
+     }
+ }
+
+ function removeTranscriptomeRow(element) {
+
+     //Get the file name and remove using app
+     if (typeof app !== "undefined") {
+         if (app.removeTranscriptome()) {
+             $(element).closest("tr").remove();
+         }
+     }
+ }
+
+ function removeGenomeRow(element) {
+
+     //Get the file name and remove using app
+     if (typeof app !== "undefined") {
+         if (app.removeGenome()) {
+             $(element).closest("tr").remove();
+         }
+     }
+ }
+
+ function removeGffRow(element) {
+
+     //Get the file name and remove using app
+     if (typeof app !== "undefined") {
+         if (app.removeGff3()) {
+             $(element).closest("tr").remove();
+         }
+     }
+ }
+
+ function setUseTranscriptome() {
+
+     if (typeof app !== "undefined") {
+         app.setUsingTranscriptome(true);
+     }
+     document.getElementById('genome_div').style.display = 'none';
+     document.getElementById('transcriptome_div').style.display = 'inline';
+     document.getElementById('include_utr_label').style.display = 'none';
+     document.getElementById('include_utr').disabled = true;
+     
+ }
+
+ function setUseGenomeGFF() {
+     if (typeof app !== "undefined") {
+         app.setUsingGenomeGFF(true);
+     }
+
+     document.getElementById('transcriptome_div').style.display = 'none';
+     document.getElementById('genome_div').style.display = 'inline';
+     document.getElementById('include_utr_label').style.display = 'inline';
+     document.getElementById('include_utr').disabled = false;
+ }
+
+ function setAlignSmallRNAs() {
+     if (typeof app !== "undefined") {
+
+         if (!app.alignSmallRNAsToGenome()) {
+             document.getElementById('align_small_RNAs').checked = false;
+             document.getElementById('genome_Header').innerHTML = "Genome File (optional)";
+         } else {
+             document.getElementById('genome_Header').innerHTML = "Genome File";
+         }
+     }
+ }
+
+ function setUseFilter() {
+     if (typeof app !== "undefined") {
+         if (!app.usingFilter()) {
+             document.getElementById('use_mfe_filter').checked = false;
+             document.getElementById('filterVal').style.display = 'none';
+             document.getElementById('filter_cutoff').style.display = 'none';
+         } else {
+             document.getElementById('use_mfe_filter').checked = true;
+             document.getElementById('filterVal').style.display = 'inline';
+             document.getElementById('filter_cutoff').style.display = 'inline';
+         }
+     } else {
+         document.getElementById('use_mfe_filter').checked = false;
+         document.getElementById('filterVal').style.display = 'none';
+         document.getElementById('filter_cutoff').style.display = 'none';
+     }
+
+ }
+ 
+ function setUseLowComplexityFilter() {
+     if (typeof app !== "undefined") {
+         if (!app.usingLowComplexityFilter()) {
+             document.getElementById('use_low_complexity_filter').checked = false;
+         }
+         else
+         {
+            document.getElementById('use_low_complexity_filter').checked = true; 
+         }
+     }
+ }
+
+ function setUsePValue() {
+
+     if (typeof app !== "undefined") {
+         if (!app.usingPValue()) {
+             document.getElementById('use_p_val').checked = false;
+             document.getElementById('pVal').style.display = 'none';
+             document.getElementById('p_val_cutoff').style.display = 'none';
+         } else {
+             document.getElementById('use_p_val').checked = true;
+             document.getElementById('pVal').style.display = 'inline';
+             document.getElementById('p_val_cutoff').style.display = 'inline';
+         }
+     } else {
+  
+         document.getElementById('use_p_val').checked = false;
+         document.getElementById('pVal').style.display = 'none';
+         document.getElementById('p_val_cutoff').style.display = 'none';
+     }
+ }
+
+ function checkPValue() {
+     //Get the value
+     var n = document.getElementById('p_val_cutoff').value;
+     //Turn it into a float
+     n = parseFloat(n);
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The P-value must be a decimal number between 0 and 1");
+         document.getElementById('p_val_cutoff').value = '0.05';
+         app.setPValue(0.05);
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the p-value is between 0-1....
+     if (!(n >= 0 && n <= 1)) {
+         app.showErrorMessage("The P-value must be a decimal number between 0 and 1");
+         document.getElementById('p_val_cutoff').value = '0.05';
+         app.setPValue(0.05);
+         //$("#wizard").smartWizard('disableFinishButton');
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     app.setPValue(n);
+ }
+
+ function checkFilterValue() {
+     //Get the value
+     var n = document.getElementById('filter_cutoff').value;
+     //Turn it into a float
+     n = parseFloat(n);
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The MFE filter value must be a decimal number between 0 and 1");
+         document.getElementById('filter_cutoff').value = '0.70';
+         app.setFilterValue(0.7);
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the value is between 0-1....
+     if (!(n >= 0 && n <= 1)) {
+         app.showErrorMessage("The MFE filter value must be a decimal number between 0 and 1");
+         document.getElementById('filter_cutoff').value = '0.70';
+         app.setFilterValue(0.7);
+         //$("#wizard").smartWizard('disableFinishButton');
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     app.setFilterValue(n);
+ }
+
+ function checkMinSRNALength() {
+     //Get the value
+     var n = document.getElementById('min_seq_length').value;
+     //Turn it into a int
+     n = parseInt(n);
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The sRNA length must be between 18-25");
+         document.getElementById('min_seq_length').value = '19';
+         app.setMinSRNALength(19);
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the value is between 18-25
+     if (!(n >= 18 && n <= 25)) {
+         app.showErrorMessage("The sRNA length must be between 18-25");
+         document.getElementById('min_seq_length').value = '19';
+         app.setMinSRNALength(19);
+         //$("#wizard").smartWizard('disableFinishButton');
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     app.setMinSRNALength(n);
+ }
+
+ function checkMaxSRNALength() {
+     //Get the value
+     var n = document.getElementById('max_seq_length').value;
+     //Turn it into a int
+     n = parseInt(n);
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The sRNA length must be between 18-25");
+         document.getElementById('max_seq_length').value = '24';
+         app.setMaxSRNALength(24);
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the value is between 18-25
+     if (!(n >= 18 && n <= 25)) {
+         app.showErrorMessage("The sRNA length must be between 18-25");
+         document.getElementById('max_seq_length').value = '24';
+         app.setMaxSRNALength(24);
+         //$("#wizard").smartWizard('disableFinishButton');
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     app.setMaxSRNALength(n);
+ }
+
+ //tag
+
+ function checkMinTagLength() {
+     //Get the value
+     var n = document.getElementById('min_tag_length').value;
+     //Turn it into a int
+     n = parseInt(n);
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The tag length must be a number between 15 and 30");
+         document.getElementById('min_tag_length').value = '20';
+         app.setMinTagLength(20);
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the value is between 18-25
+     if (!(n > 15)) {
+         app.showErrorMessage("The tag length must be at least 16");
+         document.getElementById('min_tag_length').value = '20';
+         app.setMinTagLength(20);
+         //$("#wizard").smartWizard('disableFinishButton');
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     app.setMinTagLength(n);
+ }
+
+ function checkMaxTagLength() {
+     //Get the value
+     var n = document.getElementById('max_tag_length').value;
+     //Turn it into a int
+     n = parseInt(n);
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The tag length must be a number between 15 and 30");
+         document.getElementById('max_tag_length').value = '21';
+         app.setMaxTagLength(21);
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the value is between 18-25
+     if (!(n > 15)) {
+         app.showErrorMessage("The minimum tag length must be at least 16");
+         document.getElementById('max_tag_length').value = '21';
+         app.setMaxTagLength(21);
+         //$("#wizard").smartWizard('disableFinishButton');
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     app.setMaxTagLength(n);
+ }
+
+ function checkNumThreads() {
+     //Get the value
+     var n = document.getElementById('threads_used').value;
+     //Turn it into a int
+     n = parseInt(n);
+
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The number of threads must greater than or equal to 1");
+         document.getElementById('threads_used').value = setThreads();
+         app.setNumThreads(setThreads());
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the value is 1 or greater
+     if (!(n >= 1)) {
+         app.showErrorMessage("The number of threads must greater than or equal to 1");
+         document.getElementById('threads_used').value = setThreads();
+         app.setNumThreads(setThreads());
+         //$("#wizard").smartWizard('disableFinishButton');
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     app.setNumThreads(n);
+ }
+
+ function checkMinAbundance() {
+     //Get the value
+     var n = document.getElementById('min_seq_abundance').value;
+     //Turn it into a int
+     n = parseInt(n);
+
+
+     //Check that is a number...        
+     if (isNaN(n)) {
+         app.showErrorMessage("The minimum abundance must greater than or equal to 1");
+         document.getElementById('min_seq_abundance').value = '1';
+         app.setMinAbundance(1);
+         //$("#wizard").smartWizard('disableExportButton');
+         return;
+     }
+
+     //Check that the value is 1 or greater
+     if (!(n >= 1)) {
+         app.showErrorMessage("The minumum abundance must greater than or equal to 1");
+         document.getElementById('min_seq_abundance').value = '1';
+         app.setMinAbundance(1);
+         return;
+     }
+
+     app.setMinAbundance(n);
+ }
+
+ function changeAbundanceType() {
+     if (typeof app !== "undefined") {
+         app.changeAbundanceType();
+     }
+ }
+
+ function setUseConservation() {
+     if (typeof app !== "undefined") {
+         if (app.setUseConservation()) {
+             document.getElementById('use_conservation').checked = true;
+         } else {
+             document.getElementById('use_conservation').checked = false;
+         }
+     }
+ }
+ 
+  function setIncludeUTR() {
+     if (typeof app !== "undefined") {
+         if (app.includeUTR()) {
+             document.getElementById('include_utr').checked = true;
+         } else {
+             document.getElementById('include_utr').checked = false;
+         }
+     }
+ }
+
+ function setCategory(n) {
+     if (typeof app !== "undefined") {
+         if (app.setCategory(n)) {
+             document.getElementById('category_' + n).checked = true;
+         } else {
+             document.getElementById('category_' + n).checked = false;
+         }
+
+     }
+ }
+ 
+
+ function selectOutputDir() {
+     if (typeof app !== "undefined") {
+         var dir = app.setOutputDir();
+
+         document.getElementById('output_dir').value = dir;
+
+     } else {
+         document.getElementById('output_dir').value = 'debug';
+     }
+ }
+ 
+ function setDefaultStringent() {
+
+  if (app.setDefaultStringentParameters()) {
+   document.getElementById('category_0').checked = true;
+   document.getElementById('category_1').checked = true;
+   document.getElementById('category_2').checked = true;
+   document.getElementById('category_3').checked = true;
+   document.getElementById('category_4').checked = false;
+   document.getElementById('use_mfe_filter').checked = true;
+   document.getElementById('filterVal').style.display = 'inline';
+   document.getElementById('filter_cutoff').style.display = 'inline';
+   document.getElementById('filter_cutoff').value = '0.70';
+   document.getElementById('min_seq_abundance').value = '5';
+  }
+
+ }
+
+ function setDefaultFlexible() {
+  if (app.setDefaultFlexibleParameters()) {
+   document.getElementById('category_0').checked = true;
+   document.getElementById('category_1').checked = true;
+   document.getElementById('category_2').checked = true;
+   document.getElementById('category_3').checked = true;
+   document.getElementById('category_4').checked = true;
+   document.getElementById('use_mfe_filter').checked = true;
+   document.getElementById('filterVal').style.display = 'inline';
+   document.getElementById('filter_cutoff').style.display = 'inline';
+   document.getElementById('filter_cutoff').value = '0.7';
+   document.getElementById('min_seq_abundance').value = '1';
+  }
+
+ }
+            
+        </script>
+    </body>
+</html>

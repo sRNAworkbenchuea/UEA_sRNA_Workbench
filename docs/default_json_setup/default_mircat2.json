@@ -6,5 +6,6 @@
     ],
     "genome_filename": "",
     "miRCAT2_Output_Dir" : "",
-    "miRCAT2_params" : ""
+    "miRCAT2_params" : "",
+    "annotation_filename" : ""
 }

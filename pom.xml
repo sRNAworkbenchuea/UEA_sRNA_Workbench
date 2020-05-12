@@ -165,6 +165,7 @@
     </build>
     
      <repositories>
+         
         <repository>
             <id>sonatype.oss.snapshots</id>
             <name>Sonatype OSS Snapshot Repository</name>
@@ -373,7 +374,7 @@
             <version>1.1.1</version>
         </dependency>
 
--->
+        -->
         <!-- Standard Java API for JSON -->
         <dependency>
             <groupId>org.glassfish</groupId>
@@ -454,7 +455,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>2.9.1.pr3-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -589,13 +590,15 @@
             <version>4.3.10.Final</version>
         </dependency>
           
-          <dependency>
-               <groupId>org.netbeans.external</groupId>
-               <artifactId>org-springframework-web</artifactId>
-               <version>RELEASE73-BETA2</version>
-               <type>jar</type>
-          </dependency>
-     </dependencies>
+        <dependency>
+            <groupId>org.netbeans.external</groupId>
+            <artifactId>org-springframework-web</artifactId>
+            <version>RELEASE73-BETA2</version>
+            <type>jar</type>
+        </dependency>
+
+          
+    </dependencies>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

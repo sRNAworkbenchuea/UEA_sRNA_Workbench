@@ -91,10 +91,10 @@ public class NormalisationController implements Initializable, ControlledScreen 
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        assert mainAnchorPane != null : "fx:id=\"mainAnchorPane\" was not injected: check your FXML file 'NormalisationView.fxml'.";
+        assert mainAnchorPane != null : "fx:id=\"mainAnchorPane\" was not injected: check your FXML file 'NormalisationScene.fxml'.";
 
-        assert mainWebView != null : "fx:id=\"mainWebView\" was not injected: check your FXML file 'NormalisationView.fxml'.";
-        assert mainAnchorPane != null : "fx:id=\"mainAnchorPane\" was not injected: check your FXML file 'NormalisationView.fxml'.";
+        assert mainWebView != null : "fx:id=\"mainWebView\" was not injected: check your FXML file 'NormalisationScene.fxml'.";
+        assert mainAnchorPane != null : "fx:id=\"mainAnchorPane\" was not injected: check your FXML file 'NormalisationScene.fxml'.";
 
         mainWebEngine = mainWebView.getEngine();
 
@@ -104,7 +104,7 @@ public class NormalisationController implements Initializable, ControlledScreen 
         tracker.setWebEngine(mainWebEngine);
 
         mainWebEngine.setOnAlert((WebEvent<String> arg0) -> {
-            System.out.println("Nofmalisation Event: " + arg0);
+            System.out.println("Normalisation Event: " + arg0);
         });
 
         mainWebEngine.getLoadWorker().stateProperty().addListener((ObservableValue<? extends State> ov, State oldState, State newState) -> {

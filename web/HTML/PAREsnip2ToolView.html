@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PAREsnip2 Analysis</title>
+
+
+
+        <!--Javascript-->
+        <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+
+        <!--JQuery files -->
+        <script type="text/javascript" src="../js/lib/jquery/jquery-2.1.4.min.js"></script>
+
+        <!--Convert DIV to canvas files -->
+        <script type="text/javascript" src="../js/lib/html2canvas-2.js"></script>
+
+        <!--D3 Javascript -->
+        <!--<script src="../js/lib/d3/d3.js"></script>-->
+        <!--<script src="../js/lib/d3/d3.min.js"></script>-->
+        <script type="text/javascript"  src="../js/lib/d3V4/d3.v4.min.js"></script>
+
+        <script type="text/javascript" src="../js/lib/d3.legend.js"></script>
+
+        <!--Menu Javascript-->
+        <script src="../js/lib/classie.js"></script>
+        <script type="text/javascript" src="../js/menu/mlpushmenu.js"></script>
+        <!-- Javascript based browser feature detection for push menu -->
+        <script type="text/javascript" src="../js/lib/modernizr.push.custom.js"></script>
+        <script type="text/javascript" src="../js/lib/modernizr-2.6.2.min.js"></script>
+
+
+        <!--Workbench Routines -->
+        <script type="text/javascript" src="../js/utils/workbenchutils.js"></script>
+
+        <!--tooltip Javascript-->
+        <!--<script type="text/javascript" src="../js/tipped/tipped.js"></script>-->
+
+        <!--easypiechart Javascript-->
+        <script type="text/javascript" src="../js/jquery.easypiechart.min.js"></script>
+
+
+
+
+
+
+
+
+        <!-- CSS -->
+        <!--Workbench CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/wbstyles.css" />
+
+        <!--Biojs CSS -->
+        <!--<link rel="stylesheet" type="text/css" href="../CSS/biojs/bootstrap.css" />-->
+        <link rel="stylesheet" type="text/css" href="../CSS/biojs/spectrum.css" />
+
+
+
+        <!--tooltip CSS-->
+        <link rel="stylesheet" type="text/css" href="../CSS/tipped/tipped.css" />
+
+        <!--Menu CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/normalize.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/menus.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/icons.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/component.css" />
+
+
+        <!-- Import FontAwesome 4.2 -->
+        <link rel="stylesheet" href="../CSS/font-awesome.min.css">
+
+        <!--Buttons CSS-->
+        <link rel="stylesheet" href="../CSS/fancy-buttons.css">
+
+        <!--bootstrap CSS-->
+        <!--<link rel="stylesheet" href="../CSS/bootstrap.min.css">-->
+
+        <style>
+            body {
+                -webkit-font-smoothing: antialiased;
+            }
+            .chart {
+                position: relative;
+                width: 450px;
+                height: 450px;
+                margin-top: 50px;
+                margin-bottom: 50px;
+            }
+            .chart canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+            .percent {
+                display: inline-block;
+                line-height: 450px;
+                z-index: 2;
+            }
+            .percent:after {
+                content: '%';
+                margin-left: 0.1em;
+                font-size: .8em;
+            }
+
+        </style>
+
+    </head>
+    <body>
+        <div class="container">
+            <!-- Push Wrapper -->
+            <div class="mp-pusher" id="mp-pusher">
+
+                <!-- mp-menu -->
+                <nav id="mp-menu" class="mp-menu">
+                    <div class="mp-level">
+                        <h2 class="icon icon-world">PAREsnip 2 Menu</h2>
+                        <ul>
+
+                            <!--<li id='continue_flow'><a href="#" onclick="continueFlow()">Continue Workflow</a></li>-->
+                            <li id='back_to_main'  ><a  href="#" onclick="returnToMain()" >Home</a></li>
+
+
+
+
+                        </ul>
+                    </div>
+
+                </nav>
+                <!-- /mp-menu -->
+
+                <div class="scroller"><!-- this is for emulating position fixed of the nav -->
+                    <div class="scroller-inner">
+
+
+                        <div class="content clearfix" >
+                            <div class="block block-80 clearfix">
+                                <p><a href="#" id="trigger" class="menu-trigger">Open/Close Menu</a></p>
+
+
+                            </div>
+
+
+                        </div>
+
+                        <div id="PAREsnip2-container" style="width: 100%;height: 100%;">
+                            <div style ="width: 50%; margin: 0 auto;">
+                                <p id="toolHelp"> You can start the tool by clicking 'Begin Workflow' on the main page!</p>
+                            </div>
+
+                            <div class="chart" id="progressCircle" data-percent="0" style ="width: 50%; margin: 0 auto; display: none;"></div>
+                            
+                            <div style ="width: 50%; margin: 1% auto;">
+                                <div style ="width: 75%; margin: 0 auto;">
+                                <p id="toolProgress" style = "display: none;" > <b>Percentage complete:</b> 0%</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- /scroller-inner -->
+
+
+
+                </div><!-- /scroller -->
+            </div>
+        </div>
+
+
+
+        <script>
+
+            var chart;
+            var progress = 0;
+
+            $(function () {
+                $('.chart').easyPieChart({
+                    size: 450,
+                    barColor: "#1E90FF",
+                    trackColor: "#BEBEBE",
+                    scaleColor: false,
+                    animate: false,
+                    onStep: function (from, to, percent) {
+                        $(this.el).find('.percent').text(Math.round(percent));
+                    }
+                });
+                chart = window.chart = $('.chart').data('easyPieChart');
+            });
+
+            function updateProgress(p)
+            {
+                chart.update(p);
+            }
+
+            function increaseProgress(p)
+            {
+                if(p <= 100)
+                {
+                    chart.update(p)
+                    document.getElementById('toolProgress').innerHTML = '<b>Percentage complete:</b> ' + p + '%';
+                }
+            }
+
+            function testInc()
+            {
+                progress += 20;
+
+                chart.update(progress);
+            }
+            
+            function hideHelp()
+            {
+                var progressText = document.getElementById('toolProgress');
+                progressText.style.display = 'inline';
+                
+                var circle = document.getElementById('progressCircle');
+                circle.style.display = 'block';
+                
+                changeText('Starting PAREsnip2....')
+            }
+
+            function changeText(text)
+            {
+                document.getElementById('toolHelp').innerHTML = '<b>Current analysis stage:</b> ' + text;
+            }
+        </script>
+        <script>
+            new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
+        </script>
+
+
+    </body>
+</html>

@@ -45,7 +45,7 @@ public class TasiModule extends WorkflowModule {
         setFXMLResource(IOUtils.DIR_SEPARATOR + "fxml" + IOUtils.DIR_SEPARATOR + "TasiScene.fxml");
         c = new TasiController(this, visualBounds);
         this.controller = c;
-        this.outDir = new File(Tools.miRPARE_DATA_Path + DIR_SEPARATOR + id + "_output");
+        this.outDir = new File(Tools.PAREfirst_DATA_Path + DIR_SEPARATOR + id + "_output");
         try {
             addInputDataContainerList(this.in_genome);
             addInputDataContainerList(this.in_sRNAQuery);
@@ -73,7 +73,7 @@ public class TasiModule extends WorkflowModule {
         SequenceServiceImpl sequence_service = (SequenceServiceImpl) DatabaseWorkflowModule.getInstance().getContext().getBean("SequenceService");
         List<Sequence_Entity> sequences = sequence_service.executeSQL(this.in_sRNAQuery.getContainer(0).getData().eval());
         // write sequences to file
-        File inputSequencesFile = new File(Tools.miRPARE_DATA_Path + DIR_SEPARATOR + getID() + "_input_sequences.fa");
+        File inputSequencesFile = new File(Tools.PAREfirst_DATA_Path + DIR_SEPARATOR + getID() + "_input_sequences.fa");
         PrintWriter writer = new PrintWriter(inputSequencesFile);
         for (Sequence_Entity sequence : sequences) {
             for (int i = 0; i < sequence.getAbundance(); i++) {
@@ -82,7 +82,7 @@ public class TasiModule extends WorkflowModule {
             }
         }
         writer.close();
-        File inputSequencesFileFormatted = new File(Tools.miRPARE_DATA_Path + DIR_SEPARATOR + getID() + "_input_sequences_formatted.fa");
+        File inputSequencesFileFormatted = new File(Tools.PAREfirst_DATA_Path + DIR_SEPARATOR + getID() + "_input_sequences_formatted.fa");
         parseFA(inputSequencesFile, inputSequencesFileFormatted);
 
         args.put("srna_file", inputSequencesFileFormatted.getAbsolutePath());

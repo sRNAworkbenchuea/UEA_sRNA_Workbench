@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+
+-->
+<html>
+    <head>
+        <title>FiRePat Setup Wizard</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!--Javascript-->
+
+
+
+        <!--JQuery files -->
+        <script type="text/javascript" src="../js/lib/jquery/jquery-1.11.2.min.js"></script>
+        <!--<script type="text/javascript" src="../js/lib/jquery.cookie-1.3.1.js"></script>
+        <script type="text/javascript" src="../js/lib/jquery/jquery.validate.js"></script>-->
+
+        <!--wizard JS-->
+        <!--<script type="text/javascript" src="../js/steps/jquery.steps.js"></script>-->
+        <script type="text/javascript" src="../js/wizards/jquery.smartWizard.firepat.datainput.js"></script>
+
+
+        <!--Workbench Routines -->
+        <script type="text/javascript" src="../js/utils/workbenchutils.js"></script>
+        <script type="text/javascript" src="../js/files/FileTable.js"></script>
+
+        <!--list drag and sort-->
+        <!--<script src="../js/utils/jquery.sortable.js"></script>-->
+        <!--<script type="text/javascript" src="../js/ListUtils/dragdrop.js"></script>-->
+        <!--<script type="text/javascript" src="../js/ListUtils/drag.js"></script>-->
+        <!--<script type="text/javascript" src="../js/ListUtils/coordinates.js"></script>-->
+        <script src="../js/lib/jqueryui/jquery-ui.min.js"></script>
+
+
+
+        <!--tooltip Javascript-->
+        <script type="text/javascript" src="../js/tipped/tipped.js"></script>
+
+
+
+
+        <!-- CSS -->
+        <!--Workbench CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/wbstyles.css" />
+
+
+        <!--Menu CSS -->
+        <link rel="stylesheet" type="text/css" href="../CSS/normalize.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/menus.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/icons.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/component.css" />
+
+        <!--tooltip CSS-->
+        <link rel="stylesheet" type="text/css" href="../CSS/tipped/tipped.css" />
+
+
+        <!-- Import FontAwesome 4.2 
+        <link rel="stylesheet" href="../CSS/font-awesome.css">-->
+
+        <!--Wizard CSS-->
+        <!--<link rel="stylesheet" href="../CSS/jquery.steps.css">-->
+        <link rel="stylesheet" type="text/css" href="../CSS/smart_wizard_vertical.css" />
+
+        <!-- Import FontAwesome 4.2 -->
+        <link rel="stylesheet" href="../CSS/font-awesome.min.css">
+        <!--Buttons CSS-->
+        <link rel="stylesheet" href="../CSS/fancy-buttons.css">
+        <!--<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
+        <style type="text/css">
+            td
+            {
+                padding:0 5px 0 5px;
+            }
+            #available_annot_list, #selected_annot_list, #other_list {
+                border: 1px solid #eee;
+                width: 142px;
+                min-height: 20px;
+                list-style-type: none;
+                margin: 0;
+                padding: 5px 0 0 0;
+                float: left;
+                margin-right: 10px;
+            }
+            #sortable1 li, #sortable2 li {
+                margin: 0 5px 5px 5px;
+                padding: 5px;
+                font-size: 1.2em;
+                width: 120px;
+            }
+        </style>
+        <style type ="text/css">
+            tr.lessSpaceUnder>td
+            {
+                padding-bottom: -20em;
+            }
+            
+        </style>
+        <style type="text/css">        
+            input.customCheckbox
+            {
+                margin: 30px 0px 20px 30px;
+                height: .855em;
+            }
+            input.leftCustomCheckbox
+            {
+                margin: 30px 0px 20px 10px;
+                height: .855em;
+            }
+            input.leftCustomCheckboxTwo
+            {
+                margin: 30px 0px 20px 10px;
+                height: .855em;
+            }
+            input.customRadiobox
+            {
+                margin: 30px 0px 0px 50px;
+                height: .855em;
+            }
+            input.leftCustomRadiobox
+            {
+                margin: 30px 0px 0px 10px;
+                height: .855em;
+            }input.colourRadiobox
+            {
+                margin: 15px 0px 0px 50px;
+                height: .855em;
+            }
+            input.leftColourRadiobox
+            {
+                margin: 15px 0px 0px 10px;
+                height: .855em;
+            }
+            input.topSampleNameRadiobox
+            {
+                margin: 22px 0px 20px 10px;
+                height: .9em;
+            }
+            input.bottomSampleNameRadiobox
+            {
+                margin: 20px 0px 22px 10px;
+                height: .855em;
+            }
+            
+        </style>
+        
+
+        <script type="text/javascript">
+
+
+
+            $(document).ready(function () {
+
+            // Smart Wizard 	
+            $('#wizard').smartWizard(
+            {
+            onLeaveStep: leaveAStepCallback,
+            onFinish: onFinishCallback,
+            onCancel: onCancelCallback,
+            labelCancel: 'Cancel',
+            labelDefaultStringent: 'Default Stringent',
+            labelDefaultFlexible: 'Default Flexible',
+            //labelLoad: 'Load Parameters',
+            labelExport: 'Save Parameters'
+            });
+
+            function leaveAStepCallback(obj, context) 
+            {
+                // return false to stay on step and true to continue navigation 
+                return validateSteps(context.fromStep, context.toStep); // return false to stay on step and true to continue navigation 
+            }
+
+            function validateSteps(stepnumber, tostep) 
+            {            
+
+            if (typeof app !== "undefined")
+            {
+                return app.isStepComplete(stepnumber, tostep);
+            }
+            return true;
+            }
+
+            function onFinishCallback(objs, context) {
+            //Check that the input is all correct
+            if (app.checkIfValid())
+            {
+            app.setReady();
+            }
+            }
+
+            function onCancelCallback()
+            {
+
+            }
+
+            });
+
+            $("#wizard").smartWizard('disableStep', 3);
+
+
+
+        </script>
+
+    </head>
+    <body>
+        <table class="mainwizardtable">
+            <tr><td> 
+                    <!-- Smart Wizard -->
+                    <div id="wizard" class="swMain">
+                        <ul id="wizardlist">
+                            <li class="simple-tooltip" title="Use this step to select input data files"><a href="#step-1">
+                                    <span class="stepNumber">1</span>
+                                    <span class="stepDesc">
+                                        Step 1<br />
+                                        <small>Input data</small>
+                                    </span>
+                                </a>
+                            </li>
+
+
+                            <li class="simple-tooltip" title="Use this step to set the processing parameters"><a href="#step-2">
+                                    <span class="stepNumber">2</span>
+                                    <span class="stepDesc">
+                                        Step 2<br />
+                                        <small>Processing parameters</small>
+                                    </span>
+                                </a>
+                            </li>
+
+                            <li class="simple-tooltip" title="Use this step to set the output parameters"><a href="#step-3">
+                                    <span class="stepNumber">3</span>
+                                    <span class="stepDesc">
+                                        Step 3<br />
+                                        <small>Output parameters</small>
+                                    </span>
+                                </a>
+                            </li>
+
+
+                        </ul>
+                       <!-- <div id="step-1" style="overflow: auto; margin-top: 0.75em;">-->
+                        <div id="step-1">
+                            <h2 class="StepTitle">First data input file</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <button type="button" id="set_first_input_file" style ="margin-top: 2em; margin-left: 10px; width: 120px;" onclick="selectFirstInputFile()">Select file</button>        
+                                        </td>
+                                        <td colspan="2">
+                                            <span id="first_input_file_label" style="color: #777"> File name </span>
+                                            <input type="text" id="first_input_file" style ="margin-top: 2em; width: 750px;" disabled value = "Not Yet Selected"/>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="firstHasHeader" id="firstHasHeader" class="leftCustomCheckbox" onclick="toggleFirstHasHeader()"  />
+                                            <label class="simple-tooltip" for="firstHasHeader" title="Tells program if file has header row">File has header row</label>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" name="firstIsSrnaData" id="firstIsSrna" class="customCheckbox" onclick="toggleFirstIsSrna()" checked />
+                                            <label class="simple-tooltip" for="firstIsSrna" title="Tells program if file contains sRNA data">Is sRNA data</label>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" name="firstPath" id="firstShowPath" class="customCheckbox" onclick="toggleFirstShowPath()" checked />
+                                            <label class="simple-tooltip" for="firstShowPath" title="Select to show full file path">Show path</label>
+                                        </td>
+                                    </tr>                                   
+                                    <tr id="name_first" style ="margin-top: 2em;">
+                                        <td colspan="2">
+                                            <span id="name_first_dataset" style="color: #777; margin-top: 2em; margin-left: 10px;" class="simple-tooltip" title="Enter dataset name, leading/trailing whitespace and periods will be removed.">Dataset name to be used in output tables</span>
+                                            <input type="text" id="first_dataset_name" onchange="setFirstDatasetName()" value ="First" style ="margin-top: 1em; margin-bottom: 1em; margin-left: 5px; width: 250px;"/>
+                                        
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                            <div style="margin-top: 0.75em;">
+                            <h2 class="StepTitle">Second data input file</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <button type="button" id="set_second_input_file" style ="margin-top: 2em; margin-left: 10px; width: 120px;" onclick="selectSecondInputFile()">Select file</button>        
+                                        </td>
+                                        <td colspan="2">
+                                            <span id="second_input_file_label" style="color: #777"> File name </span>
+                                            <input type="text" id="second_input_file" style ="margin-top: 2em; width: 750px;" disabled value = "Not Yet Selected"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        <input type="checkbox" name="secondHasHeader" id="secondHasHeader" class="leftCustomCheckbox" onclick="toggleSecondHasHeader()"  />
+                                        <label class="simple-tooltip" for="secondHasHeader" title="Tells program if file has header row">File has header row</label>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" name="secondIsSrnaData" id="secondIsSrna" class="customCheckbox" onclick="toggleSecondIsSrna()"  />
+                                            <label class="simple-tooltip" for="secondIsSrna" title="Tells program if file contains sRNA data">Is sRNA data</label>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" name="secondPath" id="secondShowPath" class="customCheckbox" onclick="toggleSecondShowPath()" checked />
+                                            <label class="simple-tooltip" for="secondShowPath" title="Select to show full file path">Show path</label>
+                                        </td>
+                                    </tr>
+                                    <tr id="name_second" style ="margin-top: 2em;">
+                                        <td colspan="2">
+                                            <span id="name_second_dataset" style="color: #777; margin-top: 2em; margin-left: 10px;" class="simple-tooltip" title="Enter dataset name, leading/trailing whitespace and periods will be removed.">Dataset name to be used in output tables</span>
+                                            <input type="text" id="second_dataset_name" onchange="setSecondDatasetName()" value ="Second" style ="margin-top: 1em; margin-bottom: 1em; margin-left: 5px; width: 250px;"/>
+                                        
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                            </div>
+                            <div style="margin-top: 0.75em;">
+                            <h2 class="StepTitle">Number of samples and replicates</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <span id="num_samp" style="color: #777; margin-left: 10px" class="simple-tooltip" title="Enter number of samples">Number of samples</span>
+                                            <input type="text" id="num_samps" onchange="checkNumSamps()" style ="margin-top: 2em; margin-left: 5px; margin-right: 15px; width: 60px;"/>
+                                        </td>
+                                        <td>
+                                            <span id="num_rep" style="color: #777" class="simple-tooltip" title="Enter number of replicates per sample, if no replicates enter 1"> Number of replicates per sample </span>
+                                            <input type="text" id="num_reps" onchange="checkNumReps()" value ="1" style ="margin-top: 2em; margin-left: 5px; width: 60px;"/>
+                                        </td>                
+                                    </tr>
+                                </table>
+                            </fieldset>
+                            </div>
+                            
+                            
+                            
+                            <div style="margin-top: 0.75em;">        
+                        <h2 class="StepTitle">Sample names</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table> 
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="sampleNames" id="useAutoNames" class="topSampleNameRadiobox" onclick="toggleAutoSampleNames()" checked/>
+                                            <label class="simple-tooltip" for="useAutoNames" title="Select to use automatically generated and sequentially numbered sample names.
+                                                   Enter sample name root, leading/trailing whitespace will be removed.">Use sequential sample names with this root</label>
+                                        </td> 
+                                        <td>
+                                            <input type="text" id="sample_name_root" onchange="setSampleNameRoot()" value ="S-" style ="margin-top: .45em; margin-left: 0px; width: 100px;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="sampleNames" id="useManualNames" class="bottomSampleNameRadiobox" onclick="toggleAutoSampleNames()" />
+                                            <label class="simple-tooltip" for="useManualNames" title="Select to use manually entered sample names.
+                                                   Enter them separated by commas. Leading and trailing whitespace will be removed.">Use these comma separated sample names</label>
+                                        </td>
+                                        <td>
+                                            <input type="text" id="sample_names" onchange="setSampleNames()" value ="" style ="margin-top: 0em; margin-left: 0px; width: 620px;"/>
+                                        </td>
+                                    </tr>
+                            
+                                </table>
+                            
+
+                        </div>
+                            
+                            
+                            
+                        </div>
+                       <!--<div id="step-2" style="overflow: auto; margin-top: 0.75em;" >-->	
+                        <div id="step-2" style="overflow: auto;" >	
+                            <h2 class="StepTitle">Filtering of input data</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="filterSrnasData" id="filterSrnas" class="leftCustomCheckbox" onclick="toggleFilterSrnaData()" checked/>
+                                            <label class="simple-tooltip" for="filterSrnas" title="Tells program to filter sRNA data before processing">Filter sRNA data</label>
+                                        </td>
+                                        <td>&nbsp;&nbsp;</td>
+                                        <td>
+                                            <span id="srna_top_pc" style="color: #777" class="simple-tooltip" title="Top percentage of sRNA data to be retained"> &nbsp Top percentage to be retained </span>
+                                            <input type="text" id="srna_top_pc_ret" onchange="setPCcutoff()" value ="10" style ="margin-top: .9em; margin-left: 5px; width: 60px;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="filterNonSrnasData" id="filterNonSrnas" class="leftCustomCheckbox" onclick="toggleFilterNonSrnaData()" checked/>
+                                            <label class="simple-tooltip" for="filterNonSrnas" title="Tells program to filter non-sRNA data before processing">Filter non-sRNA data</label>
+                                        </td>
+                                        <td>&nbsp;&nbsp;</td>
+                                        <td>
+                                            <span id="non_srna_exp_thr" style="color: #777" class="simple-tooltip" title="Enter minimum expression level for retention of non-sRNA data"> &nbsp Minimum expression level of non-sRNA data </span>
+                                            <input type="text" id="non_srna_min_exp" onchange="setNonSrnasFilterLevel()" value ="10" style ="margin-top: .9em; margin-left: 5px; width: 60px;"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                            <div style="margin-top: 0.75em;">
+                            <h2 class="StepTitle">Correlation method</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="corrMethod" id="use_kendall" class="leftCustomRadiobox" onclick="setKendall()" />
+                                            <label for="use_kendall" class="simple-tooltip"  title="Select method for calculating correlation values">KENDALL</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="corrMethod" id="use_pearson" class="customRadiobox" onclick="setPearson()" checked/>
+                                            <label for="use_pearson" class="simple-tooltip"  title="Select method for calculating correlation values">PEARSON</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="corrMethod" id="use_spearman" class="customRadiobox" onclick="setSpearman()" />
+                                            <label for="use_spearman" class="simple-tooltip"  title="Select method for calculating correlation values">SPEARMAN</label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset> </div>
+                            <div style="margin-top: 0.75em;">
+                            <h2 class="StepTitle">Local correlations</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="useLocalCorrs" id="useLocalCorrelations" class="leftCustomCheckbox" onclick="toggleLocalCorrs()"  />
+                                            <label class="simple-tooltip" for="useLocalCorrelations" title="Select to calculate local correlation values">Use local correlations</label>
+                                        </td>
+                                        <td>&nbsp;&nbsp;</td>
+                                        <td>
+                                            <span id="min_window" style="color: #777" class="simple-tooltip" title="Enter minimum width for local corelations, must not be less than 4"> Minimum window width </span>
+                                            <input type="text" id="min_corr_window" onchange="setMinWindow()" value ="4" style ="margin-top: .95em; margin-left: 5px; width: 60px;"/>
+                                        </td>
+                                        
+                                        
+                                        
+                                    </tr>
+                                </table>
+                            </fieldset>
+                            </div> 
+                            <div style="margin-top: 0.75em;">
+                            <h2 class="StepTitle">Absolute correlation threshold value</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr>
+                                        
+                                        <td>
+                                            <span id="min_cor_val" style="color: #777" class="simple-tooltip" title="Enter minimum absolute correlation value for retention of potentially correlated pairs"> &nbsp Minimum absolute correlation value </span>
+                                            <input type="text" id="min_corr_value" onchange="setCorThr()" value ="0.9" style ="margin-top: 2em; margin-left: 5px; width: 60px;"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </div> 
+                            </div>
+                    
+                        <div id="step-3" style="overflow: auto;" >
+                            <div style="margin-top: 0em;">
+                            <h2 class="StepTitle">Select output directory</h2>
+                            <fieldset  style="min-height:75px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <button type="button" id="set_output_dir" style ="margin-top: 2em; width: 120px;" onclick="selectOutputDir()">Select directory</button> 
+                                            <label class="simple-tooltip" for="set_output_dir" title="Select directory for saving output files">Output directory</label>
+                                        </td>
+                                        <td>
+                                            <input type="text" id="output_dir" style ="margin-top: 2em; width: 700px;" disabled value = "Not Yet Selected"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                            
+
+            
+            <div style="margin-top: 0.75em;">        
+                        <h2 class="StepTitle">Output file root</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table> 
+                                    <tr  id="corrs_to_csv">
+                                        <td>
+                                            <input type="checkbox" name="use_fname_root_checkbox" id="use_output_filename_root" class="leftCustomCheckbox" onclick="toggleUseOutputFileNameRoot()"  />
+                                            <label id="fname_root" class="simple-tooltip" for="use_output_filename_root" title="Select to use same root for all output file names">Use same root for all output file names</label>
+                                        </td>
+                                        <td>&nbsp;&nbsp;</td>
+                                        <td>
+                                            <span id="fname_output_root" style="color: #777" class="simple-tooltip" title="Enter root to be used for all output file names, leading/trailing whitespace and periods will be removed."> File name root </span>
+                                            <input type="text" id="output_filename_root" onchange="setOutputFileNameRoot()" value ="FiRePat" style ="margin-top: .95em; margin-left: 5px; width: 450px; color:rgb(48, 48, 48)" disabled="disabled"/>
+                                        </td>
+                                    </tr>                                   
+                                </table>
+                            </div> 
+                            
+            <div style="margin-top: 0.75em;">        
+                        <h2 class="StepTitle">Log file</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table> 
+                                    <tr  id="corrs_to_csv">
+                                        <td>
+                                            <input type="checkbox" name="record_logfile_checkbox" id="record_logfile" class="leftCustomCheckbox" onclick="toggleRecordLogFile()" checked/>
+                                            <label id="logfile" class="simple-tooltip" for="record_logfile" title="Select to record log file">Record log file</label>
+                                        </td>
+                                        <td>&nbsp;&nbsp;</td>
+                                        <td>
+                                            <span id="log_file_name" style="color: #777" class="simple-tooltip" title="Enter name of log file, leading/trailing whitespace and periods will be removed."> Log file name </span>
+                                            <input type="text" id="logfilename" onchange="setLogFile()" value ="FiRePat.log" style ="margin-top: .95em; margin-left: 5px; width: 450px; color:rgb(48, 48, 48)" />
+                                        </td>
+                                    </tr>                                   
+                                </table>
+                            </div>                
+            
+                            <div style="margin-top: 0.75em;">        
+                        <h2 class="StepTitle">Correlations output</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table> 
+                                    <tr  id="corrs_to_csv">
+                                        <td>
+                                            <input type="checkbox" name="outputCorrToCsv" id="writeCorrToCsv" class="leftCustomCheckbox" onclick="toggleCorrOutputToCsv()"  />
+                                            <label id="corr_out" class="simple-tooltip" for="writeCorrToCsv" title="Select to write correlations to .csv file">Write correlations to csv format</label>
+                                        </td>
+                                        <td>&nbsp;&nbsp;</td>
+                                        <td>
+                                            <span id="corr_csv_fileout" style="color: #777" class="simple-tooltip" title="Enter filename, leading/trailing whitespace and periods will be removed."> File name </span>
+                                            <input type="text" id="corr_csv_fileout_name" onchange="setCorrCsvOutputFile()" value ="FiRePatCorr.csv" style ="margin-top: .95em; margin-left: 5px; width: 450px;"/>
+                                        </td>
+                                    </tr>
+                                    <tr id="local_corrs_to_csv">
+                                    		<td>
+                                            <input type="checkbox" style="margin-top: 1.67em" name="outputLocalCorrToCsv" id="writeLocalCorrToCsv" class="leftCustomCheckbox" onclick="toggleLocalCorrOutputToCsv()"  />
+                                            <label id="local_corr_out" class="simple-tooltip" for="writeLocalCorrToCsv" title="Select to write local correlations to a set of .csv files">Write local correlations to csv format</label>
+                                        </td>
+                                        <td>&nbsp;&nbsp;</td>
+                                        <td>
+                                            <span id="local_corr_csv_fileout_stem" style="color: #777" class="simple-tooltip" title="Enter filename stem, leading/trailing whitespace and periods will be removed."> File name stem </span>
+                                            <input type="text" id="local_corr_csv_fileout_name_stem" onchange="setLocalCorrCsvOutputFileStem()" value ="FiRePatLocalCorr" style ="margin-top: 0em; margin-left: 5px; width: 450px;"/>
+                                        
+                                        </td>
+                                    </tr>
+                                    
+                                </table>
+                            
+
+                        </div> 
+                            
+                            
+                        <div style="margin-top: 0.75em;">        
+                        <h2 class="StepTitle">Results output file types and names</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table> 
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="outputToCsv" id="writeToCsv" class="leftCustomCheckbox" onclick="toggleOutputToCsv()"  checked/>
+                                            <label class="simple-tooltip" for="writeToCsv" title="Select to write results to .csv file">Write results to csv format</label>
+                                        </td>
+                                        <td>&nbsp;&nbsp;</td>
+                                        <td>
+                                            <span id="csv_fileout" style="color: #777" class="simple-tooltip" title="Enter filename, leading/trailing whitespace and periods will be removed."> File name </span>
+                                            <input type="text" id="csv_fileout_name" onchange="setCsvOutputFile()" value ="FiRePat.csv" style ="margin-top: .95em; margin-left: 5px; width: 570px;"/>
+                                        </td>
+                                    </tr>
+                                    
+                                    
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="outputToCytoscape" id="writeToCytoscape" class="leftCustomCheckbox" onclick="toggleOutputToCytoscape()"  checked/>
+                                            <label class="simple-tooltip" for="writeToCytoscape" title="Select to write results to cytoscape file">Write results to cytoscape format</label>
+                                        </td>
+                                        <td>&nbsp;&nbsp;</td>
+                                        <td>
+                                            <span id="cytoscape_fileout" style="color: #777" class="simple-tooltip" title="Enter filename, leading/trailing whitespace and periods will be removed."> File name </span>
+                                            <input type="text" id="cytoscape_fileout_name" onchange="setCytoscapeOutputFile()" value ="FiRePatCyto.csv" style ="margin-top: .95em; margin-left: 5px; width: 570px;"/>
+                                        </td>
+                                    </tr>
+                                    
+                                    
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="outputToHtml" style ="margin-top: 1.67em" id="writeToHtml" class="leftCustomCheckbox" onclick="toggleOutputToHtml()"  checked/>
+                                            <label class="simple-tooltip" for="writeToHtml" title="Select to write results to .html file">Write colour-coded results to html format</label>
+                                        </td>
+                                        <td>&nbsp;&nbsp;</td>
+                                        <td>
+                                            <span id="html_fileout" style="color: #777" class="simple-tooltip" title="Enter filename, leading/trailing whitespace and periods will be removed,"> File name </span>
+                                            <input type="text" id="html_fileout_name" onchange="setHtmlOutputFile()" value ="FiRePat.html" style ="margin-top: 0em; margin-left: 5px; width: 570px;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="outputToLatex" style ="margin-top: 1.67em" id="writeToLatex" class="leftCustomCheckbox" onclick="toggleOutputToLatex()"  checked/>
+                                            <label class="simple-tooltip" for="writeToLatex" title="Select to write results to .tex file">Write colour-coded results to LaTeX format</label>
+                                        </td>
+                                        <td>&nbsp;&nbsp;</td>
+                                        <td>
+                                            <span id="latex_fileout" style="color: #777" class="simple-tooltip" title="Enter filename, leading/trailing whitespace and periods will be removed."> File name </span>
+                                            <input type="text" id="latex_fileout_name" onchange="setLatexOutputFile()" value ="FiRePat.tex" style ="margin-top: 0em; margin-left: 5px; width: 570px;"/>
+                                        </td>
+                                    </tr>  
+                                </table>
+                            
+
+                        </div> 
+                
+                            
+                            <div id="step-2" style="overflow: auto; margin-top: 0.75em;" >	
+                            <h2 class="StepTitle">Results output file settings</h2>
+                            <fieldset  style="min-height:80px;">
+                                <table> 
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="includePatterns" id="incPatterns" class="leftCustomCheckbox" onclick="toggleIncludePatterns()"  checked/>
+                                            <label class="simple-tooltip" for="incPatterns" title="Select to include UDS (Up, Down, Same) coded patterns in output files">Include UDS coded patterns</label>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" name="outputFirstDataFirst" id="firstDataFirst" class="customCheckbox" onclick="toggleFirstDataFirst()"  checked/>
+                                            <label class="simple-tooltip" for="firstDataFirst" title="Select to output resuts from the first dataset first, uncheck to output results from the second dataset first in the output file">Output first dataset first</label>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" name="sortOnFirstDataPatterns" id="sortOnFirstPatterns" class="customCheckbox" onclick="toggleSortOnFirstDataPatterns()"  checked/>
+                                            <label class="simple-tooltip" for="sortOnFirstPatterns" title="Select to sort on patterns from the first dataset first, uncheck to sort on patterns from the second dataset prior to output">Sort on patterns from first dataset</label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        
+                        
+                        
+                            <fieldset  style="min-height:80px;">
+                                <table>
+                                    <tr ><br>
+                                        <th colspan="6" id="upHeader">&nbsp&nbsp&nbsp Colour coding for indicating increased expression levels in HTML files</th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                            <input type="radio" name="upColour" id="redUp" class="leftColourRadiobox" onclick="redUp()" />
+                                            <label for="redUp" class="simple-tooltip"  title="Select colour for increased expression levels, N.B. use different colour for decreased levels">Red</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="upColour" id="greenUp" class="colourRadiobox" onclick="greenUp()" checked/>
+                                            <label for="greenUp" class="simple-tooltip"  title="Select colour for increased expression levels, N.B. use different colour for decreased levels">Green</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="upColour" id="blueUp" class="colourRadiobox" onclick="blueUp()" />
+                                            <label for="blueUp" class="simple-tooltip"  title="Select colour for increased expression levels, N.B. use different colour for decreased levels">Blue</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="upColour" id="cyanUp" class="colourRadiobox" onclick="cyanUp()" />
+                                            <label for="cyanUp" class="simple-tooltip"  title="Select colour for increased expression levels, N.B. use different colour for decreased levels">Cyan</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="upColour" id="magentaUp" class="colourRadiobox" onclick="magentaUp()" />
+                                            <label for="magentaUp" class="simple-tooltip"  title="Select colour for increased expression levels, N.B. use different colour for decreased levels">Magenta</label>
+                                        </td>
+                                    <!--    <td>
+                                            <input type="radio" name="upColour" id="orangeUp" class="colourRadiobox" onclick="orangeUp()" />
+                                            <label for="orangeUp" class="simple-tooltip"  title="Select colour for increased expression levels, N.B. use different colour for decreased levels">Orange</label>
+                                        </td> -->
+                                        </tr>
+                                </table>
+                                </fieldset>
+                                <fieldset  style="min-height:80px;">
+                                <table>                              
+                                    <tr ><br>
+                                        <th colspan="6" id="upHeader">&nbsp&nbsp&nbsp Colour coding for indicating decreased expression levels in HTML files</th>                                            
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                            <input type="radio" name="downColour" id="redDown" class="leftColourRadiobox" onclick="redDown()" checked/>
+                                            <label for="redDown" class="simple-tooltip"  title="Select colour for increased expression levels, N.B. use different colour for increased levels">Red</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="downColour" id="greenDown" class="colourRadiobox" onclick="greenDown()" />
+                                            <label for="greenDown" class="simple-tooltip"  title="Select colour for increased expression levels, N.B. use different colour for increased levels">Green</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="downColour" id="blueDown" class="colourRadiobox" onclick="blueDown()" />
+                                            <label for="blueDown" class="simple-tooltip"  title="Select colour for increased expression levels, N.B. use different colour for increased levels">Blue</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="downColour" id="cyanDown" class="colourRadiobox" onclick="cyanDown()" />
+                                            <label for="cyanDown" class="simple-tooltip"  title="Select colour for increased expression levels, N.B. use different colour for increased levels">Cyan</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="downColour" id="magentaDown" class="colourRadiobox" onclick="magentaDown()" />
+                                            <label for="magentaDown" class="simple-tooltip"  title="Select colour for increased expression levels, N.B. use different colour for increased levels">Magenta</label>
+                                        </td>
+                                    <!--    <td>
+                                            <input type="radio" name="downColour" id="orangeDown" class="colourRadiobox" onclick="orangeDown()" />
+                                            <label for="orangeDown" class="simple-tooltip"  title="Select colour for increased expression levels, N.B. use different colour for increased levels">Orange</label>
+                                        </td> -->
+                                        </tr>
+                                </table>
+                            </fieldset>
+                            </div>
+                             
+                    </div>
+                    <!-- End SmartWizard Content  	-->	
+
+                </td></tr>
+        </table>
+
+        <script>
+
+$(document).ready(function() {
+     Tipped.create('.simple-tooltip', {
+         behavior: 'hide'
+     });
+ });
+
+ // method to trim leading and trailing spaces and periods from a string
+ if (!String.prototype.trimSP) {
+  String.prototype.trimSP = function () {
+    return this.replace(/^[\.\s\uFEFF\xA0]+|[\.\s\uFEFF\xA0]+$/g, '');
+  };
+}
+ 
+ 
+    
+
+    function validFilename(s)
+    {
+        if(s=="") return false;
+        var allchars = ":;/\\,|?#<>@*\"";
+        allchars = allchars.split("");
+        for (i = 0; i < allchars.length; i++) 
+        { 
+            var j = s.indexOf(allchars[i]);
+            if(j>-1) return false;
+        }
+        return true;
+    }
+    
+    function ensureFileExtension(s, e)
+    {
+        var echars = e.split("");
+        elength = e.length;
+        var schars = s.split("");
+        slength = s.length;
+        if(slength>elength)
+        {
+            var lastelements = schars.slice(slength-elength).join("").toLowerCase();
+            if(lastelements==e) return s;
+            return s.concat(e);
+        }
+        return output = s.concat(e);
+    }
+    
+    function setLogFile() 
+     {
+        var n = document.getElementById('logfilename').value;
+        n = n.trimSP();
+        if (!validFilename(n))
+        {
+            app.showErrorMessage("Not a valid file name, resetting to default");
+            document.getElementById('logfilename').value = 'FiRePat.log';
+            app.setLogFile('FiRePat.log');
+            return;
+        }
+        n = ensureFileExtension(n, ".log");
+        document.getElementById('logfilename').value = n;
+        app.setLogFile(n);
+    }  
+    function setCsvOutputFile() 
+     {
+        var n = document.getElementById('csv_fileout_name').value;
+        n = n.trimSP();
+        if (!validFilename(n))
+        {
+            app.showErrorMessage("Not a valid file name, resetting to default");
+            document.getElementById('csv_fileout_name').value = 'FiRePat.csv';
+            app.setCsvOutputFile('FiRePat.csv');
+            return;
+        }
+        n = ensureFileExtension(n, ".csv");
+        document.getElementById('csv_fileout_name').value = n;
+        app.setCsvOutputFile(n);
+    }  
+    function setCytoscapeOutputFile() 
+     {
+        var n = document.getElementById('cytoscape_fileout_name').value;
+        n = n.trimSP();
+        if (!validFilename(n))
+        {
+            app.showErrorMessage("Not a valid file name, resetting to default");
+            document.getElementById('cytoscape_fileout_name').value = 'FiRePatCyto.csv';
+            app.setCytoscapeOutputFile('FiRePatCyto.csv');
+            return;
+        }
+        n = ensureFileExtension(n, ".csv");
+        document.getElementById('cytoscape_fileout_name').value = n;
+        app.setCytoscapeOutputFile(n);
+    }  
+    function setAllOutputFileRoots(r) 
+    {
+        document.getElementById('logfilename').value = r+'.log';
+        app.setLogFile(r+'.log');            
+        document.getElementById('corr_csv_fileout_name').value = r+'Corr.csv';
+        app.setCorrCsvOutputFile(r+'Corr.csv');
+        document.getElementById('local_corr_csv_fileout_name_stem').value = r+'LocalCorr';
+        app.setLocalCorrCsvOutputFileStem(r+'LocalCorr');
+        document.getElementById('csv_fileout_name').value = r+'.csv';        
+        app.setCsvOutputFile(r+".csv");
+        document.getElementById('cytoscape_fileout_name').value = r+'Cyto.csv';        
+        app.setCytoscapeOutputFile(r+"Cyto.csv");
+        document.getElementById('html_fileout_name').value = r+'.html';        
+        app.setHtmlOutputFile(r+".html");
+        document.getElementById('latex_fileout_name').value = r+'.tex';        
+        app.setLatexOutputFile(r+".tex");      
+    }
+    function setCorrCsvOutputFile() 
+    {
+        var n = document.getElementById('corr_csv_fileout_name').value;
+        n = n.trimSP();
+        if (!validFilename(n))
+        {
+            app.showErrorMessage("Not a valid file name, resetting to default");
+            document.getElementById('corr_csv_fileout_name').value = 'FiRePatCorr.csv';
+            app.setCorrCsvOutputFile('FiRePatCorr.csv');
+            return;
+        }
+        n = ensureFileExtension(n, ".csv");
+        document.getElementById('corr_csv_fileout_name').value = n;
+        app.setCorrCsvOutputFile(n);
+    }
+    function setLocalCorrCsvOutputFileStem() 
+     {
+         var n = document.getElementById('local_corr_csv_fileout_name_stem').value;
+        n = n.trimSP();
+        if (!validFilename(n))
+        {
+            app.showErrorMessage("Not a valid file name stem, resetting to default");
+            document.getElementById('local_corr_csv_fileout_name_stem').value = 'FiRePatLocalCorr';
+            app.setLocalCorrCsvOutputFile('FiRePatLocalCorr');
+            return;
+        }
+        document.getElementById('corr_csv_fileout_name').value = n;
+        app.setLocalCorrCsvOutputFileStem(n);
+    }
+    
+    function setHtmlOutputFile() 
+     {
+        var n = document.getElementById('html_fileout_name').value;
+        n = n.trimSP();
+        if (!validFilename(n))
+        {
+            app.showErrorMessage("Not a valid file name, resetting to default");
+            document.getElementById('html_fileout_name').value = 'FiRePat.html';
+            app.setHtmlOutputFile('FiRePat.html');
+            return;
+        }
+        n = ensureFileExtension(n, ".html");
+        document.getElementById('html_fileout_name').value = n;
+        app.setHtmlOutputFile(n);
+    }
+    function setLatexOutputFile() 
+     {
+        var n = document.getElementById('latex_fileout_name').value;
+        n = n.trimSP();
+        if (!validFilename(n))
+        {
+            app.showErrorMessage("Not a valid file name, resetting to default");
+            document.getElementById('latex_fileout_name').value = 'FiRePat.tex';
+            app.setLatexOutputFile('FiRePat.tex');
+            return;
+        }
+        n = ensureFileExtension(n, ".tex");
+        document.getElementById('latex_fileout_name').value = n;
+        app.setLatexOutputFile(n);
+    }
+    
+    function setOutputFileNameRoot() 
+     {
+        var n = document.getElementById('output_filename_root').value;
+        n = n.trimSP();
+        if (!validFilename(n))
+        {
+            app.showErrorMessage("Not a valid file name root, resetting to default");
+            document.getElementById('output_filename_root').value = 'FiRePat';
+            app.setOutputFileNameRoot('FiRePat');
+            setAllOutputFileRoots('FiRePat');
+            return;
+        }
+        document.getElementById('output_filename_root').value = n;
+        app.setOutputFileNameRoot(n);
+        setAllOutputFileRoots(n);
+    }
+    function setFirstDatasetName()
+    {
+        var n = document.getElementById('first_dataset_name').value;
+        n = n.trimSP();
+        if(n=="")
+        {
+            app.showErrorMessage("Not a valid name, resetting to default");
+            document.getElementById('first_dataset_name').value = 'First';
+            app.setFirstDatasetName('First');
+            return;
+        }
+        document.getElementById('first_dataset_name').value = n;
+        app.setFirstDatasetName(n); 
+    }
+    function setSecondDatasetName()
+    {
+        var n = document.getElementById('second_dataset_name').value;
+        n = n.trimSP();
+        if(n=="")
+        {
+            app.showErrorMessage("Not a valid name, resetting to default");
+            document.getElementById('second_dataset_name').value = 'Second';
+            app.setSecondDatasetName('Second');
+            return;
+        }
+        document.getElementById('second_dataset_name').value = n;
+        app.setSecondDatasetName(n); 
+    }
+    function selectFirstInputFile() 
+     {
+        if (typeof app !== "undefined") 
+        {
+            var fdata = app.setFirstInputFile();
+            var fname = fdata[0];
+            if(fname=='Not Yet Selected')  return;
+            var fpath = fdata[1];
+            var fdir = fdata[2];
+            var shpath = app.getFirstShowPath();
+            if(shpath==true) document.getElementById('first_input_file').value = fpath;
+            else document.getElementById('first_input_file').value = fname;
+            setDefaultOutputDir(fdir);
+        } 
+        else document.getElementById('first_input_file').value = 'debug';
+    }
+    function selectSecondInputFile() 
+     {
+        if (typeof app !== "undefined") 
+        {
+            var fdata = app.setSecondInputFile();
+            var fname = fdata[0];
+            if(fname=='Not Yet Selected')  return;
+            var fpath = fdata[1];
+            var fdir = fdata[2];
+            var shpath = app.getFirstShowPath();
+            if(shpath==true) document.getElementById('second_input_file').value = fpath;
+            else document.getElementById('second_input_file').value = fname;
+            setDefaultOutputDir(fdir);
+        } 
+        else  document.getElementById('second_input_file').value = 'debug';
+    }
+    function toggleRecordLogFile()
+    {
+        app.toggleRecordLogFile();
+    }
+    function toggleLocalCorrOutputToCsv()
+    {
+        app.toggleLocalCorrOutputToCsv();
+    }
+    function toggleCorrOutputToCsv()
+    {
+        app.toggleCorrOutputToCsv();
+    }
+    function toggleOutputToCsv()
+    {
+        app.toggleOutputToCsv();
+    }
+    function toggleOutputToCytoscape()
+    {
+        app.toggleOutputToCytoscape();
+    }
+    function toggleOutputToHtml()
+    {
+        app.toggleOutputToHtml();
+    }
+    function toggleOutputToLatex()
+    {
+        app.toggleOutputToLatex();
+    }
+    function toggleFirstHasHeader()
+    {
+        app.toggleFirstHasHeader();
+    }
+    function toggleFirstIsSrna()
+    {
+        app.toggleFirstIsSrna();
+    }
+    function toggleFirstShowPath()
+    {
+        app.toggleFirstShowPath();
+        var filename = document.getElementById('first_input_file').value;
+        if(filename=='Not Yet Selected')return;
+        var fdata = app.getFirstInputFilePathName();
+        var fname = fdata[0];
+        var fpath = fdata[1];
+        var shpath = app.getFirstShowPath();
+        if(shpath==true) document.getElementById('first_input_file').value = fpath;
+        else document.getElementById('first_input_file').value = fname;
+    }
+    function toggleSecondShowPath()
+    {
+        app.toggleSecondShowPath();
+        var filename = document.getElementById('second_input_file').value;
+        if(filename=='Not Yet Selected') return;
+        var fdata = app.getSecondInputFilePathName();
+        var fname = fdata[0];
+        var fpath = fdata[1];
+        var shpath = app.getSecondShowPath();
+        if(shpath==true) document.getElementById('second_input_file').value = fpath;
+        else document.getElementById('second_input_file').value = fname;
+    }
+    function toggleSecondHasHeader()
+    {
+        app.toggleSecondHasHeader();
+    }
+    function toggleSecondIsSrna()
+    {
+        app.toggleSecondIsSrna();
+    }
+    function toggleFilterSrnaData()
+    {
+        app.toggleFilterSrnaData();
+    }
+    function toggleFilterNonSrnaData()
+    {
+        app.toggleFilterNonSrnaData();
+    }
+    function toggleIncludePatterns()
+    {
+        app.toggleIncludePatterns()
+    }
+    function toggleFirstDataFirst()
+    {
+        app.toggleFirstDataFirst();
+    }
+    function toggleSortOnFirstDataPatterns()
+    {
+        app.toggleSortOnFirstDataPatterns();
+    }   
+    function toggleUseOutputFileNameRoot()
+    {
+        var disab_col = 'rgb(48, 48, 48)';
+        var enab_col = 'rgb(0, 0, 0)';
+        app.toggleUseOutputFileNameRoot();
+        var d = document.getElementById("output_filename_root").disabled;
+        if(d==true)
+        {
+            document.getElementById("output_filename_root").disabled = false;
+            document.getElementById('output_filename_root').style.color = enab_col;            
+            document.getElementById("corr_csv_fileout_name").disabled = true;
+            document.getElementById('corr_csv_fileout_name').style.color = disab_col;
+            document.getElementById("local_corr_csv_fileout_name_stem").disabled = true;
+            document.getElementById('local_corr_csv_fileout_name_stem').style.color = disab_col;            
+            document.getElementById("csv_fileout_name").disabled = true;
+            document.getElementById('csv_fileout_name').style.color = disab_col;
+            document.getElementById("cytoscape_fileout_name").disabled = true;
+            document.getElementById('cytoscape_fileout_name').style.color = disab_col;
+            document.getElementById("html_fileout_name").disabled = true;
+            document.getElementById('html_fileout_name').style.color = disab_col;
+            document.getElementById("latex_fileout_name").disabled = true;
+            document.getElementById('latex_fileout_name').style.color = disab_col;
+            document.getElementById("logfilename").disabled = true;
+            document.getElementById('logfilename').style.color = disab_col;           
+            setAllOutputFileRoots(document.getElementById('output_filename_root').value);
+        }
+        else
+        {
+            document.getElementById("output_filename_root").disabled = true;
+            document.getElementById('output_filename_root').style.color = disab_col;           
+            document.getElementById("corr_csv_fileout_name").disabled = false;
+            document.getElementById('corr_csv_fileout_name').style.color = enab_col;
+            document.getElementById("local_corr_csv_fileout_name_stem").disabled = false;
+            document.getElementById('local_corr_csv_fileout_name_stem').style.color = enab_col;
+            document.getElementById("csv_fileout_name").disabled = false;
+            document.getElementById('csv_fileout_name').style.color = enab_col;
+            document.getElementById("cytoscape_fileout_name").disabled = false;
+            document.getElementById('cytoscape_fileout_name').style.color = enab_col;
+            document.getElementById("html_fileout_name").disabled = false;
+            document.getElementById('html_fileout_name').style.color = enab_col;
+            document.getElementById("latex_fileout_name").disabled = false;
+            document.getElementById('latex_fileout_name').style.color = enab_col;            
+            document.getElementById("logfilename").disabled = false;
+            document.getElementById('logfilename').style.color = enab_col;             
+        }
+    }
+    function setCorThr()
+    {
+        //Get the value
+        var n = document.getElementById('min_corr_value').value;
+        //Turn it into a float
+        n = parseFloat(n);
+        //Check that is a number...        
+        if (isNaN(n)) {
+            app.showErrorMessage("The value must be a decimal number between 0 and 1, resetting to 0.9");
+            document.getElementById('min_corr_value').value = '0.90';
+            app.setCorThr(0.9);
+            return;
+        }
+        //Check that the value is between 0-1....
+        if (!(n >= 0 && n <= 1)) {
+            app.showErrorMessage("The value must be a decimal number between 0 and 1, resetting to 0.9");
+            document.getElementById('min_corr_value').value = '0.9';
+            app.setCorThr(0.9);
+            return;
+        }
+        document.getElementById('min_corr_value').value = n;
+        app.setCorThr(n);
+    }
+    function setPCcutoff()
+    {
+        //Get the value
+        var n = document.getElementById('srna_top_pc_ret').value;
+        //Turn it into a float
+        n = parseFloat(n);
+        //Check that is a number...        
+        if (isNaN(n)) {
+            app.showErrorMessage("The value must be a percentage between 0 and 100, resetting to 10");
+            document.getElementById('srna_top_pc_ret').value = '10';
+            app.setPCcutoff(10);
+            return;
+        }
+        //Check that the value is positive....
+        if (!(n >= 0 && n <= 100)) {
+            app.showErrorMessage("The value must be a percentage between 0 and 100, resetting to 10");
+            document.getElementById('srna_top_pc_ret').value = '10';
+            app.setPCcutoff(10);
+            return;
+        }
+        document.getElementById('srna_top_pc_ret').value = n;
+        app.setPCcutoff(n);
+    }
+    function setNonSrnasFilterLevel()
+    {
+        //Get the value
+        var n = document.getElementById('non_srna_min_exp').value;
+        //Turn it into a float
+        n = parseFloat(n);
+        //Check that is a number...        
+        if (isNaN(n)) {
+            app.showErrorMessage("The value must be a positive number, resetting to 0");
+            document.getElementById('non_srna_min_exp').value = '0';
+            app.setNonSrnasFilterLevel(0);
+            return;
+        }
+        //Check that the value is positive....
+        if (!(n >= 0 )) {
+            app.showErrorMessage("The value must be a positive number, resetting to 0");
+            document.getElementById('non_srna_min_exp').value = '0';
+            app.setNonSrnasFilterLevel(0);
+            return;
+        }
+        document.getElementById('non_srna_min_exp').value = n;
+        app.setNonSrnasFilterLevel(n);
+    }
+    function checkColours()
+    {
+        var downCol = app.getDownColour();
+        var upCol = app.getUpColour();
+        if(downCol==upCol) app.showErrorMessage("Colour for increased expression levels is the same as for decreased! Change one of them to a different colour.");
+    }
+    function redUp()
+    {
+        app.setUpColour('RED');
+        checkColours();
+    }
+    function greenUp()
+    {
+        app.setUpColour('GREEN');
+        checkColours();
+    }
+    function blueUp()
+    {
+        app.setUpColour('BLUE');
+        checkColours();
+    }
+    function cyanUp()
+    {
+        app.setUpColour('CYAN');
+        checkColours();
+    }
+    function magentaUp()
+    {
+        app.setUpColour('MAGENTA');
+        checkColours();
+    }
+    function orangeUp()
+    {
+        app.setUpColour('ORANGE');
+    }
+    function redDown()
+    {
+        app.setDownColour('RED');
+        checkColours();
+    }
+    function greenDown()
+    {
+        app.setDownColour('GREEN');
+        checkColours();
+    }
+    function blueDown()
+    {
+        app.setDownColour('BLUE');
+        checkColours();
+    }
+    function cyanDown()
+    {
+        app.setDownColour('CYAN');
+        checkColours();
+    }
+    function magentaDown()
+    {
+        app.setDownColour('MAGENTA');
+        checkColours();
+    }
+    function orangeDown()
+    {
+        app.setDownColour('ORANGE');
+        checkColours();
+    }  
+    function setPearson()
+    {
+        app.setCorrMethod('PEARSON');
+    }
+    function setKendall()
+    {
+        app.setCorrMethod('KENDALL');
+    }
+    function setSpearman()
+    {
+        app.setCorrMethod('SPEARMAN');
+    }
+    function toggleLocalCorrs()
+    {    	  
+    	app.toggleLocalCorrs();
+    }
+    function setMinWindow()
+    {
+        //Get the value
+        var n = document.getElementById('min_corr_window').value;
+        //Turn it into a int
+        n = parseInt(n);
+        //Check that is a number...  
+        if (isNaN(n)) 
+        {
+            app.showErrorMessage("The window width must greater than or equal to 4, resetting to 4");
+            document.getElementById('min_corr_window').value = '4';
+            app.setMinWindow(4);
+            return;
+        }
+        //Check that the value is 4 or greater
+        if (!(n >= 4)) 
+        {
+            app.showErrorMessage("The window width must greater than or equal to 4, resetting to 4");
+            document.getElementById('min_corr_window').value = '4';
+            app.setMinWindow(4);
+            return;
+        }
+        document.getElementById('min_corr_window').value = n;
+        app.setMinWindow(n);
+    }
+    
+     
+    function selectOutputDir() 
+    { 
+        if (typeof app !== "undefined") 
+        {
+            var dir = app.setOutputDir();
+            document.getElementById('output_dir').value = dir;
+        } 
+        else  document.getElementById('output_dir').value = 'debug';
+    }
+    function setDefaultOutputDir(dir)
+    {
+        var curr = document.getElementById('output_dir').value;
+        if(curr=="Not Yet Selected")
+        {
+            if(dir!='')
+            {
+                document.getElementById('output_dir').value = dir;
+            }
+        }
+    }
+    function checkNumSamps() 
+    {
+        //Get the value
+        var n = document.getElementById('num_samps').value;
+        //Turn it into a int
+        n = parseInt(n);
+        //Check that is a number...  
+        if (isNaN(n)) 
+        {
+            app.showErrorMessage("The number of samples must greater than or equal to 1");
+            document.getElementById('num_samps').value = '';
+            app.setNumSamples(null);
+            return;
+        }
+        //Check that the value is 1 or greater
+        if (!(n >= 1)) 
+        {
+            app.showErrorMessage("The number of samples must greater than or equal to 1");
+            document.getElementById('num_samps').value = '';
+            app.setNumSamples(null);
+            return;
+        }
+        document.getElementById('num_samps').value = n;
+        app.setNumSamples(n);
+    }
+    
+    function checkNumReps() 
+    {
+        //Get the value
+        var n = document.getElementById('num_reps').value;
+        //Turn it into a int
+        n = parseInt(n);
+        //Check that is a number...        
+        if (isNaN(n)) 
+        {
+            app.showErrorMessage("The number of replicates must an greater than or equal to 1, resetting to 1");
+            document.getElementById('num_reps').value = 1;
+            app.setNumReplicates(1);
+            return;
+        }
+        //Check that the value is 1 or greater
+        if (!(n >= 1)) 
+        {
+            app.showErrorMessage("The number of replicates must greater than or equal to 1, resetting to 1");
+            document.getElementById('num_reps').value = '1';
+            app.setNumReplicates(1);
+            return;
+        }
+        document.getElementById('num_reps').value = n;
+        app.setNumReplicates(n);
+    }
+    function toggleAutoSampleNames()
+    {
+        app.toggleAutoSampleNames();
+    }
+    function setSampleNameRoot()
+    {
+        var n = document.getElementById('sample_name_root').value;
+        n = n.trim();
+        app.setSampleNameRoot(n);
+    }
+    function setSampleNames()
+    {
+        var n = document.getElementById('sample_names').value;
+        n = n.trim();
+        var sncheck = app.checkNumSamplesAndNames(n);
+        if(sncheck==false) app.showErrorMessage("The number of manually entered sample names must match the number of samples! Or use sequential sample names.");
+        else 
+        {
+            app.setSampleNames(n);
+            document.getElementById('sample_names').value = app.getSampleNames();
+        }
+    }
+    
+    
+
+        </script>
+    </body>
+</html>

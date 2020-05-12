@@ -76,7 +76,12 @@ public class PAREsnipController extends Controller implements ControlledScreen {
 
     @Override
     protected void initWebFile() {
-        setWebFile(IOUtils.DIR_SEPARATOR + "HTML" + IOUtils.DIR_SEPARATOR + "paresnip.html");
+        if(!module.runPAREsnip){
+            // run PAREsnip2 for PAREfirst
+            setWebFile(IOUtils.DIR_SEPARATOR + "HTML" + IOUtils.DIR_SEPARATOR + "parefirst_paresnip2_results.html");
+        }else{
+            setWebFile(IOUtils.DIR_SEPARATOR + "HTML" + IOUtils.DIR_SEPARATOR + "paresnip.html");
+        }
     }
 
     @Override
@@ -287,6 +292,9 @@ public class PAREsnipController extends Controller implements ControlledScreen {
         // returns whether or not the parameters should be shown
         // this will be false when PAREsnip output file is input and algorithm does not need to be run but results displayed
         public boolean showParameters() {
+//            if(module.isPAREsnip2){
+//                return false;
+//            }
             return module.runPAREsnip;
         }
 
