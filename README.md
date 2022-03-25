@@ -1,5 +1,11 @@
 The UEA sRNA workbench is a simple to use, downloadable sRNA software package based on algorithms developed for the original UEA sRNA Toolkit that will perform a complete analysis of single or multiple-sample small RNA datasets from both plants and animals to identify interesting landmarks (such as detection of novel micro RNA sequences) or other tasks such as profiling small RNA expression patterns in genetic data.
 
+The UEA sRNA workbench is available to download at: 
+
+https://sourceforge.net/projects/srnaworkbench/
+
+
+
 Organisation of the code
 --------------------------
 
