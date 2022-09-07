@@ -1,0 +1,12 @@
+{
+    "srna_file": "",
+	"transcriptome_file": "",
+	"degradome_file": "",
+    "genome_file": "",
+    "output_dir" : "",
+	"gff3_file"  : "",
+	"paresnip2_config"  : "",
+	"paresnip2_rules"  : "",
+	"validated_targets_file": "",
+	"mature_mirnas_file": ""
+}

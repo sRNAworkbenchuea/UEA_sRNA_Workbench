@@ -1,0 +1,17 @@
+{
+  "srna_files": [
+	{
+      "srna_filename": ""
+	}
+  ],
+  "genome_filename": "",
+  "transcriptome_filename": "",
+  "degradome_files": [
+	{
+      "degradome_filename": ""
+	}
+  ],
+  "mircat2_parameters": "",
+  "paresnip2_parameters": "",
+  "paresnip2_rules": ""
+}
